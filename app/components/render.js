@@ -39,7 +39,7 @@
     function renderComponents() {
         const list = document.getElementById('componentList');
         if (State.components.length === 0) {
-            list.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="material-symbols-outlined text-4xl mb-2">inbox</span><p class="text-sm">No components yet</p><p class="text-xs">Add components above or use Templates button</p></div>';
+            list.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="material-symbols-outlined text-4xl mb-2">inbox</span><p class="text-sm">No components yet</p></div>';
             return;
         }
         list.innerHTML = '';

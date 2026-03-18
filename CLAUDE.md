@@ -54,13 +54,14 @@ The project is being migrated from a single 2,200-line HTML file into a modular 
 - **Phase 1.1-1.2:** Scaffolding + data extraction (stocks, templates, coatings, seals, postage into `app/data/`; CSS into `assets/styles.css`)
 - **Phase 1.3:** Calculation and postal logic extraction (`app/utils/calculations.js` for weight/thickness/coating/buffer math; `app/utils/postal.js` for classification/aspect ratio/postage/tray capacity)
 - **Phase 1.4-1.5:** UI component extraction + state management (`app/state.js` for shared state on `window.MailSpec.State`; `app/components/` for render, calculate, config-manager, bom-export, component-manager, ui-controls). Inline script reduced to ~155 lines: init, autoSave, window bindings, event delegation.
+- **Phase 1.6:** Verification checkpoint — code-level comparison of all calculation, classification, postage, and tray capacity logic confirmed identical to v2.4 reference. Data files (stocks, templates, coatings, seals, postage) verified byte-identical. One cosmetic fix applied (render.js empty state text). Browser verification recommended to confirm runtime behavior.
 
-Remaining work: Phase 1.6 (if any cleanup needed), then Phase 2+.
+Phase 1 migration complete. Next: Phase 2+.
 
 ## Development Plan
 
 The full development plan is in docs/DEVELOPMENT-PLAN.md. Phases overview:
-- Phase 1: Foundation — Codebase migration (1.1-1.5 complete, 1.6 remaining)
+- Phase 1: Foundation — Codebase migration (complete)
 - Phase 2: Data integrity and provenance
 - Phase 3: Accuracy verification and confidence indicators
 - Phase 4: Enhanced capabilities (self-mailer compliance, postage comparison, new component types)

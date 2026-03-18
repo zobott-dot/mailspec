@@ -12,12 +12,14 @@ MailSpec is a browser-based direct mail component weight and dimension calculato
 
 **Data namespace pattern:** All data modules attach to `window.MailSpec` since there's no bundler. Each data file in `app/data/` initializes `window.MailSpec = window.MailSpec || {};` and attaches its export. The inline script in `index.html` aliases these to local `const` variables (e.g., `const STOCKS = window.MailSpec.STOCKS;`).
 
-**Script load order matters** — `index.html` loads data files first, then the inline script that references them:
+**Script load order matters** — `index.html` loads data files first, then utility files, then the inline script:
 1. `app/data/stocks.js` → `window.MailSpec.STOCKS`, `.loadCustomStocks`, `.STORAGE_KEY_CUSTOM_STOCKS`
 2. `app/data/templates.js` → `window.MailSpec.TEMPLATES`
 3. `app/data/coatings.js` → `window.MailSpec.COATINGS`
 4. `app/data/seals.js` → `window.MailSpec.SEALS`
 5. `app/data/postage.js` → `window.MailSpec.POSTAGE`
+6. `app/utils/calculations.js` → `window.MailSpec.Calculations`
+7. `app/utils/postal.js` → `window.MailSpec.Postal`
 
 **State & persistence:** App state lives in JS variables (`components`, `globalBuffer`, etc.) and auto-saves to `localStorage` under keys: `mailspec_current_assembly`, `mailspec_saved_configs`, `mailspec_custom_stocks`.
 
@@ -40,13 +42,14 @@ The legacy single-file version is preserved as `mailspec-assembly-tool-v2.4.html
 
 The project is being migrated from a single 2,200-line HTML file into a modular structure. Phases completed:
 - **Phase 1.1-1.2:** Scaffolding + data extraction (stocks, templates, coatings, seals, postage into `app/data/`; CSS into `assets/styles.css`)
+- **Phase 1.3:** Calculation and postal logic extraction (`app/utils/calculations.js` for weight/thickness/coating/buffer math; `app/utils/postal.js` for classification/aspect ratio/postage/tray capacity)
 
-Remaining inline JS in `index.html` (~800 lines of functions) will be extracted into `app/components/` and `app/utils/` in future phases.
+Remaining inline JS in `index.html` (~600 lines of functions) will be extracted into `app/components/` and `app/utils/` in future phases.
 
 ## Development Plan
 
 The full development plan is in docs/DEVELOPMENT-PLAN.md. Phases overview:
-- Phase 1: Foundation — Codebase migration (1.1-1.2 complete, 1.3-1.6 remaining)
+- Phase 1: Foundation — Codebase migration (1.1-1.3 complete, 1.4-1.6 remaining)
 - Phase 2: Data integrity and provenance
 - Phase 3: Accuracy verification and confidence indicators
 - Phase 4: Enhanced capabilities (self-mailer compliance, postage comparison, new component types)

@@ -12,7 +12,7 @@ MailSpec is a browser-based direct mail component weight and dimension calculato
 
 **Data namespace pattern:** All data modules attach to `window.MailSpec` since there's no bundler. Each data file in `app/data/` initializes `window.MailSpec = window.MailSpec || {};` and attaches its export. The inline script in `index.html` aliases these to local `const` variables (e.g., `const STOCKS = window.MailSpec.STOCKS;`).
 
-**Script load order matters** — `index.html` loads data files first, then utility files, then the inline script:
+**Script load order matters** — `index.html` loads files in this order:
 1. `app/data/stocks.js` → `window.MailSpec.STOCKS`, `.loadCustomStocks`, `.STORAGE_KEY_CUSTOM_STOCKS`
 2. `app/data/templates.js` → `window.MailSpec.TEMPLATES`
 3. `app/data/coatings.js` → `window.MailSpec.COATINGS`
@@ -20,8 +20,18 @@ MailSpec is a browser-based direct mail component weight and dimension calculato
 5. `app/data/postage.js` → `window.MailSpec.POSTAGE`
 6. `app/utils/calculations.js` → `window.MailSpec.Calculations`
 7. `app/utils/postal.js` → `window.MailSpec.Postal`
+8. `app/state.js` → `window.MailSpec.State`, `.STORAGE_KEY_CURRENT`, `.STORAGE_KEY_CONFIGS`
+9. `app/components/render.js` → `window.MailSpec.Components.renderComponents`, `.getSourceBadge`, `.filterStocks`, `.updateStockSearch`
+10. `app/components/calculate.js` → `window.MailSpec.Components.calculate`
+11. `app/components/config-manager.js` → `window.MailSpec.Components.saveConfiguration`, `.loadConfiguration`, `.deleteConfiguration`, `.renderConfigList`, `.exportConfigurations`, `.importConfigurations`
+12. `app/components/bom-export.js` → `window.MailSpec.Components.copyBOMToClipboard`, `.exportBOMText`, `.generateBOMText`
+13. `app/components/component-manager.js` → `window.MailSpec.Components.addComponent`, `.duplicateComponent`, `.removeComponent`, `.clearAllComponents`, `.updateComponent`, `.toggleDimMode`, `.toggleManual`, `.addTemplate`, `.addCustomStock`
+14. `app/components/ui-controls.js` → `window.MailSpec.Components.updateGlobalBuffer`, `.updateGlobalThickBuffer`, `.updateGlobalSeal`, `.updateSealInfo`, `.switchTab`
+15. Inline script → `init()`, `autoSave()`, `showAutosaveStatus()`, window bindings, event delegation
 
-**State & persistence:** App state lives in JS variables (`components`, `globalBuffer`, etc.) and auto-saves to `localStorage` under keys: `mailspec_current_assembly`, `mailspec_saved_configs`, `mailspec_custom_stocks`.
+**State namespace:** App state lives on `window.MailSpec.State` (components, nextId, globalBuffer, globalThickBuffer, globalSealType, globalSealQty, lastBomData). Auto-saves to `localStorage` under keys: `mailspec_current_assembly`, `mailspec_saved_configs`, `mailspec_custom_stocks`.
+
+**Component namespace:** All extracted UI functions live on `window.MailSpec.Components`. Each component file uses an IIFE that aliases `State` and `C` (Components) at the top, then defines functions and registers them on `C`. Cross-file calls use `C.functionName()`. The inline script registers `autoSave` and `showAutosaveStatus` on `C` so component files can call them.
 
 **Event handling:** Uses both inline `onclick` handlers and a `data-add-component`/`data-add-template` event delegation system. All functions are explicitly bound to `window` for onclick access.
 
@@ -43,13 +53,14 @@ The legacy single-file version is preserved as `mailspec-assembly-tool-v2.4.html
 The project is being migrated from a single 2,200-line HTML file into a modular structure. Phases completed:
 - **Phase 1.1-1.2:** Scaffolding + data extraction (stocks, templates, coatings, seals, postage into `app/data/`; CSS into `assets/styles.css`)
 - **Phase 1.3:** Calculation and postal logic extraction (`app/utils/calculations.js` for weight/thickness/coating/buffer math; `app/utils/postal.js` for classification/aspect ratio/postage/tray capacity)
+- **Phase 1.4-1.5:** UI component extraction + state management (`app/state.js` for shared state on `window.MailSpec.State`; `app/components/` for render, calculate, config-manager, bom-export, component-manager, ui-controls). Inline script reduced to ~155 lines: init, autoSave, window bindings, event delegation.
 
-Remaining inline JS in `index.html` (~600 lines of functions) will be extracted into `app/components/` and `app/utils/` in future phases.
+Remaining work: Phase 1.6 (if any cleanup needed), then Phase 2+.
 
 ## Development Plan
 
 The full development plan is in docs/DEVELOPMENT-PLAN.md. Phases overview:
-- Phase 1: Foundation — Codebase migration (1.1-1.3 complete, 1.4-1.6 remaining)
+- Phase 1: Foundation — Codebase migration (1.1-1.5 complete, 1.6 remaining)
 - Phase 2: Data integrity and provenance
 - Phase 3: Accuracy verification and confidence indicators
 - Phase 4: Enhanced capabilities (self-mailer compliance, postage comparison, new component types)

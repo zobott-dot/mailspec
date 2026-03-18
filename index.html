@@ -54,10 +54,7 @@
         <button class="flex items-center gap-1 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-md hover:bg-purple-100 transition text-xs font-bold uppercase tracking-wide" onclick="document.getElementById('customStockModal').showModal()">
             <span class="material-symbols-outlined text-sm">add_circle</span> Stock
         </button>
-        <button class="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-md hover:bg-slate-200 transition text-xs font-bold uppercase tracking-wide" onclick="downloadTool()">
-            <span class="material-symbols-outlined text-sm">download</span>
-        </button>
-        <button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="window.print()">
+<button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="window.print()">
             <span class="material-symbols-outlined text-lg">print</span>
         </button>
     </div>
@@ -114,9 +111,6 @@
             </button>
             <button class="w-full flex items-center gap-3 p-3 bg-purple-50 text-purple-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); document.getElementById('customStockModal').showModal();">
                 <span class="material-symbols-outlined">add_circle</span> Add Custom Stock
-            </button>
-            <button class="w-full flex items-center gap-3 p-3 bg-slate-100 text-slate-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); downloadTool();">
-                <span class="material-symbols-outlined">download</span> Download Tool
             </button>
             <button class="w-full flex items-center gap-3 p-3 bg-slate-100 text-slate-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); clearAllComponents();">
                 <span class="material-symbols-outlined">delete_sweep</span> Clear All Components
@@ -752,7 +746,7 @@
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Build</strong><p class="text-slate-500">Add and configure mail piece components</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Results</strong><p class="text-slate-500">View calculations, BOM, and postal classification</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Templates</strong><p class="text-slate-500">Quick-add common mail piece configurations</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">More</strong><p class="text-slate-500">Manual, Sources, Custom Stock, Download</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">More</strong><p class="text-slate-500">Manual, Sources, Custom Stock</p></div>
                         </div>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
@@ -1582,13 +1576,6 @@
         return lines.join('\n');
     }
 
-    function downloadTool() {
-        const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = 'mailspec-assembly-tool-v2.4.html';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    }
-
     // ============================================================
     // MOBILE TAB NAVIGATION
     // ============================================================
@@ -1642,7 +1629,6 @@
     window.addCustomStock = addCustomStock;
     window.copyBOMToClipboard = copyBOMToClipboard;
     window.exportBOMText = exportBOMText;
-    window.downloadTool = downloadTool;
     window.switchTab = switchTab;
 
     console.log('MailSpec v2.4: Functions bound. addComponent =', typeof window.addComponent);

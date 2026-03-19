@@ -59,6 +59,8 @@ The project is being migrated from a single 2,200-line HTML file into a modular 
 Phase 1 migration complete.
 - **Phase 2.1:** Custom Panel Mode — added opt-in toggle on self-mailer, insert/sheet, accordion, and booklet components. Custom mode accepts flat size (for weight), finished size (for postal classification), and layer count (for thickness), bypassing standard fold derivation. Standard mode behavior unchanged. Toggle absent on envelope and card types. State persists in saved configurations.
 
+- **Phase 2.1b:** UI polish — dynamic version number (v2.5, defined once in inline script, propagates to header/title/mobile/manual/console), removed `h-8` from global adjustment inputs for consistent mobile sizing, full dark mode with toggle (desktop header + mobile menu), localStorage persistence, comprehensive CSS coverage of all panels/cards/modals/inputs, print always light.
+
 Next: Phase 2.2+ (postal risk warnings, data provenance).
 
 ## Development Plan

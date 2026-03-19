@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="MailSpec">
     <meta name="theme-color" content="#4f46e5">
     <meta name="description" content="Direct mail component weight and dimension calculator">
-    <title>MailSpec Pro | Component Assembly Tool v2.4</title>
+    <title>MailSpec Pro | Component Assembly Tool v2.5</title>
 
     <!-- PWA App Icon (inline SVG as data URI) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234f46e5'/%3E%3Cstop offset='100%25' style='stop-color:%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='96' fill='url(%23bg)'/%3E%3Cg fill='white'%3E%3Crect x='96' y='160' width='320' height='48' rx='8'/%3E%3Crect x='96' y='232' width='240' height='48' rx='8' opacity='0.8'/%3E%3Crect x='96' y='304' width='280' height='48' rx='8' opacity='0.6'/%3E%3Ccircle cx='400' cy='352' r='64' opacity='0.9'/%3E%3Ctext x='400' y='368' text-anchor='middle' font-size='56' font-weight='bold' fill='%234f46e5'%3Eoz%3C/text%3E%3C/g%3E%3C/svg%3E">
@@ -28,7 +28,7 @@
             <span class="material-symbols-outlined text-xl md:text-2xl">layers</span>
         </div>
         <div>
-            <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">MailSpec <span class="text-xs font-normal text-slate-400">v2.4</span></h1>
+            <h1 class="text-base md:text-lg font-bold text-slate-800 leading-tight">MailSpec <span class="text-xs font-normal text-slate-400" id="headerVersion">v2.5</span></h1>
             <p class="text-[10px] md:text-xs text-slate-500 hidden sm:block">Component Weight & Dimension Calculator</p>
         </div>
     </div>
@@ -54,7 +54,10 @@
         <button class="flex items-center gap-1 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-md hover:bg-purple-100 transition text-xs font-bold uppercase tracking-wide" onclick="document.getElementById('customStockModal').showModal()">
             <span class="material-symbols-outlined text-sm">add_circle</span> Stock
         </button>
-<button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="window.print()">
+<button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="toggleDarkMode()" id="darkModeToggle" title="Toggle Dark Mode">
+            <span class="material-symbols-outlined text-lg">dark_mode</span>
+        </button>
+        <button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="window.print()">
             <span class="material-symbols-outlined text-lg">print</span>
         </button>
     </div>
@@ -112,12 +115,15 @@
             <button class="w-full flex items-center gap-3 p-3 bg-purple-50 text-purple-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); document.getElementById('customStockModal').showModal();">
                 <span class="material-symbols-outlined">add_circle</span> Add Custom Stock
             </button>
+            <button class="w-full flex items-center gap-3 p-3 bg-slate-100 text-slate-700 rounded-lg font-medium" onclick="toggleDarkMode(); document.getElementById('mobileMenuModal').close();" id="darkModeToggleMobile">
+                <span class="material-symbols-outlined">dark_mode</span> Dark Mode
+            </button>
             <button class="w-full flex items-center gap-3 p-3 bg-slate-100 text-slate-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); clearAllComponents();">
                 <span class="material-symbols-outlined">delete_sweep</span> Clear All Components
             </button>
         </div>
         <div class="p-4 border-t border-slate-100 bg-slate-50">
-            <p class="text-xs text-slate-500 text-center">MailSpec Pro v2.4 • Mobile Edition</p>
+            <p class="text-xs text-slate-500 text-center" id="mobileMenuVersion">MailSpec Pro v2.5 • Mobile Edition</p>
         </div>
     </div>
 </dialog>
@@ -176,14 +182,14 @@
                 <div>
                     <label class="input-label">Weight Buffer</label>
                     <div class="flex items-center gap-1">
-                        <input class="flex-1 text-right input-field h-8" onchange="updateGlobalBuffer(this.value)" step="0.5" type="number" value="5" id="globalWeightBuffer">
+                        <input class="flex-1 text-right input-field" onchange="updateGlobalBuffer(this.value)" step="0.5" type="number" value="5" id="globalWeightBuffer">
                         <span class="text-slate-400 text-xs">%</span>
                     </div>
                 </div>
                 <div>
                     <label class="input-label">Thickness Buffer</label>
                     <div class="flex items-center gap-1">
-                        <input class="flex-1 text-right input-field h-8" onchange="updateGlobalThickBuffer(this.value)" step="0.5" type="number" value="5" id="globalThickBuffer">
+                        <input class="flex-1 text-right input-field" onchange="updateGlobalThickBuffer(this.value)" step="0.5" type="number" value="5" id="globalThickBuffer">
                         <span class="text-slate-400 text-xs">%</span>
                     </div>
                 </div>
@@ -191,7 +197,7 @@
             <div class="grid grid-cols-2 gap-2">
                 <div>
                     <label class="input-label">Seal Type</label>
-                    <select class="input-field h-8" id="globalSealType" onchange="updateGlobalSeal()">
+                    <select class="input-field" id="globalSealType" onchange="updateGlobalSeal()">
                         <option value="none">None</option>
                         <option value="wafer">Wafer Tab</option>
                         <option value="glue_dot">Glue Dot</option>
@@ -200,7 +206,7 @@
                 </div>
                 <div>
                     <label class="input-label">Seal Qty</label>
-                    <input type="number" min="0" max="10" value="0" class="input-field h-8" id="globalSealQty" onchange="updateGlobalSeal()">
+                    <input type="number" min="0" max="10" value="0" class="input-field" id="globalSealQty" onchange="updateGlobalSeal()">
                 </div>
             </div>
             <div class="text-[10px] text-slate-400 mt-1" id="sealInfo"></div>
@@ -667,7 +673,7 @@
         <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50 shrink-0">
             <div class="flex items-center gap-2 text-indigo-800">
                 <span class="material-symbols-outlined">menu_book</span>
-                <h2 class="font-bold text-base md:text-lg">MailSpec Pro Manual v2.4</h2>
+                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Pro Manual v2.5</h2>
             </div>
             <button class="touch-btn text-slate-400 hover:text-slate-600" onclick="document.getElementById('manualModal').close()">
                 <span class="material-symbols-outlined">close</span>
@@ -827,14 +833,23 @@
                 </h3>
                 <div class="space-y-3 md:space-y-4">
                     <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 md:p-4">
-                        <h4 class="font-bold text-sm text-purple-800 mb-3">v2.4 — Mobile Edition</h4>
+                        <h4 class="font-bold text-sm text-purple-800 mb-3">v2.5 — Custom Panels & Dark Mode</h4>
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">📱 Mobile Responsive</div><p class="text-[10px] text-slate-600">Full touch-optimized interface for phones and tablets</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">🏠 Add to Home Screen</div><p class="text-[10px] text-slate-600">PWA support—install as app with custom icon</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">👆 Touch-Friendly</div><p class="text-[10px] text-slate-600">Larger buttons and inputs (44px+ targets)</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">📑 Tab Navigation</div><p class="text-[10px] text-slate-600">Bottom bar: Build, Results, Templates, More</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">📴 Works Offline</div><p class="text-[10px] text-slate-600">Use anywhere—no internet required after first load</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">🔄 Cross-Platform</div><p class="text-[10px] text-slate-600">One version for desktop, tablet, and phone</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Custom Panel Mode</div><p class="text-[10px] text-slate-600">Define flat size, finished size, and fold layers independently for irregular folded pieces</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Dark Mode</div><p class="text-[10px] text-slate-600">Full dark theme for all panels, cards, modals, and inputs</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Dynamic Versioning</div><p class="text-[10px] text-slate-600">Version number defined once, updates everywhere automatically</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">UI Polish</div><p class="text-[10px] text-slate-600">Consistent input sizing on mobile, refined global adjustments</p></div>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">v2.4 — Mobile Edition</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2 rounded">📱 Mobile responsive interface</div>
+                            <div class="bg-slate-50 p-2 rounded">🏠 PWA / Add to Home Screen</div>
+                            <div class="bg-slate-50 p-2 rounded">👆 Touch-friendly (44px+ targets)</div>
+                            <div class="bg-slate-50 p-2 rounded">📑 Bottom tab navigation</div>
+                            <div class="bg-slate-50 p-2 rounded">📴 Works offline</div>
+                            <div class="bg-slate-50 p-2 rounded">🔄 Cross-platform</div>
                         </div>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
@@ -895,6 +910,10 @@
 <script src="app/components/ui-controls.js"></script>
 
 <script type="text/javascript">
+    // Version — single source of truth
+    const MAILSPEC_VERSION = '2.5';
+    window.MailSpec.VERSION = MAILSPEC_VERSION;
+
     // Reference data from namespace
     const STOCKS = window.MailSpec.STOCKS;
     const TEMPLATES = window.MailSpec.TEMPLATES;
@@ -909,12 +928,54 @@
     const C = window.MailSpec.Components;
 
     // Debug: verify script execution
-    console.log('MailSpec v2.4: Script starting...');
+    console.log(`MailSpec v${MAILSPEC_VERSION}: Script starting...`);
+
+    // ============================================================
+    // DARK MODE
+    // ============================================================
+    function toggleDarkMode() {
+        const html = document.documentElement;
+        const isDark = html.classList.toggle('dark');
+        localStorage.setItem('mailspec_dark_mode', isDark ? 'true' : 'false');
+        document.querySelector('meta[name="theme-color"]').content = isDark ? '#1e293b' : '#4f46e5';
+        updateDarkModeIcons(isDark);
+    }
+
+    function updateDarkModeIcons(isDark) {
+        const icon = isDark ? 'light_mode' : 'dark_mode';
+        const label = isDark ? 'Light Mode' : 'Dark Mode';
+        const desktop = document.getElementById('darkModeToggle');
+        const mobile = document.getElementById('darkModeToggleMobile');
+        if (desktop) desktop.querySelector('.material-symbols-outlined').textContent = icon;
+        if (mobile) {
+            mobile.querySelector('.material-symbols-outlined').textContent = icon;
+            mobile.childNodes[mobile.childNodes.length - 1].textContent = ' ' + label;
+        }
+    }
+
+    function initDarkMode() {
+        const saved = localStorage.getItem('mailspec_dark_mode');
+        if (saved === 'true') {
+            document.documentElement.classList.add('dark');
+            document.querySelector('meta[name="theme-color"]').content = '#1e293b';
+            updateDarkModeIcons(true);
+        }
+    }
 
     // ============================================================
     // INITIALIZATION
     // ============================================================
     function init() {
+        initDarkMode();
+
+        // Dynamic version
+        document.title = 'MailSpec Pro | Component Assembly Tool v' + MAILSPEC_VERSION;
+        document.getElementById('headerVersion').textContent = 'v' + MAILSPEC_VERSION;
+        var mobileVer = document.getElementById('mobileMenuVersion');
+        if (mobileVer) mobileVer.textContent = 'MailSpec Pro v' + MAILSPEC_VERSION + ' \u2022 Mobile Edition';
+        var manualVer = document.getElementById('manualVersion');
+        if (manualVer) manualVer.textContent = 'MailSpec Pro Manual v' + MAILSPEC_VERSION;
+
         loadCustomStocks();
         const saved = localStorage.getItem(window.MailSpec.STORAGE_KEY_CURRENT);
         if (saved) {
@@ -972,7 +1033,7 @@
     // ============================================================
     // WINDOW BINDINGS
     // ============================================================
-    console.log('MailSpec v2.4: Binding functions to window...');
+    console.log(`MailSpec v${MAILSPEC_VERSION}: Binding functions to window...`);
 
     // Bind all functions to window for onclick handlers
     window.addComponent = C.addComponent;
@@ -983,6 +1044,7 @@
     window.toggleDimMode = C.toggleDimMode;
     window.toggleManual = C.toggleManual;
     window.toggleCustomPanels = C.toggleCustomPanels;
+    window.toggleDarkMode = toggleDarkMode;
     window.clearAllComponents = C.clearAllComponents;
     window.updateGlobalBuffer = C.updateGlobalBuffer;
     window.updateGlobalThickBuffer = C.updateGlobalThickBuffer;
@@ -998,7 +1060,7 @@
     window.exportBOMText = C.exportBOMText;
     window.switchTab = C.switchTab;
 
-    console.log('MailSpec v2.4: Functions bound. addComponent =', typeof window.addComponent);
+    console.log(`MailSpec v${MAILSPEC_VERSION}: Functions bound. addComponent =`, typeof window.addComponent);
 
     // ============================================================
     // EVENT DELEGATION
@@ -1033,19 +1095,19 @@
                 }
             }
         });
-        console.log('MailSpec v2.4: Event delegation ready');
+        console.log(`MailSpec v${MAILSPEC_VERSION}: Event delegation ready`);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('MailSpec v2.4: DOM ready, initializing...');
+        console.log(`MailSpec v${MAILSPEC_VERSION}: DOM ready, initializing...`);
         setupEventDelegation();
         init();
         C.renderConfigList();
-        console.log('MailSpec v2.4: Initialization complete');
+        console.log(`MailSpec v${MAILSPEC_VERSION}: Initialization complete`);
     });
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        console.log('MailSpec v2.4: DOM already ready, initializing immediately...');
+        console.log(`MailSpec v${MAILSPEC_VERSION}: DOM already ready, initializing immediately...`);
         setupEventDelegation();
         init();
         C.renderConfigList();

@@ -28,6 +28,10 @@
             coverStockIdx: -1, binding: 'stitch',
             sealType: 'none', coating: 'none',
             manualWeight: null, manualThick: null,
+            customPanels: false,
+            flatWidth: null, flatHeight: null,
+            finishedWidth: null, finishedHeight: null,
+            layersAtFold: null,
             caliper: 0, gsm: 0
         };
         const stock = STOCKS[comp.stockIdx];
@@ -69,6 +73,10 @@
                 else if (comp.foldAxis === 'w' && field === 'w') comp.w = val * ply;
                 else comp[field] = val;
             } else { comp[field] = val; }
+        } else if (['flatWidth', 'flatHeight', 'finishedWidth', 'finishedHeight'].includes(field)) {
+            comp[field] = parseFloat(value);
+        } else if (field === 'layersAtFold') {
+            comp[field] = parseInt(value);
         } else { comp[field] = value; }
         C.calculate(); C.autoSave();
     }
@@ -83,6 +91,32 @@
         const comp = State.components.find(c => c.id === id); if (!comp) return;
         if (mode === 'weight') { const v = prompt("Custom weight (oz):", comp.manualWeight || ""); comp.manualWeight = v ? parseFloat(v) : null; }
         if (mode === 'thick') { const v = prompt("Custom thickness (in):", comp.manualThick || ""); comp.manualThick = v ? parseFloat(v) : null; }
+        C.renderComponents(); C.calculate(); C.autoSave();
+    }
+
+    function toggleCustomPanels(id) {
+        const comp = State.components.find(c => c.id === id); if (!comp) return;
+        comp.customPanels = !comp.customPanels;
+        if (comp.customPanels && comp.flatWidth == null) {
+            // Pre-populate from current standard values
+            comp.flatWidth = comp.w;
+            comp.flatHeight = comp.h;
+            if (comp.type === 'sheet' || comp.type === 'selfmailer') {
+                const ply = parseInt(comp.fold) || 1;
+                comp.finishedWidth = comp.foldAxis === 'w' ? comp.w / ply : comp.w;
+                comp.finishedHeight = comp.foldAxis === 'h' ? comp.h / ply : comp.h;
+                comp.layersAtFold = ply;
+            } else if (comp.type === 'accordion') {
+                const ply = parseInt(comp.panels) || 1;
+                comp.finishedWidth = comp.foldAxis === 'w' ? comp.w / ply : comp.w;
+                comp.finishedHeight = comp.foldAxis === 'h' ? comp.h / ply : comp.h;
+                comp.layersAtFold = ply;
+            } else if (comp.type === 'booklet') {
+                comp.finishedWidth = comp.w;
+                comp.finishedHeight = comp.h;
+                comp.layersAtFold = Math.ceil(comp.panels / 2);
+            }
+        }
         C.renderComponents(); C.calculate(); C.autoSave();
     }
 
@@ -119,6 +153,7 @@
     C.updateComponent = updateComponent;
     C.toggleDimMode = toggleDimMode;
     C.toggleManual = toggleManual;
+    C.toggleCustomPanels = toggleCustomPanels;
     C.addTemplate = addTemplate;
     C.addCustomStock = addCustomStock;
 })();

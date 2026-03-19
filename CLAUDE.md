@@ -56,7 +56,10 @@ The project is being migrated from a single 2,200-line HTML file into a modular 
 - **Phase 1.4-1.5:** UI component extraction + state management (`app/state.js` for shared state on `window.MailSpec.State`; `app/components/` for render, calculate, config-manager, bom-export, component-manager, ui-controls). Inline script reduced to ~155 lines: init, autoSave, window bindings, event delegation.
 - **Phase 1.6:** Verification checkpoint — code-level comparison of all calculation, classification, postage, and tray capacity logic confirmed identical to v2.4 reference. Data files (stocks, templates, coatings, seals, postage) verified byte-identical. One cosmetic fix applied (render.js empty state text). Browser verification recommended to confirm runtime behavior.
 
-Phase 1 migration complete. Next: Phase 2+.
+Phase 1 migration complete.
+- **Phase 2.1:** Custom Panel Mode — added opt-in toggle on self-mailer, insert/sheet, accordion, and booklet components. Custom mode accepts flat size (for weight), finished size (for postal classification), and layer count (for thickness), bypassing standard fold derivation. Standard mode behavior unchanged. Toggle absent on envelope and card types. State persists in saved configurations.
+
+Next: Phase 2.2+ (postal risk warnings, data provenance).
 
 ## Development Plan
 

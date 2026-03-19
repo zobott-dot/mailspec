@@ -63,6 +63,25 @@
             const coatingOpts = Object.entries(COATINGS).map(([k, v]) => `<option value="${k}" ${c.coating === k ? 'selected' : ''}>${v.label}</option>`).join('');
 
             let mainInputs = '', badge = '';
+            const isCustomPanelType = ['sheet', 'selfmailer', 'accordion', 'booklet'].includes(c.type);
+            const customPanelToggle = isCustomPanelType ? `
+                    <label class="flex items-center gap-1.5 mb-2 cursor-pointer select-none">
+                        <input type="checkbox" class="accent-indigo-600" ${c.customPanels ? 'checked' : ''} onchange="toggleCustomPanels(${c.id})">
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wide font-medium">Custom panels</span>
+                    </label>` : '';
+            const customPanelInputs = `
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div><label class="input-label">Flat W</label><input type="number" step="any" class="input-field" value="${c.flatWidth != null ? c.flatWidth : ''}" onchange="updateComponent(${c.id}, 'flatWidth', this.value)"></div>
+                        <div><label class="input-label">Flat H</label><input type="number" step="any" class="input-field" value="${c.flatHeight != null ? c.flatHeight : ''}" onchange="updateComponent(${c.id}, 'flatHeight', this.value)"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div><label class="input-label">Fin. W</label><input type="number" step="any" class="input-field" value="${c.finishedWidth != null ? c.finishedWidth : ''}" onchange="updateComponent(${c.id}, 'finishedWidth', this.value)"></div>
+                        <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${c.finishedHeight != null ? c.finishedHeight : ''}" onchange="updateComponent(${c.id}, 'finishedHeight', this.value)"></div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="input-label">Layers at fold</label>
+                        <input type="number" step="1" min="1" class="input-field w-20" value="${c.layersAtFold != null ? c.layersAtFold : ''}" onchange="updateComponent(${c.id}, 'layersAtFold', this.value)">
+                    </div>`;
 
             if (c.type === 'envelope') {
                 badge = '<span class="mode-pill finished">Env</span>';
@@ -81,8 +100,21 @@
                 const ply = parseInt(c.fold);
                 let dW = c.w, dH = c.h;
                 if (c.dimMode === 'finished') { if (c.foldAxis === 'h') dH = c.h / ply; else dW = c.w / ply; }
-                badge = `<span class="mode-pill ${c.type === 'selfmailer' ? 'mailer' : 'flat'}">${c.dimMode === 'flat' ? 'Flat' : 'Fin.'}</span>`;
-                mainInputs = `
+                badge = `<span class="mode-pill ${c.type === 'selfmailer' ? 'mailer' : 'flat'}">${c.customPanels ? 'Custom' : (c.dimMode === 'flat' ? 'Flat' : 'Fin.')}</span>`;
+                if (c.customPanels) {
+                    mainInputs = `
+                    ${customPanelToggle}
+                    ${customPanelInputs}
+                    <div class="mb-2">
+                        <label class="input-label">Material</label>
+                        <input type="text" class="input-field stock-search-input mb-1" placeholder="Search..." oninput="updateStockSearch(${c.id}, this.value)">
+                        <select class="input-field stock-dropdown" id="stock-${c.id}" onchange="updateComponent(${c.id}, 'stockIdx', this.value)">${stockOpts}</select>
+                        ${stockInfo}
+                    </div>
+                    <div><label class="input-label">Coating</label><select class="input-field" onchange="updateComponent(${c.id}, 'coating', this.value)">${coatingOpts}</select></div>`;
+                } else {
+                    mainInputs = `
+                    ${customPanelToggle}
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <div><label class="input-label">${c.dimMode === 'flat' ? 'Flat W' : 'Fin. W'}</label><input type="number" step="any" class="input-field" value="${dW.toFixed(3)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
                         <div><label class="input-label">${c.dimMode === 'flat' ? 'Flat H' : 'Fin. H'}</label><input type="number" step="any" class="input-field" value="${dH.toFixed(3)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
@@ -106,9 +138,17 @@
                         </select></div>
                     </div>
                     <div><label class="input-label">Coating</label><select class="input-field" onchange="updateComponent(${c.id}, 'coating', this.value)">${coatingOpts}</select></div>`;
+                }
             } else if (c.type === 'booklet') {
-                badge = '<span class="mode-pill finished">Booklet</span>';
-                mainInputs = `
+                badge = `<span class="mode-pill finished">${c.customPanels ? 'Custom' : 'Booklet'}</span>`;
+                if (c.customPanels) {
+                    mainInputs = `
+                    ${customPanelToggle}
+                    ${customPanelInputs}
+                    <div class="mb-2"><label class="input-label">Body Stock</label><select class="input-field" onchange="updateComponent(${c.id}, 'stockIdx', this.value)">${stockOpts}</select>${stockInfo}</div>`;
+                } else {
+                    mainInputs = `
+                    ${customPanelToggle}
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <div><label class="input-label">Fin. W</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
                         <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${c.h}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
@@ -119,6 +159,33 @@
                         <div><label class="input-label">Pages</label><input type="number" step="4" min="4" class="input-field" value="${c.panels}" onchange="updateComponent(${c.id}, 'panels', this.value)"></div>
                     </div>
                     <div class="mb-2"><label class="input-label">Body Stock</label><select class="input-field" onchange="updateComponent(${c.id}, 'stockIdx', this.value)">${stockOpts}</select></div>`;
+                }
+            } else if (c.type === 'accordion') {
+                badge = `<span class="mode-pill mailer">${c.customPanels ? 'Custom' : 'Accordion'}</span>`;
+                if (c.customPanels) {
+                    mainInputs = `
+                    ${customPanelToggle}
+                    ${customPanelInputs}
+                    <div class="mb-2">
+                        <label class="input-label">Material</label>
+                        <input type="text" class="input-field stock-search-input mb-1" placeholder="Search..." oninput="updateStockSearch(${c.id}, this.value)">
+                        <select class="input-field stock-dropdown" id="stock-${c.id}" onchange="updateComponent(${c.id}, 'stockIdx', this.value)">${stockOpts}</select>
+                        ${stockInfo}
+                    </div>`;
+                } else {
+                    mainInputs = `
+                    ${customPanelToggle}
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
+                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${c.h}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="input-label">Material</label>
+                        <input type="text" class="input-field stock-search-input mb-1" placeholder="Search..." oninput="updateStockSearch(${c.id}, this.value)">
+                        <select class="input-field stock-dropdown" id="stock-${c.id}" onchange="updateComponent(${c.id}, 'stockIdx', this.value)">${stockOpts}</select>
+                        ${stockInfo}
+                    </div>`;
+                }
             } else {
                 badge = '<span class="mode-pill finished">Item</span>';
                 mainInputs = `
@@ -143,7 +210,7 @@
                         ${badge}${manualBadge}
                     </div>
                     <div class="flex gap-0.5">
-                        ${(c.type === 'sheet' || c.type === 'selfmailer') ? `<button title="Toggle Flat/Finished" onclick="toggleDimMode(${c.id})" class="text-slate-300 hover:text-amber-600 p-1"><span class="material-symbols-outlined text-base">swap_vert</span></button>` : ''}
+                        ${(c.type === 'sheet' || c.type === 'selfmailer') && !c.customPanels ? `<button title="Toggle Flat/Finished" onclick="toggleDimMode(${c.id})" class="text-slate-300 hover:text-amber-600 p-1"><span class="material-symbols-outlined text-base">swap_vert</span></button>` : ''}
                         <button title="Duplicate" onclick="duplicateComponent(${c.id})" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">content_copy</span></button>
                         <button title="Manual Weight" onclick="toggleManual(${c.id}, 'weight')" class="text-slate-300 hover:text-purple-600 p-1"><span class="material-symbols-outlined text-base">scale</span></button>
                         <button title="Manual Thickness" onclick="toggleManual(${c.id}, 'thick')" class="text-slate-300 hover:text-purple-600 p-1"><span class="material-symbols-outlined text-base">straighten</span></button>

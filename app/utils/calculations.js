@@ -16,7 +16,17 @@
       var finW = c.w, finH = c.h, weightOz = 0, itemThick = 0;
       var coating = COATINGS[c.coating] || { weightAdd: 0 };
 
-      if (c.type === 'envelope') {
+      // Custom panel mode: user-specified flat size, finished size, and layer count
+      if (c.customPanels && c.flatWidth != null && c.flatHeight != null &&
+          c.finishedWidth != null && c.finishedHeight != null && c.layersAtFold != null) {
+        finW = c.finishedWidth;
+        finH = c.finishedHeight;
+        var flatArea = c.flatWidth * c.flatHeight;
+        weightOz = (flatArea / 1550.0031) * c.gsm * 0.035274;
+        var ply = parseInt(c.layersAtFold);
+        var bulge = ply > 1 ? 1.1 + (ply * 0.02) : 1.0;
+        itemThick = c.caliper * ply * bulge;
+      } else if (c.type === 'envelope') {
         var area = c.w * c.h * 2.1;
         weightOz = (area / 1550.0031) * c.gsm * 0.035274;
         itemThick = c.caliper * 2 * 1.1;

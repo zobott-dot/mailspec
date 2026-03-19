@@ -37,7 +37,18 @@ body {
     transition: all 0.2s;
     min-height: 44px; /* Apple's recommended touch target */
 }
-select.input-field { height: 44px; }
+select.input-field {
+    height: 44px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    padding-right: 2rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 12px 8px;
+}
 .input-field:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
 
 .component-card { background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 1rem; transition: all 0.2s; }
@@ -136,6 +147,35 @@ select option { font-weight: 400; color: #334155; padding: 4px 8px; }
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Landscape warning overlay */
+.landscape-warning {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background-color: #0f172a;
+    color: #e2e8f0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.landscape-warning-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+@media (max-width: 767px) and (orientation: landscape) {
+    .landscape-warning {
+        display: flex;
+    }
 }
 
 /* Component add buttons - larger on mobile */
@@ -335,6 +375,10 @@ html.dark .input-field:focus {
 html.dark select {
     background-color: #1e293b;
     color: #e2e8f0;
+}
+
+html.dark select.input-field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394a3b8' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
 }
 
 html.dark select optgroup {

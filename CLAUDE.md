@@ -61,7 +61,7 @@ Phase 1 migration complete.
 
 - **Phase 2.1b:** UI polish — dynamic version number (v2.5, defined once in inline script, propagates to header/title/mobile/manual/console), removed `h-8` from global adjustment inputs for consistent mobile sizing, full dark mode with toggle (desktop header + mobile menu), localStorage persistence, comprehensive CSS coverage of all panels/cards/modals/inputs, print always light.
 
-- **Hotfix:** iOS select height fix (`appearance:none` + custom SVG chevron on `select.input-field`), portrait-only orientation lock (PWA manifest + CSS landscape overlay warning).
+- **Hotfix:** iOS select height fix (`appearance:none` + custom SVG chevron on `select.input-field`). Landscape phone layout (side-by-side panels, compact header/inputs/cards via `@media (orientation: landscape) and (max-height: 500px)`). Tablet layout fix (side-by-side at 768-1023px). PWA manifest with `orientation: any`.
 
 Next: Phase 2.2+ (postal risk warnings, data provenance).
 

@@ -73,6 +73,8 @@ Phase 1 migration complete.
 
 - **Phase 4.1:** Self-mailer compliance checking — new `app/utils/compliance.js` evaluates tab requirements per DMM 201.3.14 based on fold type, weight, and optional design elements. Compliance panel appears in analysis when self-mailer component is present, showing pass/caution/fail status with specific guidance. Supports bi-fold, tri-fold, quarter-fold. Line glue recognized as alternative closure. Dark mode support.
 
+- **Phase 4.1b:** Specialty fold templates — gate fold, double gate fold, roll fold, Z-fold, iron cross, French fold added to templates using Custom Panel Mode. `addTemplate()` and `addComponent()` pass through custom panel fields. New Specialty Folds section in templates modal with rose color scheme. Component name input width fix (`w-24` → `min-w-0 flex-1`).
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

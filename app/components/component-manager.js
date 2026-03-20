@@ -28,10 +28,12 @@
             coverStockIdx: -1, binding: 'stitch',
             sealType: 'none', coating: 'none',
             manualWeight: null, manualThick: null,
-            customPanels: false,
-            flatWidth: null, flatHeight: null,
-            finishedWidth: null, finishedHeight: null,
-            layersAtFold: null,
+            customPanels: defaults.customPanels || false,
+            flatWidth: defaults.flatWidth || null,
+            flatHeight: defaults.flatHeight || null,
+            finishedWidth: defaults.finishedWidth || null,
+            finishedHeight: defaults.finishedHeight || null,
+            layersAtFold: defaults.layersAtFold || null,
             caliper: 0, gsm: 0
         };
         const stock = STOCKS[comp.stockIdx];
@@ -123,7 +125,16 @@
     function addTemplate(id) {
         const t = TEMPLATES[id]; if (!t) return;
         const stockIdx = STOCKS.findIndex(s => s.name === t.stockName);
-        addComponent(t.type, { name: t.name, w: t.w, h: t.h, fold: t.fold || '1', foldAxis: t.foldAxis || 'h', stockIdx: stockIdx >= 0 ? stockIdx : 0 });
+        const defaults = { name: t.name, w: t.w, h: t.h, fold: t.fold || '1', foldAxis: t.foldAxis || 'h', stockIdx: stockIdx >= 0 ? stockIdx : 0 };
+        if (t.customPanels) {
+            defaults.customPanels = true;
+            defaults.flatWidth = t.flatWidth;
+            defaults.flatHeight = t.flatHeight;
+            defaults.finishedWidth = t.finishedWidth;
+            defaults.finishedHeight = t.finishedHeight;
+            defaults.layersAtFold = t.layersAtFold;
+        }
+        addComponent(t.type, defaults);
     }
 
     function addCustomStock() {

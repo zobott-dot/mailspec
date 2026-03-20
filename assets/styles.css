@@ -785,6 +785,12 @@ html.dark .template-btn.border-emerald-200.bg-emerald-50\/50 {
     border-color: #065f46;
 }
 
+/* Rose template buttons (specialty folds) */
+html.dark .template-btn.border-rose-200.bg-rose-50\/50 {
+    background-color: #4c0519;
+    border-color: #881337;
+}
+
 /* Config items */
 html.dark .config-item {
     background-color: #0f172a;

@@ -901,6 +901,27 @@ html.dark .border-b.pb-2 {
     border-color: #334155;
 }
 
+/* Postal risk warning badges */
+html.dark #postalWarnings .bg-amber-50 {
+    background-color: #451a03;
+    border-color: #92400e;
+    color: #fbbf24;
+}
+
+html.dark #postalWarnings .bg-red-50 {
+    background-color: #450a0a;
+    border-color: #991b1b;
+    color: #fca5a5;
+}
+
+html.dark #postalWarnings .text-amber-500 {
+    color: #f59e0b;
+}
+
+html.dark #postalWarnings .text-red-500 {
+    color: #f87171;
+}
+
 /* Purple manual badge for manual overrides */
 html.dark .bg-purple-100 {
     background-color: #2e1065;

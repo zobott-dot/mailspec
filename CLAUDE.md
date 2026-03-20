@@ -63,7 +63,9 @@ Phase 1 migration complete.
 
 - **Hotfix:** iOS select height fix (`appearance:none` + custom SVG chevron on `select.input-field`). Landscape phone layout (side-by-side panels, compact header/inputs/cards via `@media (orientation: landscape) and (max-height: 500px)`). Tablet layout fix (side-by-side at 768-1023px). PWA manifest with `orientation: any`.
 
-Next: Phase 2.2+ (postal risk warnings, data provenance).
+- **Phase 2.2:** Postal risk warnings — amber/red visual warnings in results panel when assembly values approach USPS classification boundaries. Monitors thickness (letter→flat at 0.25", flat→parcel at 0.75"), weight (1oz tier, 3.5oz letter max, 13oz flat max), dimensions (width 11.5", height 6.125"), and aspect ratio (1.3–2.5 range). Context-aware: only warns about the next relevant boundary for current classification. Warning container between summary cards and classification section. Dark mode support. Logic in `app/components/calculate.js` (internal `generatePostalWarnings` function).
+
+Next: Phase 2.3+ (data provenance).
 
 ## Development Plan
 

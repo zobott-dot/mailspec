@@ -932,6 +932,42 @@ html.dark #postalWarnings .text-blue-500 {
     color: #60a5fa;
 }
 
+/* Compliance panel */
+html.dark #compliancePanel .bg-white {
+    background-color: #1e293b;
+}
+
+html.dark #compliancePanel .bg-emerald-50 {
+    background-color: #064e3b;
+    border-color: #065f46;
+}
+
+html.dark #compliancePanel .bg-amber-50 {
+    background-color: #451a03;
+    border-color: #92400e;
+}
+
+html.dark #compliancePanel .bg-red-50 {
+    background-color: #450a0a;
+    border-color: #991b1b;
+}
+
+html.dark #compliancePanel .bg-slate-50 {
+    background-color: #0f172a;
+}
+
+html.dark #compliancePanel .text-emerald-600 {
+    color: #6ee7b7;
+}
+
+html.dark #compliancePanel .text-amber-600 {
+    color: #fbbf24;
+}
+
+html.dark #compliancePanel .text-red-600 {
+    color: #fca5a5;
+}
+
 /* Purple manual badge for manual overrides */
 html.dark .bg-purple-100 {
     background-color: #2e1065;

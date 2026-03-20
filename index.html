@@ -250,6 +250,26 @@
             <!-- Postal Risk Warnings -->
             <div id="postalWarnings" class="hidden"></div>
 
+            <!-- Self-Mailer Compliance -->
+            <div id="compliancePanel" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-indigo-500">verified_user</span>
+                            Self-Mailer Compliance
+                            <span class="text-[9px] text-slate-400 font-normal">DMM 201.3.14</span>
+                        </h3>
+                        <label class="flex items-center gap-1.5 cursor-pointer select-none">
+                            <input type="checkbox" id="complianceOptionalElements" onchange="updateCompliance()" class="rounded">
+                            <span class="text-[10px] text-slate-500">Has die-cuts/perforations</span>
+                        </label>
+                    </div>
+                    <div class="p-4" id="complianceContent">
+                        <!-- Rendered by calculate.js -->
+                    </div>
+                </div>
+            </div>
+
             <!-- 2. Classification, Postage & Trays -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Postal Class -->
@@ -908,6 +928,7 @@
 <!-- Utility modules -->
 <script src="app/utils/calculations.js"></script>
 <script src="app/utils/postal.js"></script>
+<script src="app/utils/compliance.js"></script>
 
 <!-- State -->
 <script src="app/state.js"></script>
@@ -1060,6 +1081,7 @@
     window.updateGlobalBuffer = C.updateGlobalBuffer;
     window.updateGlobalThickBuffer = C.updateGlobalThickBuffer;
     window.updateGlobalSeal = C.updateGlobalSeal;
+    window.updateCompliance = function() { C.calculate(); };
     window.updateStockSearch = C.updateStockSearch;
     window.saveConfiguration = C.saveConfiguration;
     window.loadConfiguration = C.loadConfiguration;

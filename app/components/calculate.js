@@ -209,6 +209,69 @@
             warningsEl.innerHTML = '';
         }
 
+        // Self-Mailer Compliance Check
+        const Compliance = window.MailSpec.Compliance;
+        const compliancePanel = document.getElementById('compliancePanel');
+        const selfMailer = State.components.find(c => c.type === 'selfmailer');
+
+        if (selfMailer && State.components.length > 0) {
+            const hasOptional = document.getElementById('complianceOptionalElements')?.checked || false;
+            const compliance = Compliance.evaluateSelfMailer({
+                foldType: selfMailer.fold,
+                totalWeightOz: totalWeightOz,
+                sealType: State.globalSealType,
+                sealQty: State.globalSealQty,
+                hasOptionalElements: hasOptional
+            });
+
+            compliancePanel.className = '';
+            const content = document.getElementById('complianceContent');
+
+            let statusIcon, statusColor, statusBg, statusLabel;
+            if (compliance.status === 'pass') {
+                statusIcon = 'check_circle';
+                statusColor = 'text-emerald-600';
+                statusBg = 'bg-emerald-50 border-emerald-200';
+                statusLabel = 'Compliant';
+            } else if (compliance.status === 'caution') {
+                statusIcon = 'warning';
+                statusColor = 'text-amber-600';
+                statusBg = 'bg-amber-50 border-amber-200';
+                statusLabel = 'Verify';
+            } else if (compliance.status === 'fail') {
+                statusIcon = 'error';
+                statusColor = 'text-red-600';
+                statusBg = 'bg-red-50 border-red-200';
+                statusLabel = 'Non-Compliant';
+            } else {
+                statusIcon = 'info';
+                statusColor = 'text-slate-500';
+                statusBg = 'bg-slate-50 border-slate-200';
+                statusLabel = 'N/A';
+            }
+
+            let reqHtml = '';
+            if (compliance.requiredTabs > 0) {
+                reqHtml = `<div class="text-xs text-slate-500 mb-2">Required: <strong>${compliance.requiredTabs} tabs</strong> at <strong>${compliance.requiredSize}</strong> minimum</div>`;
+            }
+
+            content.innerHTML = `
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg ${statusBg} border">
+                        <span class="material-symbols-outlined ${statusColor}">${statusIcon}</span>
+                        <span class="font-bold text-sm ${statusColor}">${statusLabel}</span>
+                    </div>
+                    ${reqHtml}
+                </div>
+                <div class="space-y-1">
+                    ${compliance.messages.map(m => `<div class="text-xs text-slate-600 flex items-start gap-1.5"><span class="material-symbols-outlined text-xs text-slate-400 mt-0.5">arrow_right</span><span>${m}</span></div>`).join('')}
+                </div>
+                <div class="mt-3 text-[9px] text-slate-400">Reference: ${compliance.reference}. Verify with USPS for production mailings.</div>
+            `;
+        } else {
+            compliancePanel.className = 'hidden';
+        }
+
         // Trays
         const trays = Postal.calculateTrayCapacity(maxW, maxH, totalThickness, totalWeightOz);
         document.getElementById('emmAlert').className = trays.emm ? 'mt-3 text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-100 flex items-center gap-2' : 'hidden';

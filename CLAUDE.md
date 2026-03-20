@@ -21,6 +21,7 @@ MailSpec is a browser-based direct mail component weight and dimension calculato
 5. `app/data/postage.js` → `window.MailSpec.POSTAGE`
 6. `app/utils/calculations.js` → `window.MailSpec.Calculations`
 7. `app/utils/postal.js` → `window.MailSpec.Postal`
+7b. `app/utils/compliance.js` → `window.MailSpec.Compliance`
 8. `app/state.js` → `window.MailSpec.State`, `.STORAGE_KEY_CURRENT`, `.STORAGE_KEY_CONFIGS`
 9. `app/components/render.js` → `window.MailSpec.Components.renderComponents`, `.getSourceBadge`, `.getStockInfo`, `.filterStocks`, `.updateStockSearch`
 10. `app/components/calculate.js` → `window.MailSpec.Components.calculate`
@@ -70,7 +71,9 @@ Phase 1 migration complete.
 
 - **Phase 3:** Data confidence indicators — tolerance percentage (±3%/±5%/±7%) shown color-coded on stock info line, staleness detection on provenance dates (amber >12mo, red >24mo), custom stocks show "Unverified" label in purple italic. All implemented in `getStockInfo()` in render.js. Hover tooltips on all new indicators. Stock info line uses flex-wrap for mobile overflow.
 
-Next: Phase 3+ (future phases).
+- **Phase 4.1:** Self-mailer compliance checking — new `app/utils/compliance.js` evaluates tab requirements per DMM 201.3.14 based on fold type, weight, and optional design elements. Compliance panel appears in analysis when self-mailer component is present, showing pass/caution/fail status with specific guidance. Supports bi-fold, tri-fold, quarter-fold. Line glue recognized as alternative closure. Dark mode support.
+
+Next: Phase 4.2+ (future phases).
 
 ## Development Plan
 

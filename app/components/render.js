@@ -259,7 +259,7 @@
             el.innerHTML = `
                 <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
-                        <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 w-24" onchange="updateComponent(${c.id}, 'name', this.value)">
+                        <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 min-w-0 flex-1" onchange="updateComponent(${c.id}, 'name', this.value)">
                         ${badge}${manualBadge}
                     </div>
                     <div class="flex gap-0.5">

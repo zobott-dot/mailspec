@@ -14,6 +14,7 @@ MailSpec is a browser-based direct mail component weight and dimension calculato
 
 **Script load order matters** — `index.html` loads files in this order:
 1. `app/data/stocks.js` → `window.MailSpec.STOCKS`, `.loadCustomStocks`, `.STORAGE_KEY_CUSTOM_STOCKS`
+1b. `app/data/provenance.js` → `window.MailSpec.PROVENANCE`
 2. `app/data/templates.js` → `window.MailSpec.TEMPLATES`
 3. `app/data/coatings.js` → `window.MailSpec.COATINGS`
 4. `app/data/seals.js` → `window.MailSpec.SEALS`
@@ -21,7 +22,7 @@ MailSpec is a browser-based direct mail component weight and dimension calculato
 6. `app/utils/calculations.js` → `window.MailSpec.Calculations`
 7. `app/utils/postal.js` → `window.MailSpec.Postal`
 8. `app/state.js` → `window.MailSpec.State`, `.STORAGE_KEY_CURRENT`, `.STORAGE_KEY_CONFIGS`
-9. `app/components/render.js` → `window.MailSpec.Components.renderComponents`, `.getSourceBadge`, `.filterStocks`, `.updateStockSearch`
+9. `app/components/render.js` → `window.MailSpec.Components.renderComponents`, `.getSourceBadge`, `.getStockInfo`, `.filterStocks`, `.updateStockSearch`
 10. `app/components/calculate.js` → `window.MailSpec.Components.calculate`
 11. `app/components/config-manager.js` → `window.MailSpec.Components.saveConfiguration`, `.loadConfiguration`, `.deleteConfiguration`, `.renderConfigList`, `.exportConfigurations`, `.importConfigurations`
 12. `app/components/bom-export.js` → `window.MailSpec.Components.copyBOMToClipboard`, `.exportBOMText`, `.generateBOMText`
@@ -65,7 +66,9 @@ Phase 1 migration complete.
 
 - **Phase 2.2:** Postal risk warnings — amber/red visual warnings in results panel when assembly values approach USPS classification boundaries. Monitors thickness (letter→flat at 0.25", flat→parcel at 0.75"), weight (1oz tier, 3.5oz letter max, 13oz flat max), dimensions (width 11.5", height 6.125"), and aspect ratio (1.3–2.5 range). Context-aware: only warns about the next relevant boundary for current classification. Warning container between summary cards and classification section. Dark mode support. Logic in `app/components/calculate.js` (internal `generatePostalWarnings` function).
 
-Next: Phase 2.3+ (data provenance).
+- **Phase 2.3:** Data provenance — new `app/data/provenance.js` maps stock source keys to publisher, document, URL, and verification date. Stock info line in component cards now shows verified date (e.g., "· Jun 2025") and source badges link to manufacturer spec pages. `getStockInfo()` function in render.js. Sources modal updated with static verification dates. Provenance data separate from stock entries.
+
+Next: Phase 2.4+ (future phases).
 
 ## Development Plan
 

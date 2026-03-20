@@ -8,11 +8,28 @@
     const State = window.MailSpec.State;
     const STOCKS = window.MailSpec.STOCKS;
     const COATINGS = window.MailSpec.COATINGS;
+    const PROVENANCE = window.MailSpec.PROVENANCE;
     const C = window.MailSpec.Components;
 
     function getSourceBadge(source) {
         const map = { sappi: 'sappi', domtar: 'domtar', mohawk: 'mohawk', neenah: 'neenah', finch: 'finch', ip: 'ip', custom: 'custom', industry: 'industry' };
         return `<span class="source-badge ${map[source] || 'industry'}">${source.toUpperCase()}</span>`;
+    }
+
+    function getStockInfo(stock) {
+        const prov = PROVENANCE[stock.source] || PROVENANCE['industry'];
+        const badge = prov.url
+            ? `<a href="${prov.url}" target="_blank" rel="noopener" title="${prov.publisher}: ${prov.document || ''}">${getSourceBadge(stock.source)}</a>`
+            : getSourceBadge(stock.source);
+        const specs = `<span class="text-[10px] text-slate-400">${stock.cal.toFixed(4)}" / ${stock.gsm}gsm</span>`;
+        let verifiedTag = '';
+        if (prov.verified) {
+            const [year, month] = prov.verified.split('-');
+            const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthStr = monthNames[parseInt(month)] || month;
+            verifiedTag = `<span class="text-[9px] text-slate-300" title="${prov.publisher}${prov.document ? ': ' + prov.document : ''}">· ${monthStr} ${year}</span>`;
+        }
+        return `<div class="mt-1 flex items-center gap-2">${badge}${specs}${verifiedTag}</div>`;
     }
 
     function filterStocks(searchTerm, selectedIdx) {
@@ -57,7 +74,7 @@
 
             const stock = STOCKS[c.stockIdx];
             const stockOpts = filterStocks('', c.stockIdx);
-            const stockInfo = `<div class="mt-1 flex items-center gap-2">${getSourceBadge(stock.source)}<span class="text-[10px] text-slate-400">${stock.cal.toFixed(4)}" / ${stock.gsm}gsm</span></div>`;
+            const stockInfo = getStockInfo(stock);
 
             // Coating dropdown
             const coatingOpts = Object.entries(COATINGS).map(([k, v]) => `<option value="${k}" ${c.coating === k ? 'selected' : ''}>${v.label}</option>`).join('');
@@ -230,6 +247,7 @@
     }
 
     C.getSourceBadge = getSourceBadge;
+    C.getStockInfo = getStockInfo;
     C.filterStocks = filterStocks;
     C.renderComponents = renderComponents;
     C.updateStockSearch = updateStockSearch;

@@ -68,7 +68,9 @@ Phase 1 migration complete.
 
 - **Phase 2.3:** Data provenance — new `app/data/provenance.js` maps stock source keys to publisher, document, URL, and verification date. Stock info line in component cards now shows verified date (e.g., "· Jun 2025") and source badges link to manufacturer spec pages. `getStockInfo()` function in render.js. Sources modal updated with static verification dates. Provenance data separate from stock entries.
 
-Next: Phase 2.4+ (future phases).
+- **Phase 3:** Data confidence indicators — tolerance percentage (±3%/±5%/±7%) shown color-coded on stock info line, staleness detection on provenance dates (amber >12mo, red >24mo), custom stocks show "Unverified" label in purple italic. All implemented in `getStockInfo()` in render.js. Hover tooltips on all new indicators. Stock info line uses flex-wrap for mobile overflow.
+
+Next: Phase 3+ (future phases).
 
 ## Development Plan
 

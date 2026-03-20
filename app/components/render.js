@@ -18,18 +18,54 @@
 
     function getStockInfo(stock) {
         const prov = PROVENANCE[stock.source] || PROVENANCE['industry'];
+
+        // Source badge (linked if URL available)
         const badge = prov.url
             ? `<a href="${prov.url}" target="_blank" rel="noopener" title="${prov.publisher}: ${prov.document || ''}">${getSourceBadge(stock.source)}</a>`
             : getSourceBadge(stock.source);
+
+        // Caliper and GSM specs
         const specs = `<span class="text-[10px] text-slate-400">${stock.cal.toFixed(4)}" / ${stock.gsm}gsm</span>`;
+
+        // Tolerance indicator
+        const tolPct = Math.round(stock.tolerance * 100);
+        let tolColor = 'text-slate-400';
+        if (tolPct <= 3) tolColor = 'text-emerald-500';
+        else if (tolPct >= 7) tolColor = 'text-amber-500';
+        if (tolPct >= 10) tolColor = 'text-red-400';
+        const tolTag = `<span class="text-[9px] ${tolColor}" title="Caliper tolerance: ±${tolPct}%">±${tolPct}%</span>`;
+
+        // Provenance date with staleness detection
         let verifiedTag = '';
         if (prov.verified) {
             const [year, month] = prov.verified.split('-');
             const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const monthStr = monthNames[parseInt(month)] || month;
-            verifiedTag = `<span class="text-[9px] text-slate-300" title="${prov.publisher}${prov.document ? ': ' + prov.document : ''}">· ${monthStr} ${year}</span>`;
+
+            const now = new Date();
+            const verifiedDate = new Date(parseInt(year), parseInt(month) - 1);
+            const ageMonths = (now.getFullYear() - verifiedDate.getFullYear()) * 12 + (now.getMonth() - verifiedDate.getMonth());
+
+            let dateColor = 'text-slate-300';
+            let dateTitle = `${prov.publisher}${prov.document ? ': ' + prov.document : ''}`;
+            if (ageMonths >= 24) {
+                dateColor = 'text-red-400';
+                dateTitle += ' — Data over 2 years old, may need re-verification';
+            } else if (ageMonths >= 12) {
+                dateColor = 'text-amber-400';
+                dateTitle += ' — Data over 1 year old, consider re-verification';
+            }
+
+            verifiedTag = `<span class="text-[9px] text-slate-300">·</span><span class="text-[9px] ${dateColor}" title="${dateTitle}">${monthStr} ${year}</span>`;
         }
-        return `<div class="mt-1 flex items-center gap-2">${badge}${specs}${verifiedTag}</div>`;
+
+        // Custom stock note
+        let customNote = '';
+        if (stock.source === 'custom') {
+            customNote = `<span class="text-[9px] text-slate-300">·</span><span class="text-[9px] text-purple-400 italic" title="User-provided values — not verified against manufacturer data">Unverified</span>`;
+        }
+
+        return `<div class="mt-1 flex items-center gap-2 flex-wrap">${badge}${specs}<span class="text-[9px] text-slate-300">·</span>${tolTag}${verifiedTag}${customNote}</div>`;
     }
 
     function filterStocks(searchTerm, selectedIdx) {

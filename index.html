@@ -46,6 +46,9 @@
         <button class="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-md hover:bg-amber-100 transition text-xs font-bold uppercase tracking-wide" onclick="document.getElementById('configModal').showModal()">
             <span class="material-symbols-outlined text-sm">folder_open</span> Configs
         </button>
+        <button class="flex items-center gap-1 px-3 py-1.5 bg-sky-50 text-sky-700 rounded-md hover:bg-sky-100 transition text-xs font-bold uppercase tracking-wide" onclick="document.getElementById('quickStartModal').showModal()">
+            <span class="material-symbols-outlined text-sm">bolt</span> Quick Start
+        </button>
         <button class="flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 transition text-xs font-bold uppercase tracking-wide" onclick="document.getElementById('manualModal').showModal()">
             <span class="material-symbols-outlined text-sm">menu_book</span> Manual
         </button>
@@ -107,6 +110,9 @@
             </button>
         </div>
         <div class="p-4 space-y-2">
+            <button class="w-full flex items-center gap-3 p-3 bg-sky-50 text-sky-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); document.getElementById('quickStartModal').showModal();">
+                <span class="material-symbols-outlined">bolt</span> Quick Start
+            </button>
             <button class="w-full flex items-center gap-3 p-3 bg-indigo-50 text-indigo-700 rounded-lg font-medium" onclick="document.getElementById('mobileMenuModal').close(); document.getElementById('manualModal').showModal();">
                 <span class="material-symbols-outlined">menu_book</span> User Manual
             </button>
@@ -816,6 +822,76 @@
 </dialog>
 
 <!-- User Manual Modal -->
+<!-- Quick Start Guide -->
+<dialog class="rounded-xl shadow-2xl p-0 max-w-lg w-full max-h-[90vh] backdrop:bg-slate-900/40" id="quickStartModal">
+    <div class="flex flex-col h-full bg-white text-slate-700">
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-sky-50/50 shrink-0">
+            <div class="flex items-center gap-2 text-sky-800">
+                <span class="material-symbols-outlined">bolt</span>
+                <h2 class="font-bold text-base md:text-lg">Quick Start</h2>
+            </div>
+            <button class="touch-btn text-slate-400 hover:text-slate-600" onclick="document.getElementById('quickStartModal').close()">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="overflow-y-auto p-5 md:p-6 space-y-5">
+
+            <p class="text-sm text-slate-600">MailSpec calculates weight, thickness, and postal classification for direct mail pieces. Here's how to build your first assembly.</p>
+
+            <div class="space-y-4">
+                <div class="flex gap-3">
+                    <span class="bg-sky-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Add components</h4>
+                        <p class="text-xs text-slate-500 mt-1">Click the component buttons at the top of the Build panel — Envelope, Self-Mailer, Insert, etc. Or use <strong>Templates</strong> for common presets like #10 envelopes, 6x9 postcards, and specialty folds.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <span class="bg-sky-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Set dimensions and stock</h4>
+                        <p class="text-xs text-slate-500 mt-1">Enter the flat size, choose a paper stock from 70+ options, and select a fold type. The stock dropdown is searchable — just start typing.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <span class="bg-sky-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Check results</h4>
+                        <p class="text-xs text-slate-500 mt-1">The right panel updates automatically with total weight, thickness, postal classification, postage estimates, and any warnings about boundary limits. On mobile, tap the <strong>Results</strong> tab.</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <span class="bg-sky-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-800">Adjust and finalize</h4>
+                        <p class="text-xs text-slate-500 mt-1">Set weight and thickness buffers in <strong>Global Adjustments</strong> (default 5%). Add tab seals if mailing a self-mailer. Use <strong>Copy</strong> or <strong>Export</strong> on the BOM table for job tickets, or print a spec sheet with the print button.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-sky-50 border border-sky-200 rounded-lg p-3">
+                <h4 class="font-bold text-xs text-sky-800 mb-1">Good to know</h4>
+                <ul class="text-xs text-slate-600 space-y-1">
+                    <li>Your work auto-saves to your device.</li>
+                    <li>Use <strong>Configs</strong> to save and name assemblies for later.</li>
+                    <li>For irregular folds (gate fold, iron cross, etc.), use the <strong>Specialty Folds</strong> templates or toggle <strong>Custom Panels</strong> on any component.</li>
+                </ul>
+            </div>
+
+            <div class="border-t border-slate-100 pt-4">
+                <p class="text-xs text-slate-400">For detailed information on all features, component types, coatings, seals, and postal rules, see the <button class="text-indigo-600 font-bold underline" onclick="document.getElementById('quickStartModal').close(); document.getElementById('manualModal').showModal();">full Manual</button>.</p>
+            </div>
+
+        </div>
+        <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+            <button class="px-6 py-3 md:py-2 bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold rounded min-h-[44px]" onclick="document.getElementById('quickStartModal').close()">Got It</button>
+        </div>
+    </div>
+</dialog>
+
 <dialog class="rounded-xl shadow-2xl p-0 max-w-4xl w-full max-h-[90vh] backdrop:bg-slate-900/40" id="manualModal">
     <div class="flex flex-col h-full bg-white text-slate-700">
         <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50 shrink-0">
@@ -838,7 +914,7 @@
                 <div class="space-y-4">
                     <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-indigo-800 mb-2">What This Tool Does</h4>
-                        <p class="text-xs md:text-sm text-slate-600">MailSpec Pro calculates the weight, thickness, and postal classification of direct mail pieces by combining individual components. Use it to estimate postage costs, verify mailability, and plan tray quantities—on any device.</p>
+                        <p class="text-xs md:text-sm text-slate-600">MailSpec Pro calculates the weight, thickness, and postal classification of direct mail assemblies. It estimates postage costs, checks self-mailer compliance against USPS standards, warns when values approach postal boundaries, and generates printable spec sheets — all on any device.</p>
                     </div>
                     <h4 class="font-bold text-sm text-slate-800">Basic Workflow</h4>
                     <div class="space-y-3 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
@@ -921,8 +997,8 @@
                         <h4 class="font-bold text-sm text-slate-800 mb-3">Component Types</h4>
                         <div class="grid grid-cols-2 gap-2 text-xs">
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Envelope</strong><p class="text-slate-500 mt-1">Outer or reply envelopes with flap calculation.</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Self-Mailer</strong><p class="text-slate-500 mt-1">Postcards and bi-folds that mail without envelope.</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Insert/Sheet</strong><p class="text-slate-500 mt-1">Letters, brochures with fold options.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Self-Mailer</strong><p class="text-slate-500 mt-1">Postcards, bi-folds, gate folds, iron crosses. Use Custom Panels for specialty folds.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Insert/Sheet</strong><p class="text-slate-500 mt-1">Letters, brochures, roll folds, Z-folds. Supports standard and custom fold configurations.</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Accordion</strong><p class="text-slate-500 mt-1">Z-fold pieces with multiple panels.</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Booklet</strong><p class="text-slate-500 mt-1">Saddle-stitch or perfect-bound.</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Card</strong><p class="text-slate-500 mt-1">Business cards, CR80, magnets.</p></div>
@@ -963,6 +1039,51 @@
                         <p class="text-[10px] text-slate-500 mt-2"><strong>Note:</strong> USPS requires tabs based on piece weight and fold configuration. Consult DMM 201.3.15 for specifics.</p>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Custom Panel Mode</h4>
+                        <p class="text-xs text-slate-600 mb-2">For irregular folds where panels aren't equal (gate folds, roll folds, iron crosses, etc.), toggle <strong>Custom Panels</strong> on any self-mailer, insert, accordion, or booklet. This lets you specify independently:</p>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Flat Size</strong><p class="text-slate-500 mt-1">Total paper area — drives weight calculation</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Finished Size</strong><p class="text-slate-500 mt-1">Folded dimensions — drives postal classification</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Layers at Fold</strong><p class="text-slate-500 mt-1">Sheets at thickest point — drives thickness</p></div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Use <strong>Specialty Folds</strong> templates for common configurations with Custom Panels pre-configured.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Postal Risk Warnings</h4>
+                        <p class="text-xs text-slate-600 mb-2">The results panel automatically warns when assembly values approach USPS classification boundaries. Each warning shows how much room remains before the boundary.</p>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="bg-blue-50 p-2 rounded border border-blue-200"><strong class="text-blue-700">Advisory</strong><p class="text-slate-500 mt-1">Approaching a boundary. Informational.</p></div>
+                            <div class="bg-amber-50 p-2 rounded border border-amber-200"><strong class="text-amber-700">Caution</strong><p class="text-slate-500 mt-1">Very close. Adding components could trigger a reclassification.</p></div>
+                            <div class="bg-red-50 p-2 rounded border border-red-200"><strong class="text-red-700">Violation</strong><p class="text-slate-500 mt-1">Boundary crossed. Classification has changed.</p></div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Monitors thickness, weight, dimensions, and aspect ratio. Only warns about the next relevant boundary.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Self-Mailer Compliance (DMM 201.3.14)</h4>
+                        <p class="text-xs text-slate-600 mb-2">When a self-mailer component is present, MailSpec evaluates tab requirements based on fold type and weight per USPS DMM 201.3.14. The compliance panel shows whether the current seal configuration meets requirements.</p>
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <div><strong>Bi-fold/Tri-fold up to 1 oz:</strong> 2 tabs, 1" minimum</div>
+                            <div><strong>Bi-fold/Tri-fold over 1 oz:</strong> 2 tabs, 1.5" minimum</div>
+                            <div><strong>Quarter-fold over 1 oz:</strong> 3 tabs, 1.5" minimum</div>
+                            <div><strong>With die-cuts/perforations:</strong> adds a third tab to the requirement</div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Check the "Has die-cuts/perforations" box in the compliance panel if your piece has optional design elements. Maximum weight for folded self-mailers is 3 oz.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Print Spec Sheet</h4>
+                        <p class="text-xs text-slate-600">Click the print icon in the header to generate a clean, one-page specification sheet. The printout includes assembly summary, postal classification, postage estimates, warnings, compliance status, the full BOM table, and seal/buffer notes. Formatted for letter-size paper with typographic hierarchy — no screen UI elements.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Data Confidence Indicators</h4>
+                        <p class="text-xs text-slate-600 mb-2">Each stock entry shows provenance information below the stock selector:</p>
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <div><strong>Source badge</strong> — clickable link to manufacturer spec sheet (when available)</div>
+                            <div><strong>Tolerance</strong> — color-coded: green (±3%), gray (±5%), amber (±7%+)</div>
+                            <div><strong>Verified date</strong> — turns amber after 12 months, red after 24 months</div>
+                            <div><strong>Custom stocks</strong> — marked "Unverified" in purple italic</div>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">📮 Postal Classification</h4>
                         <div class="text-xs text-slate-600 space-y-1">
                             <div><strong>Letter (Auto):</strong> Max 6.125"H × 11.5"W × 0.25" thick</div>
@@ -981,12 +1102,16 @@
                 </h3>
                 <div class="space-y-3 md:space-y-4">
                     <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 md:p-4">
-                        <h4 class="font-bold text-sm text-purple-800 mb-3">v2.5 — Custom Panels & Dark Mode</h4>
+                        <h4 class="font-bold text-sm text-purple-800 mb-3">v2.5 — Current Release</h4>
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Custom Panel Mode</div><p class="text-[10px] text-slate-600">Define flat size, finished size, and fold layers independently for irregular folded pieces</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Custom Panel Mode</div><p class="text-[10px] text-slate-600">Define flat size, finished size, and fold layers independently for irregular pieces</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Specialty Fold Templates</div><p class="text-[10px] text-slate-600">Gate fold, double gate, roll fold, Z-fold, iron cross, French fold</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Postal Risk Warnings</div><p class="text-[10px] text-slate-600">Three-tier alerts when values approach USPS classification boundaries</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Self-Mailer Compliance</div><p class="text-[10px] text-slate-600">Tab requirement checking against DMM 201.3.14</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Print Spec Sheet</div><p class="text-[10px] text-slate-600">One-page typographic printout for job tickets</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Data Provenance</div><p class="text-[10px] text-slate-600">Source documents, verification dates, and confidence indicators per stock</p></div>
                             <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Dark Mode</div><p class="text-[10px] text-slate-600">Full dark theme for all panels, cards, modals, and inputs</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Dynamic Versioning</div><p class="text-[10px] text-slate-600">Version number defined once, updates everywhere automatically</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">UI Polish</div><p class="text-[10px] text-slate-600">Consistent input sizing on mobile, refined global adjustments</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Quick Start Guide</div><p class="text-[10px] text-slate-600">Fast onboarding for new users</p></div>
                         </div>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">

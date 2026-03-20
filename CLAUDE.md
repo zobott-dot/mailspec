@@ -77,6 +77,8 @@ Phase 1 migration complete.
 
 - **Phase 2.4:** Print spec sheet — print-only div populated at print time by `preparePrintSheet()`. Typography-driven layout: 14pt title, 16pt summary numbers, thin rules, no UI chrome. Includes summary, classification, postage, warnings, compliance, BOM table, seals/buffers, footer disclaimer. Single portrait letter page. Dark mode forced to light on print. Old print rules replaced.
 
+- **Phase 2.4b:** Quick Start Guide modal with 4-step onboarding (sky/teal button in desktop header and mobile menu). Manual updated with Custom Panels, Postal Risk Warnings, Self-Mailer Compliance, Print Spec Sheet, and Data Confidence sections. Component type descriptions updated. v2.5 What's New expanded to 8 feature cards. Dark mode support for Quick Start UI.
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

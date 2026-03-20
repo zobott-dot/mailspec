@@ -785,6 +785,26 @@ html.dark .template-btn.border-emerald-200.bg-emerald-50\/50 {
     border-color: #065f46;
 }
 
+/* Quick Start modal and button */
+html.dark .desktop-header-btns .bg-sky-50 {
+    background-color: #0c4a6e;
+    color: #7dd3fc;
+}
+
+html.dark #quickStartModal .bg-sky-50\/50 {
+    background-color: #0f172a;
+}
+
+html.dark #quickStartModal .bg-sky-50 {
+    background-color: #0c4a6e;
+    border-color: #0369a1;
+}
+
+html.dark #mobileMenuModal .bg-sky-50 {
+    background-color: #0c4a6e;
+    color: #7dd3fc;
+}
+
 /* Rose template buttons (specialty folds) */
 html.dark .template-btn.border-rose-200.bg-rose-50\/50 {
     background-color: #4c0519;

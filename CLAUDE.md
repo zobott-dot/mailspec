@@ -75,6 +75,8 @@ Phase 1 migration complete.
 
 - **Phase 4.1b:** Specialty fold templates — gate fold, double gate fold, roll fold, Z-fold, iron cross, French fold added to templates using Custom Panel Mode. `addTemplate()` and `addComponent()` pass through custom panel fields. New Specialty Folds section in templates modal with rose color scheme. Component name input width fix (`w-24` → `min-w-0 flex-1`).
 
+- **Phase 2.4:** Print spec sheet — print-only div populated at print time by `preparePrintSheet()`. Typography-driven layout: 14pt title, 16pt summary numbers, thin rules, no UI chrome. Includes summary, classification, postage, warnings, compliance, BOM table, seals/buffers, footer disclaimer. Single portrait letter page. Dark mode forced to light on print. Old print rules replaced.
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

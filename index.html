@@ -58,7 +58,7 @@
 <button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="toggleDarkMode()" id="darkModeToggle" title="Toggle Dark Mode">
             <span class="material-symbols-outlined text-lg">dark_mode</span>
         </button>
-        <button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="window.print()">
+        <button class="flex items-center gap-1 text-sm text-slate-600 hover:text-indigo-600 transition font-medium" onclick="preparePrintSheet()">
             <span class="material-symbols-outlined text-lg">print</span>
         </button>
     </div>
@@ -389,6 +389,84 @@
         </div>
     </div>
 </main>
+
+<!-- Print Spec Sheet (hidden on screen, visible on print) -->
+<div id="printSheet" class="print-sheet">
+    <div class="print-header">
+        <div class="print-title">ASSEMBLY SPECIFICATION</div>
+        <div class="print-meta">
+            <span id="printDate"></span> · <span>MailSpec v<span id="printVersion"></span></span>
+        </div>
+    </div>
+
+    <div class="print-summary">
+        <div class="print-summary-item">
+            <div class="print-summary-label">MAILING DIMENSIONS</div>
+            <div class="print-summary-value" id="printDimensions"></div>
+            <div class="print-summary-detail" id="printDimSource"></div>
+        </div>
+        <div class="print-summary-item">
+            <div class="print-summary-label">TOTAL THICKNESS</div>
+            <div class="print-summary-value" id="printThickness"></div>
+            <div class="print-summary-detail" id="printThickRange"></div>
+        </div>
+        <div class="print-summary-item">
+            <div class="print-summary-label">TOTAL WEIGHT</div>
+            <div class="print-summary-value" id="printWeight"></div>
+            <div class="print-summary-detail" id="printWeightStatus"></div>
+        </div>
+    </div>
+
+    <div class="print-classification">
+        <div class="print-class-row">
+            <span class="print-class-label">Classification:</span>
+            <span class="print-class-value" id="printClass"></span>
+            <span class="print-class-sub" id="printClassSub"></span>
+        </div>
+        <div class="print-class-row">
+            <span class="print-class-label">Aspect Ratio:</span>
+            <span id="printAspect"></span>
+            <span class="print-class-detail">(target: 1.3 – 2.5)</span>
+        </div>
+        <div class="print-class-row">
+            <span class="print-class-label">Marketing Mail (Auto):</span>
+            <span class="print-class-value" id="printPostageMarketing"></span>
+            <span class="print-class-label" style="margin-left: 2em;">First-Class (Auto):</span>
+            <span class="print-class-value" id="printPostageFirstClass"></span>
+        </div>
+    </div>
+
+    <div id="printWarnings" class="print-warnings"></div>
+
+    <div id="printCompliance" class="print-compliance"></div>
+
+    <table class="print-bom">
+        <thead>
+            <tr>
+                <th class="print-bom-left">Component</th>
+                <th class="print-bom-left">Finished Size</th>
+                <th class="print-bom-left">Stock</th>
+                <th class="print-bom-right">Thickness</th>
+                <th class="print-bom-right">Weight</th>
+            </tr>
+        </thead>
+        <tbody id="printBomBody"></tbody>
+        <tfoot>
+            <tr class="print-bom-total">
+                <td colspan="3">TOTAL ASSEMBLY</td>
+                <td class="print-bom-right" id="printBomThick"></td>
+                <td class="print-bom-right" id="printBomWeight"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="print-seals" id="printSeals"></div>
+
+    <div class="print-footer">
+        <span>Estimates for planning purposes. Verify with physical samples for postal qualification.</span>
+        <span>Postage rates: USPS July 2025. Stock data from manufacturer spec sheets.</span>
+    </div>
+</div>
 
 <!-- Configuration Modal -->
 <dialog class="rounded-xl shadow-2xl p-0 max-w-lg w-full max-h-[90vh] backdrop:bg-slate-900/40" id="configModal">
@@ -1102,6 +1180,105 @@
     C.autoSave = autoSave;
     C.showAutosaveStatus = showAutosaveStatus;
 
+    function preparePrintSheet() {
+        const State = window.MailSpec.State;
+        const COATINGS = window.MailSpec.COATINGS;
+        const VERSION = MAILSPEC_VERSION;
+
+        // Date
+        const now = new Date();
+        document.getElementById('printDate').textContent = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('printVersion').textContent = VERSION;
+
+        // Summary values (read from existing DOM)
+        document.getElementById('printDimensions').textContent = document.getElementById('totalW').textContent + '" \u00d7 ' + document.getElementById('totalH').textContent + '"';
+        document.getElementById('printDimSource').textContent = document.getElementById('dimSource').textContent;
+        document.getElementById('printThickness').textContent = document.getElementById('totalThick').textContent + '"';
+        document.getElementById('printThickRange').textContent = 'Range: ' + document.getElementById('thickRange').textContent;
+        document.getElementById('printWeight').textContent = document.getElementById('totalWeight').textContent + ' oz';
+        document.getElementById('printWeightStatus').textContent = document.getElementById('weightStatus').textContent;
+
+        // Classification & Postage
+        document.getElementById('printClass').textContent = document.getElementById('postalClass').textContent;
+        document.getElementById('printClassSub').textContent = '(' + document.getElementById('postalSub').textContent + ')';
+        document.getElementById('printAspect').textContent = document.getElementById('aspectVal').textContent;
+        document.getElementById('printPostageMarketing').textContent = document.getElementById('postageMarketing').textContent;
+        document.getElementById('printPostageFirstClass').textContent = document.getElementById('postageFirstClass').textContent;
+
+        // Warnings (text-only, no icons)
+        const warningsEl = document.getElementById('postalWarnings');
+        const printWarnings = document.getElementById('printWarnings');
+        if (warningsEl && !warningsEl.classList.contains('hidden')) {
+            const warningDivs = warningsEl.querySelectorAll('.postal-warning');
+            printWarnings.innerHTML = warningDivs.length > 0
+                ? Array.from(warningDivs).map(function(w) {
+                    var text = w.querySelector('span:last-child').innerHTML.replace(/<strong>/g, '').replace(/<\/strong>/g, '');
+                    var levelClass = '';
+                    if (w.classList.contains('bg-red-50')) levelClass = ' print-warning-violation';
+                    else if (w.classList.contains('bg-amber-50')) levelClass = ' print-warning-caution';
+                    return '<div class="print-warning-line' + levelClass + '">' + text + '</div>';
+                }).join('')
+                : '';
+        } else {
+            printWarnings.innerHTML = '';
+        }
+
+        // Compliance
+        const compPanel = document.getElementById('compliancePanel');
+        const printCompliance = document.getElementById('printCompliance');
+        if (compPanel && !compPanel.classList.contains('hidden')) {
+            var content = document.getElementById('complianceContent');
+            if (content) {
+                var statusEl = content.querySelector('.font-bold.text-sm');
+                var messages = content.querySelectorAll('.text-xs.text-slate-600 span:last-child');
+                var statusText = statusEl ? statusEl.textContent : '';
+                var msgText = Array.from(messages).map(function(m) { return m.textContent; }).join(' ');
+                printCompliance.innerHTML = '<div class="print-compliance-line">Self-Mailer Compliance (DMM 201.3.14): <span class="print-compliance-status">' + statusText + '</span> \u2014 ' + msgText + '</div>';
+            }
+        } else {
+            printCompliance.innerHTML = '';
+        }
+
+        // BOM Table
+        var bomBody = document.getElementById('printBomBody');
+        if (State.lastBomData && State.lastBomData.length > 0) {
+            bomBody.innerHTML = State.lastBomData.map(function(i) {
+                var stockShort = i.stockName.replace(/^(Sappi|Domtar|Mohawk|Neenah|Finch|Hammermill|Accent|French|Springhill)\s+/, '');
+                var coating = i.coating !== 'none' && COATINGS[i.coating] ? ' + ' + COATINGS[i.coating].label : '';
+                return '<tr>' +
+                    '<td>' + i.name + '</td>' +
+                    '<td>' + i.dim + '</td>' +
+                    '<td>' + stockShort + coating + '</td>' +
+                    '<td class="print-bom-right">' + i.thick.toFixed(4) + '"</td>' +
+                    '<td class="print-bom-right">' + i.weight.toFixed(3) + ' oz</td>' +
+                    '</tr>';
+            }).join('');
+        } else {
+            bomBody.innerHTML = '<tr><td colspan="5">No components</td></tr>';
+        }
+        document.getElementById('printBomThick').textContent = document.getElementById('bomTotalThick').textContent;
+        document.getElementById('printBomWeight').textContent = document.getElementById('bomTotalWeight').textContent;
+
+        // Seals
+        var printSeals = document.getElementById('printSeals');
+        var sealsText = '';
+        if (State.globalSealType !== 'none' && State.globalSealQty > 0) {
+            var sealName = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue' }[State.globalSealType] || State.globalSealType;
+            sealsText = 'Seals: ' + State.globalSealQty + '\u00d7 ' + sealName + ' (included in totals)';
+        }
+
+        // Buffers note
+        if (State.globalBuffer > 0 || State.globalThickBuffer > 0) {
+            var bufferNote = 'Buffers applied:';
+            if (State.globalBuffer > 0) bufferNote += ' Weight +' + State.globalBuffer + '%';
+            if (State.globalThickBuffer > 0) bufferNote += ' Thickness +' + State.globalThickBuffer + '%';
+            sealsText += (sealsText ? ' \u00b7 ' : '') + bufferNote;
+        }
+        printSeals.textContent = sealsText;
+
+        window.print();
+    }
+
     // ============================================================
     // WINDOW BINDINGS
     // ============================================================
@@ -1122,6 +1299,7 @@
     window.updateGlobalThickBuffer = C.updateGlobalThickBuffer;
     window.updateGlobalSeal = C.updateGlobalSeal;
     window.updateCompliance = function() { C.calculate(); };
+    window.preparePrintSheet = preparePrintSheet;
     window.updateStockSearch = C.updateStockSearch;
     window.saveConfiguration = C.saveConfiguration;
     window.loadConfiguration = C.loadConfiguration;

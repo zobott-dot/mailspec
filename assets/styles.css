@@ -462,6 +462,34 @@ button:active, .template-btn:active {
     transform: scale(0.97);
 }
 
+/* Template dropdown buttons in build panel */
+.template-dd-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.375rem 0.5rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.375rem;
+    font-size: 0.65rem;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.template-dd-btn:hover {
+    border-color: #a5b4fc;
+    color: #4f46e5;
+    background: #eef2ff;
+}
+
+.template-dd-btn span.text-slate-400 {
+    font-size: 0.55rem;
+    margin-top: 1px;
+}
+
 /* ========== DARK MODE ========== */
 
 html.dark body {
@@ -780,9 +808,26 @@ html.dark .template-btn .size {
     color: #64748b;
 }
 
-html.dark .template-btn.border-emerald-200.bg-emerald-50\/50 {
-    background-color: #064e3b;
-    border-color: #065f46;
+/* Template dropdowns in build panel */
+html.dark .template-dropdown {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+html.dark .template-dd-btn {
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #94a3b8;
+}
+
+html.dark .template-dd-btn:hover {
+    border-color: #6366f1;
+    color: #a5b4fc;
+    background-color: #312e81;
+}
+
+html.dark .template-dd-btn span.text-slate-400 {
+    color: #64748b;
 }
 
 /* Quick Start modal and button */
@@ -803,12 +848,6 @@ html.dark #quickStartModal .bg-sky-50 {
 html.dark #mobileMenuModal .bg-sky-50 {
     background-color: #0c4a6e;
     color: #7dd3fc;
-}
-
-/* Rose template buttons (specialty folds) */
-html.dark .template-btn.border-rose-200.bg-rose-50\/50 {
-    background-color: #4c0519;
-    border-color: #881337;
 }
 
 /* Config items */

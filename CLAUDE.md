@@ -79,6 +79,8 @@ Phase 1 migration complete.
 
 - **Phase 2.4b:** Quick Start Guide modal with 4-step onboarding (sky/teal button in desktop header and mobile menu). Manual updated with Custom Panels, Postal Risk Warnings, Self-Mailer Compliance, Print Spec Sheet, and Data Confidence sections. Component type descriptions updated. v2.5 What's New expanded to 8 feature cards. Dark mode support for Quick Start UI.
 
+- **Phase 2.5:** Template category dropdowns in build panel — 6 category buttons (Envelopes, Reply Env, Self-Mailers, Specialty, Inserts, Cards) above component buttons, each with dropdown showing category templates for one-click add. Renamed component buttons row to "Add Custom". Removed category-specific colors (emerald/rose) from templates modal buttons. Dark mode support for dropdowns.
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

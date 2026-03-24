@@ -137,7 +137,7 @@
             totalToleranceSum += itemThick * tol;
 
             const stock = STOCKS[c.stockIdx];
-            return { name: c.name, dim: `${finW.toFixed(2)}" × ${finH.toFixed(2)}"`, thick: itemThick, thickMax: itemThick * (1 + tol), weight: weightOz, isManual: c.manualWeight !== null || c.manualThick !== null, stockName: stock.name, stockSource: stock.source, coating: c.coating };
+            return { name: c.name, dim: `${finW.toFixed(3)}" × ${finH.toFixed(3)}"`, thick: itemThick, thickMax: itemThick * (1 + tol), weight: weightOz, isManual: c.manualWeight !== null || c.manualThick !== null, stockName: stock.name, stockSource: stock.source, coating: c.coating };
         });
 
         State.lastBomData = bomData;
@@ -153,8 +153,8 @@
         totalThickness = sealResult.thickness;
         totalWeightOz = sealResult.weightOz;
 
-        document.getElementById('totalW').textContent = maxW.toFixed(2);
-        document.getElementById('totalH').textContent = maxH.toFixed(2);
+        document.getElementById('totalW').textContent = maxW.toFixed(3);
+        document.getElementById('totalH').textContent = maxH.toFixed(3);
         document.getElementById('dimSource').textContent = State.components.length ? `From: ${driverName}` : 'Add a component';
         document.getElementById('totalThick').textContent = totalThickness.toFixed(4);
         document.getElementById('totalWeight').textContent = totalWeightOz.toFixed(3);

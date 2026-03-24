@@ -162,6 +162,17 @@
         alert(`"${name}" added!`);
     }
 
+    function moveComponent(id, direction) {
+        const idx = State.components.findIndex(c => c.id === id);
+        if (idx === -1) return;
+        const newIdx = idx + direction;
+        if (newIdx < 0 || newIdx >= State.components.length) return;
+        const temp = State.components[idx];
+        State.components[idx] = State.components[newIdx];
+        State.components[newIdx] = temp;
+        C.renderComponents(); C.calculate(); C.autoSave();
+    }
+
     C.getName = getName;
     C.addComponent = addComponent;
     C.duplicateComponent = duplicateComponent;
@@ -173,4 +184,5 @@
     C.toggleCustomPanels = toggleCustomPanels;
     C.addTemplate = addTemplate;
     C.addCustomStock = addCustomStock;
+    C.moveComponent = moveComponent;
 })();

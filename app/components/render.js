@@ -99,7 +99,6 @@
         State.components.forEach(c => {
             const el = document.createElement('div');
             el.className = 'component-card p-4';
-            el.setAttribute('data-component-id', c.id);
 
             // Validate stockIdx - fix if out of bounds
             if (c.stockIdx < 0 || c.stockIdx >= STOCKS.length || !STOCKS[c.stockIdx]) {
@@ -253,13 +252,14 @@
             const manualBadge = (c.manualWeight || c.manualThick) ? '<span class="text-[10px] bg-purple-100 text-purple-700 px-1 rounded ml-1">Manual</span>' : '';
 
             el.innerHTML = `
-                <div class="drag-header flex justify-between items-center mb-2 border-b border-slate-100 pb-2" draggable="true">
+                <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
-                        <span class="drag-handle text-slate-300 hover:text-slate-500 p-1 material-symbols-outlined text-base" title="Drag to reorder">drag_indicator</span>
                         <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 min-w-0 flex-1" onchange="updateComponent(${c.id}, 'name', this.value)">
                         ${manualBadge}
                     </div>
                     <div class="flex gap-0.5">
+                        <button title="Move Up" onclick="moveComponent(${c.id}, -1)" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_up</span></button>
+                        <button title="Move Down" onclick="moveComponent(${c.id}, 1)" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_down</span></button>
                         ${(c.type === 'sheet' || c.type === 'selfmailer') && !c.customPanels ? `<button title="Toggle Flat/Finished" onclick="toggleDimMode(${c.id})" class="text-slate-300 hover:text-amber-600 p-1"><span class="material-symbols-outlined text-base">swap_vert</span></button>` : ''}
                         <button title="Duplicate" onclick="duplicateComponent(${c.id})" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">content_copy</span></button>
                         <button title="Manual Weight" onclick="toggleManual(${c.id}, 'weight')" class="text-slate-300 hover:text-purple-600 p-1"><span class="material-symbols-outlined text-base">scale</span></button>

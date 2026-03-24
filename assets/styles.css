@@ -529,7 +529,7 @@ html.dark .bg-white {
 
 html.dark .border-slate-200,
 html.dark .border-slate-100 {
-    border-color: #334155;
+    border-color: #334155 !important;
 }
 
 /* Text colors */

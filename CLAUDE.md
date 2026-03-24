@@ -83,6 +83,8 @@ Phase 1 migration complete.
 
 - **Phase 2.5b:** Build panel reorganization — consolidated Reply Envelopes into Envelopes dropdown with sub-labels (Outer / Reply & Remittance), renamed Specialty to Folds with sub-labels (Standard / Specialty) and added Accordion 4-panel and 6-panel templates, added Booklets category with self-cover, plus-cover (saddle), and perfect bound templates. `addTemplate()` now passes `coverStockName`, `binding`, and `panels` through to `addComponent()`. Removed type badge (ENV/FLAT/BOOKLET/etc.) from component card headers.
 
+- **Phase 2.6:** Version bump to v2.6. Header buttons reordered (Quick Start, Manual, Templates, Configs, Sources, Stock). Quick Start rewritten for template-dropdown workflow. Manual What's New updated with v2.6 featured entry, v2.5 demoted. Manual Getting Started updated to reference template categories. Removed Add Custom component buttons row. Consolidated folds in templates modal. Dimension display precision to 3 decimal places.
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

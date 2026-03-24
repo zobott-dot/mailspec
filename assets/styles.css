@@ -52,6 +52,11 @@ select.input-field {
 .input-field:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
 
 .component-card { background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; margin-bottom: 1rem; transition: all 0.2s; }
+.component-card.dragging { opacity: 0.4; }
+.component-card.drag-over-top { border-top: 2px solid #6366f1; }
+.component-card.drag-over-bottom { border-bottom: 2px solid #6366f1; }
+.drag-handle { cursor: grab; touch-action: none; }
+.drag-handle:active { cursor: grabbing; }
 .mode-pill { font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
 .mode-pill.finished { background: #dbeafe; color: #1e40af; }
 .mode-pill.flat { background: #fef3c7; color: #92400e; }
@@ -585,6 +590,10 @@ html.dark .component-card {
     background-color: #1e293b;
     border-color: #334155;
 }
+html.dark .component-card.drag-over-top { border-top-color: #818cf8; }
+html.dark .component-card.drag-over-bottom { border-bottom-color: #818cf8; }
+html.dark .drag-handle { color: #475569; }
+html.dark .drag-handle:hover { color: #94a3b8; }
 
 /* Input labels */
 html.dark .input-label {

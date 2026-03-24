@@ -99,6 +99,8 @@
         State.components.forEach(c => {
             const el = document.createElement('div');
             el.className = 'component-card p-4';
+            el.setAttribute('data-component-id', c.id);
+            el.setAttribute('draggable', 'true');
 
             // Validate stockIdx - fix if out of bounds
             if (c.stockIdx < 0 || c.stockIdx >= STOCKS.length || !STOCKS[c.stockIdx]) {
@@ -252,8 +254,9 @@
             const manualBadge = (c.manualWeight || c.manualThick) ? '<span class="text-[10px] bg-purple-100 text-purple-700 px-1 rounded ml-1">Manual</span>' : '';
 
             el.innerHTML = `
-                <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2">
+                <div class="drag-header flex justify-between items-center mb-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
+                        <span class="drag-handle text-slate-300 hover:text-slate-500 p-1 material-symbols-outlined text-base" title="Drag to reorder">drag_indicator</span>
                         <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 min-w-0 flex-1" onchange="updateComponent(${c.id}, 'name', this.value)">
                         ${manualBadge}
                     </div>

@@ -147,17 +147,17 @@
                     <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">mail</span>
                     Envelopes
                 </button>
-                <button class="flex flex-col items-center justify-center p-2 md:p-1.5 bg-white border border-slate-200 rounded-lg hover:border-indigo-400 hover:text-indigo-600 active:bg-indigo-50 transition text-xs md:text-[10px] font-medium group min-h-[60px] md:min-h-0" onclick="toggleTemplateDropdown('replyEnv')">
-                    <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">reply</span>
-                    Reply Env
-                </button>
                 <button class="flex flex-col items-center justify-center p-2 md:p-1.5 bg-white border border-slate-200 rounded-lg hover:border-indigo-400 hover:text-indigo-600 active:bg-indigo-50 transition text-xs md:text-[10px] font-medium group min-h-[60px] md:min-h-0" onclick="toggleTemplateDropdown('selfMailer')">
                     <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">mark_as_unread</span>
                     Self-Mailers
                 </button>
                 <button class="flex flex-col items-center justify-center p-2 md:p-1.5 bg-white border border-slate-200 rounded-lg hover:border-indigo-400 hover:text-indigo-600 active:bg-indigo-50 transition text-xs md:text-[10px] font-medium group min-h-[60px] md:min-h-0" onclick="toggleTemplateDropdown('specialtyFold')">
                     <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">view_agenda</span>
-                    Specialty
+                    Folds
+                </button>
+                <button class="flex flex-col items-center justify-center p-2 md:p-1.5 bg-white border border-slate-200 rounded-lg hover:border-indigo-400 hover:text-indigo-600 active:bg-indigo-50 transition text-xs md:text-[10px] font-medium group min-h-[60px] md:min-h-0" onclick="toggleTemplateDropdown('booklet')">
+                    <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">menu_book</span>
+                    Booklets
                 </button>
                 <button class="flex flex-col items-center justify-center p-2 md:p-1.5 bg-white border border-slate-200 rounded-lg hover:border-indigo-400 hover:text-indigo-600 active:bg-indigo-50 transition text-xs md:text-[10px] font-medium group min-h-[60px] md:min-h-0" onclick="toggleTemplateDropdown('insert')">
                     <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">description</span>
@@ -171,7 +171,8 @@
 
             <!-- Template Dropdown Panels (one visible at a time) -->
             <div id="templateDropdown-outerEnv" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5">
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Outer Envelopes</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
                     <button class="template-dd-btn" onclick="addTemplate('env10'); closeTemplateDropdowns()">
                         <span class="font-bold">#10 Envelope</span><span class="text-slate-400">4.125" × 9.5"</span>
                     </button>
@@ -188,9 +189,7 @@
                         <span class="font-bold">A2 Envelope</span><span class="text-slate-400">4.375" × 5.75"</span>
                     </button>
                 </div>
-            </div>
-
-            <div id="templateDropdown-replyEnv" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Reply & Remittance</div>
                 <div class="grid grid-cols-3 gap-1.5">
                     <button class="template-dd-btn" onclick="addTemplate('bre9'); closeTemplateDropdowns()">
                         <span class="font-bold">#9 BRE</span><span class="text-slate-400">3.875" × 8.875"</span>
@@ -219,6 +218,19 @@
             </div>
 
             <div id="templateDropdown-specialtyFold" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Standard Folds</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
+                    <button class="template-dd-btn" onclick="addTemplate('accordion4'); closeTemplateDropdowns()">
+                        <span class="font-bold">Accordion (4-Panel)</span><span class="text-slate-400">8.5" × 28" flat</span>
+                    </button>
+                    <button class="template-dd-btn" onclick="addTemplate('accordion6'); closeTemplateDropdowns()">
+                        <span class="font-bold">Accordion (6-Panel)</span><span class="text-slate-400">8.5" × 42" flat</span>
+                    </button>
+                    <button class="template-dd-btn" onclick="addTemplate('zFold8x11'); closeTemplateDropdowns()">
+                        <span class="font-bold">Z-Fold</span><span class="text-slate-400">8.5"×11" → 8.5"×3.67"</span>
+                    </button>
+                </div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Specialty Folds</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5">
                     <button class="template-dd-btn" onclick="addTemplate('gateFold8x11'); closeTemplateDropdowns()">
                         <span class="font-bold">Gate Fold</span><span class="text-slate-400">17"×11" → 8.5"×11"</span>
@@ -229,14 +241,44 @@
                     <button class="template-dd-btn" onclick="addTemplate('rollFold8x14'); closeTemplateDropdowns()">
                         <span class="font-bold">Roll Fold</span><span class="text-slate-400">14"×8.5" → 3.5"×8.5"</span>
                     </button>
-                    <button class="template-dd-btn" onclick="addTemplate('zFold8x11'); closeTemplateDropdowns()">
-                        <span class="font-bold">Z-Fold</span><span class="text-slate-400">8.5"×11" → 8.5"×3.67"</span>
-                    </button>
                     <button class="template-dd-btn" onclick="addTemplate('ironCross'); closeTemplateDropdowns()">
                         <span class="font-bold">Iron Cross</span><span class="text-slate-400">17"×22" → 8.5"×11"</span>
                     </button>
                     <button class="template-dd-btn" onclick="addTemplate('frenchFold'); closeTemplateDropdowns()">
                         <span class="font-bold">French Fold</span><span class="text-slate-400">17"×11" → 8.5"×5.5"</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="templateDropdown-booklet" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Self-Cover (body stock throughout)</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_5x8_8sc'); closeTemplateDropdowns()">
+                        <span class="font-bold">5.5×8.5 8pp</span><span class="text-slate-400">Saddle · Self-Cover</span>
+                    </button>
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_8x11_8sc'); closeTemplateDropdowns()">
+                        <span class="font-bold">8.5×11 8pp</span><span class="text-slate-400">Saddle · Self-Cover</span>
+                    </button>
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_6x9_8sc'); closeTemplateDropdowns()">
+                        <span class="font-bold">6×9 8pp</span><span class="text-slate-400">Saddle · Self-Cover</span>
+                    </button>
+                </div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Plus-Cover (separate cover stock)</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_5x8_8pc'); closeTemplateDropdowns()">
+                        <span class="font-bold">5.5×8.5 8+4pp</span><span class="text-slate-400">Saddle · Plus-Cover</span>
+                    </button>
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_8x11_12pc'); closeTemplateDropdowns()">
+                        <span class="font-bold">8.5×11 12+4pp</span><span class="text-slate-400">Saddle · Plus-Cover</span>
+                    </button>
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_8x11_16pc'); closeTemplateDropdowns()">
+                        <span class="font-bold">8.5×11 16+4pp</span><span class="text-slate-400">Saddle · Plus-Cover</span>
+                    </button>
+                </div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Perfect Bound</div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5">
+                    <button class="template-dd-btn" onclick="addTemplate('booklet_8x11_32pb'); closeTemplateDropdowns()">
+                        <span class="font-bold">8.5×11 32+4pp</span><span class="text-slate-400">Perfect · Plus-Cover</span>
                     </button>
                 </div>
             </div>

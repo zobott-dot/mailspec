@@ -85,6 +85,23 @@ window.MailSpec.TEMPLATES = {
         layersAtFold: 4
     },
 
+    // Accordion Folds
+    accordion4: { type: 'accordion', name: 'Accordion (4-Panel)', w: 28, h: 8.5, panels: 4, foldAxis: 'w', stockName: 'Sappi McCoy 80# Gloss Text' },
+    accordion6: { type: 'accordion', name: 'Accordion (6-Panel)', w: 42, h: 8.5, panels: 6, foldAxis: 'w', stockName: 'Sappi McCoy 80# Gloss Text' },
+
+    // Booklets — Self-Cover
+    booklet_5x8_8sc: { type: 'booklet', name: '5.5×8.5 8pp SC', w: 5.5, h: 8.5, panels: 8, binding: 'stitch', stockName: 'Sappi McCoy 80# Gloss Text' },
+    booklet_8x11_8sc: { type: 'booklet', name: '8.5×11 8pp SC', w: 8.5, h: 11, panels: 8, binding: 'stitch', stockName: 'Sappi McCoy 80# Gloss Text' },
+    booklet_6x9_8sc: { type: 'booklet', name: '6×9 8pp SC', w: 6, h: 9, panels: 8, binding: 'stitch', stockName: 'Sappi McCoy 80# Gloss Text' },
+
+    // Booklets — Plus-Cover (Saddle)
+    booklet_5x8_8pc: { type: 'booklet', name: '5.5×8.5 8+4pp', w: 5.5, h: 8.5, panels: 12, binding: 'stitch', stockName: 'Sappi McCoy 80# Gloss Text', coverStockName: 'Sappi McCoy 80# Gloss Cover' },
+    booklet_8x11_12pc: { type: 'booklet', name: '8.5×11 12+4pp', w: 8.5, h: 11, panels: 16, binding: 'stitch', stockName: 'Sappi McCoy 80# Gloss Text', coverStockName: 'Sappi McCoy 80# Gloss Cover' },
+    booklet_8x11_16pc: { type: 'booklet', name: '8.5×11 16+4pp', w: 8.5, h: 11, panels: 20, binding: 'stitch', stockName: 'Sappi McCoy 80# Gloss Text', coverStockName: 'Sappi McCoy 80# Gloss Cover' },
+
+    // Booklets — Perfect Bound
+    booklet_8x11_32pb: { type: 'booklet', name: '8.5×11 32+4pp PB', w: 8.5, h: 11, panels: 36, binding: 'paste', stockName: 'Sappi McCoy 80# Gloss Text', coverStockName: 'Sappi McCoy 80# Gloss Cover' },
+
     // Cards
     cr80: { type: 'card', name: 'CR80 Card', w: 3.375, h: 2.125, stockName: '30mil PVC Card (CR80)' },
     businessCard: { type: 'card', name: 'Business Card', w: 3.5, h: 2, stockName: '14pt C2S Board' },

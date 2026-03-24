@@ -81,6 +81,8 @@ Phase 1 migration complete.
 
 - **Phase 2.5:** Template category dropdowns in build panel — 6 category buttons (Envelopes, Reply Env, Self-Mailers, Specialty, Inserts, Cards) above component buttons, each with dropdown showing category templates for one-click add. Renamed component buttons row to "Add Custom". Removed category-specific colors (emerald/rose) from templates modal buttons. Dark mode support for dropdowns.
 
+- **Phase 2.5b:** Build panel reorganization — consolidated Reply Envelopes into Envelopes dropdown with sub-labels (Outer / Reply & Remittance), renamed Specialty to Folds with sub-labels (Standard / Specialty) and added Accordion 4-panel and 6-panel templates, added Booklets category with self-cover, plus-cover (saddle), and perfect bound templates. `addTemplate()` now passes `coverStockName`, `binding`, and `panels` through to `addComponent()`. Removed type badge (ENV/FLAT/BOOKLET/etc.) from component card headers.
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

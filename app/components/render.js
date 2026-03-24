@@ -115,7 +115,7 @@
             // Coating dropdown
             const coatingOpts = Object.entries(COATINGS).map(([k, v]) => `<option value="${k}" ${c.coating === k ? 'selected' : ''}>${v.label}</option>`).join('');
 
-            let mainInputs = '', badge = '';
+            let mainInputs = '';
             const isCustomPanelType = ['sheet', 'selfmailer', 'accordion', 'booklet'].includes(c.type);
             const customPanelToggle = isCustomPanelType ? `
                     <label class="flex items-center gap-1.5 mb-2 cursor-pointer select-none">
@@ -137,7 +137,6 @@
                     </div>`;
 
             if (c.type === 'envelope') {
-                badge = '<span class="mode-pill finished">Env</span>';
                 mainInputs = `
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
@@ -153,7 +152,6 @@
                 const ply = parseInt(c.fold);
                 let dW = c.w, dH = c.h;
                 if (c.dimMode === 'finished') { if (c.foldAxis === 'h') dH = c.h / ply; else dW = c.w / ply; }
-                badge = `<span class="mode-pill ${c.type === 'selfmailer' ? 'mailer' : 'flat'}">${c.customPanels ? 'Custom' : (c.dimMode === 'flat' ? 'Flat' : 'Fin.')}</span>`;
                 if (c.customPanels) {
                     mainInputs = `
                     ${customPanelToggle}
@@ -193,7 +191,6 @@
                     <div><label class="input-label">Coating</label><select class="input-field" onchange="updateComponent(${c.id}, 'coating', this.value)">${coatingOpts}</select></div>`;
                 }
             } else if (c.type === 'booklet') {
-                badge = `<span class="mode-pill finished">${c.customPanels ? 'Custom' : 'Booklet'}</span>`;
                 if (c.customPanels) {
                     mainInputs = `
                     ${customPanelToggle}
@@ -214,7 +211,6 @@
                     <div class="mb-2"><label class="input-label">Body Stock</label><select class="input-field" onchange="updateComponent(${c.id}, 'stockIdx', this.value)">${stockOpts}</select></div>`;
                 }
             } else if (c.type === 'accordion') {
-                badge = `<span class="mode-pill mailer">${c.customPanels ? 'Custom' : 'Accordion'}</span>`;
                 if (c.customPanels) {
                     mainInputs = `
                     ${customPanelToggle}
@@ -240,7 +236,6 @@
                     </div>`;
                 }
             } else {
-                badge = '<span class="mode-pill finished">Item</span>';
                 mainInputs = `
                     <div class="grid grid-cols-2 gap-2 mb-2">
                         <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
@@ -260,7 +255,7 @@
                 <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2">
                     <div class="flex items-center gap-2">
                         <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 min-w-0 flex-1" onchange="updateComponent(${c.id}, 'name', this.value)">
-                        ${badge}${manualBadge}
+                        ${manualBadge}
                     </div>
                     <div class="flex gap-0.5">
                         ${(c.type === 'sheet' || c.type === 'selfmailer') && !c.customPanels ? `<button title="Toggle Flat/Finished" onclick="toggleDimMode(${c.id})" class="text-slate-300 hover:text-amber-600 p-1"><span class="material-symbols-outlined text-base">swap_vert</span></button>` : ''}

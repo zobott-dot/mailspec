@@ -22,10 +22,10 @@
             id, type,
             name: defaults.name || getName(type),
             w: defaults.w || 8.5, h: defaults.h || 11,
-            fold: defaults.fold || '1', panels: type === 'accordion' ? 4 : 8,
+            fold: defaults.fold || '1', panels: defaults.panels !== undefined ? defaults.panels : (type === 'accordion' ? 4 : 8),
             foldAxis: defaults.foldAxis || 'h', dimMode: 'flat',
             stockIdx: defaults.stockIdx !== undefined ? defaults.stockIdx : (defaultStock >= 0 ? defaultStock : 0),
-            coverStockIdx: -1, binding: 'stitch',
+            coverStockIdx: defaults.coverStockIdx !== undefined ? defaults.coverStockIdx : -1, binding: defaults.binding || 'stitch',
             sealType: 'none', coating: 'none',
             manualWeight: null, manualThick: null,
             customPanels: defaults.customPanels || false,
@@ -126,6 +126,12 @@
         const t = TEMPLATES[id]; if (!t) return;
         const stockIdx = STOCKS.findIndex(s => s.name === t.stockName);
         const defaults = { name: t.name, w: t.w, h: t.h, fold: t.fold || '1', foldAxis: t.foldAxis || 'h', stockIdx: stockIdx >= 0 ? stockIdx : 0 };
+        if (t.panels !== undefined) defaults.panels = t.panels;
+        if (t.binding) defaults.binding = t.binding;
+        if (t.coverStockName) {
+            const coverIdx = STOCKS.findIndex(s => s.name === t.coverStockName);
+            if (coverIdx >= 0) defaults.coverStockIdx = coverIdx;
+        }
         if (t.customPanels) {
             defaults.customPanels = true;
             defaults.flatWidth = t.flatWidth;

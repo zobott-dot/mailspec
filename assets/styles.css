@@ -620,12 +620,26 @@ html.dark table thead {
     border-bottom-color: #334155;
 }
 
-html.dark #analysisPanel thead.border-b {
-    border-bottom-color: #334155;
+html.dark #analysisPanel .border-b {
+    border-bottom-color: #334155 !important;
 }
 
-html.dark .border-b.border-slate-100 {
-    border-color: #334155;
+html.dark #analysisPanel .border-t {
+    border-top-color: #334155 !important;
+}
+
+html.dark #analysisPanel .divide-y > * + * {
+    border-top-color: #334155 !important;
+}
+
+html.dark #analysisPanel table,
+html.dark #analysisPanel thead,
+html.dark #analysisPanel tbody,
+html.dark #analysisPanel tfoot,
+html.dark #analysisPanel tr,
+html.dark #analysisPanel th,
+html.dark #analysisPanel td {
+    border-color: #334155 !important;
 }
 
 html.dark thead th {

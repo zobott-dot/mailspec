@@ -613,6 +613,19 @@ html.dark table {
 
 html.dark thead {
     background-color: #0f172a;
+    border-color: #334155;
+}
+
+html.dark table thead {
+    border-bottom-color: #334155;
+}
+
+html.dark #analysisPanel thead.border-b {
+    border-bottom-color: #334155;
+}
+
+html.dark .border-b.border-slate-100 {
+    border-color: #334155;
 }
 
 html.dark thead th {

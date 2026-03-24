@@ -16,7 +16,9 @@
     // --- HTML5 Drag and Drop (desktop) ---
 
     function onDragStart(e) {
-        const card = e.target.closest('.component-card');
+        const header = e.target.closest('.drag-header');
+        if (!header) return;
+        const card = header.closest('.component-card');
         if (!card) return;
 
         // Don't drag when interacting with inputs, selects, buttons
@@ -26,17 +28,11 @@
             return;
         }
 
-        // Only allow drag from header area
-        const header = card.querySelector('.drag-header');
-        if (!header || !header.contains(e.target)) {
-            e.preventDefault();
-            return;
-        }
-
         draggedId = parseInt(card.dataset.componentId);
         card.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', draggedId);
+        e.dataTransfer.setDragImage(card, 0, 0);
     }
 
     function onDragOver(e) {

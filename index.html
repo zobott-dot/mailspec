@@ -1096,7 +1096,7 @@
         <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50 shrink-0">
             <div class="flex items-center gap-2 text-indigo-800">
                 <span class="material-symbols-outlined">menu_book</span>
-                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Pro Manual v2.5</h2>
+                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Manual v2.6</h2>
             </div>
             <button class="touch-btn text-slate-400 hover:text-slate-600" onclick="document.getElementById('manualModal').close()">
                 <span class="material-symbols-outlined">close</span>
@@ -1475,7 +1475,7 @@
         var mobileVer = document.getElementById('mobileMenuVersion');
         if (mobileVer) mobileVer.textContent = 'MailSpec Pro v' + MAILSPEC_VERSION + ' \u2022 Mobile Edition';
         var manualVer = document.getElementById('manualVersion');
-        if (manualVer) manualVer.textContent = 'MailSpec Pro Manual v' + MAILSPEC_VERSION;
+        if (manualVer) manualVer.textContent = 'MailSpec Manual v' + MAILSPEC_VERSION;
 
         loadCustomStocks();
         const saved = localStorage.getItem(window.MailSpec.STORAGE_KEY_CURRENT);

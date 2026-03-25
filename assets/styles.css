@@ -190,6 +190,14 @@ select option { font-weight: 400; color: #334155; padding: 4px 8px; }
         -webkit-overflow-scrolling: touch;
     }
 
+    /* Smaller action buttons on mobile */
+    .component-card .flex.gap-0\.5 button {
+        padding: 0.125rem;
+    }
+    .component-card .flex.gap-0\.5 .material-symbols-outlined {
+        font-size: 14px;
+    }
+
     /* Modals full screen on mobile */
     dialog {
         max-width: 100% !important;

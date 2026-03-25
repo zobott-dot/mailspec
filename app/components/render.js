@@ -257,7 +257,7 @@
                         <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 min-w-0 flex-1" onchange="updateComponent(${c.id}, 'name', this.value)">
                         ${manualBadge}
                     </div>
-                    <div class="flex gap-0.5">
+                    <div class="flex gap-0.5 flex-wrap justify-end">
                         <button title="Move Up" onclick="moveComponent(${c.id}, -1)" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_up</span></button>
                         <button title="Move Down" onclick="moveComponent(${c.id}, 1)" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_down</span></button>
                         ${(c.type === 'sheet' || c.type === 'selfmailer') && !c.customPanels ? `<button title="Toggle Flat/Finished" onclick="toggleDimMode(${c.id})" class="text-slate-300 hover:text-amber-600 p-1"><span class="material-symbols-outlined text-base">swap_vert</span></button>` : ''}

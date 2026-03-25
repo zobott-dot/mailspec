@@ -98,7 +98,7 @@
         list.innerHTML = '';
         State.components.forEach(c => {
             const el = document.createElement('div');
-            el.className = 'component-card p-4';
+            el.className = 'component-card p-4 border-l-4 border-l-red-400';
 
             // Validate stockIdx - fix if out of bounds
             if (c.stockIdx < 0 || c.stockIdx >= STOCKS.length || !STOCKS[c.stockIdx]) {

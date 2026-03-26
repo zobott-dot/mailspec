@@ -90,10 +90,6 @@
         <span class="material-symbols-outlined">analytics</span>
         Results
     </button>
-    <button class="mobile-tab" id="tabTemplates" onclick="document.getElementById('templatesModal').showModal()">
-        <span class="material-symbols-outlined">dashboard</span>
-        Templates
-    </button>
     <button class="mobile-tab" id="tabMore" onclick="document.getElementById('mobileMenuModal').showModal()">
         <span class="material-symbols-outlined">menu</span>
         More
@@ -1660,6 +1656,7 @@
     window.toggleDimMode = C.toggleDimMode;
     window.toggleManual = C.toggleManual;
     window.toggleCustomPanels = C.toggleCustomPanels;
+    window.toggleComponentMenu = C.toggleComponentMenu;
     window.toggleDarkMode = toggleDarkMode;
     window.clearAllComponents = C.clearAllComponents;
     window.updateGlobalBuffer = C.updateGlobalBuffer;
@@ -1735,11 +1732,14 @@
             }
         });
 
-        // Close template dropdowns when clicking outside the template section
+        // Close template dropdowns and component overflow menus when clicking outside
         document.addEventListener('click', function(e) {
             const templateSection = document.getElementById('templateSection');
             if (templateSection && !templateSection.contains(e.target)) {
                 closeTemplateDropdowns();
+            }
+            if (!e.target.closest('.component-overflow-menu') && !e.target.closest('[onclick*="toggleComponentMenu"]')) {
+                document.querySelectorAll('.component-overflow-menu').forEach(m => m.classList.add('hidden'));
             }
         });
 

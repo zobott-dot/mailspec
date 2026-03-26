@@ -173,6 +173,17 @@
         C.renderComponents(); C.calculate(); C.autoSave();
     }
 
+    function toggleComponentMenu(id) {
+        const menu = document.getElementById('componentMenu-' + id);
+        if (!menu) return;
+        // Close all other open menus first
+        document.querySelectorAll('.component-overflow-menu').forEach(m => {
+            if (m.id !== 'componentMenu-' + id) m.classList.add('hidden');
+        });
+        menu.classList.toggle('hidden');
+    }
+
+    C.toggleComponentMenu = toggleComponentMenu;
     C.getName = getName;
     C.addComponent = addComponent;
     C.duplicateComponent = duplicateComponent;

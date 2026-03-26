@@ -190,14 +190,6 @@ select option { font-weight: 400; color: #334155; padding: 4px 8px; }
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Smaller action buttons on mobile */
-    .component-card .flex.gap-0\.5 button {
-        padding: 0.125rem;
-    }
-    .component-card .flex.gap-0\.5 .material-symbols-outlined {
-        font-size: 14px;
-    }
-
     /* Modals full screen on mobile */
     dialog {
         max-width: 100% !important;
@@ -496,6 +488,16 @@ button:active, .template-btn:active {
 .template-dd-btn span.text-slate-400 {
     font-size: 0.55rem;
     margin-top: 1px;
+}
+
+/* Component overflow menu */
+.component-overflow-menu {
+    animation: fadeIn 0.1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* ========== DARK MODE ========== */
@@ -976,6 +978,20 @@ html.dark #mobileMenuModal .bg-slate-100 {
 
 /* Aspect ratio bar background */
 html.dark .bg-slate-100.rounded-full {
+    background-color: #334155;
+}
+
+/* Component overflow menu dark mode */
+html.dark .component-overflow-menu {
+    background-color: #1e293b;
+    border-color: #334155;
+}
+
+html.dark .component-overflow-menu button {
+    color: #94a3b8;
+}
+
+html.dark .component-overflow-menu button:hover {
     background-color: #334155;
 }
 

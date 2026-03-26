@@ -257,14 +257,19 @@
                         <input type="text" value="${c.name}" class="font-bold text-sm text-slate-700 bg-transparent border-none p-0 min-w-0 flex-1" onchange="updateComponent(${c.id}, 'name', this.value)">
                         ${manualBadge}
                     </div>
-                    <div class="flex gap-0.5 flex-wrap justify-end">
+                    <div class="flex gap-0.5 items-center">
                         <button title="Move Up" onclick="moveComponent(${c.id}, -1)" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_up</span></button>
                         <button title="Move Down" onclick="moveComponent(${c.id}, 1)" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_down</span></button>
-                        ${(c.type === 'sheet' || c.type === 'selfmailer') && !c.customPanels ? `<button title="Toggle Flat/Finished" onclick="toggleDimMode(${c.id})" class="text-slate-300 hover:text-amber-600 p-1"><span class="material-symbols-outlined text-base">swap_vert</span></button>` : ''}
                         <button title="Duplicate" onclick="duplicateComponent(${c.id})" class="text-slate-300 hover:text-indigo-600 p-1"><span class="material-symbols-outlined text-base">content_copy</span></button>
-                        <button title="Manual Weight" onclick="toggleManual(${c.id}, 'weight')" class="text-slate-300 hover:text-purple-600 p-1"><span class="material-symbols-outlined text-base">scale</span></button>
-                        <button title="Manual Thickness" onclick="toggleManual(${c.id}, 'thick')" class="text-slate-300 hover:text-purple-600 p-1"><span class="material-symbols-outlined text-base">straighten</span></button>
                         <button title="Delete" onclick="removeComponent(${c.id})" class="text-slate-300 hover:text-red-500 p-1"><span class="material-symbols-outlined text-base">delete</span></button>
+                        <div class="relative">
+                            <button title="More actions" onclick="toggleComponentMenu(${c.id})" class="text-slate-300 hover:text-slate-600 p-1"><span class="material-symbols-outlined text-base">more_vert</span></button>
+                            <div id="componentMenu-${c.id}" class="component-overflow-menu hidden absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-30 py-1 min-w-[160px]">
+                                ${(c.type === 'sheet' || c.type === 'selfmailer') && !c.customPanels ? `<button class="w-full text-left px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 flex items-center gap-2" onclick="toggleDimMode(${c.id}); toggleComponentMenu(${c.id})"><span class="material-symbols-outlined text-sm text-amber-500">swap_vert</span> Toggle Flat/Finished</button>` : ''}
+                                <button class="w-full text-left px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 flex items-center gap-2" onclick="toggleManual(${c.id}, 'weight'); toggleComponentMenu(${c.id})"><span class="material-symbols-outlined text-sm text-purple-500">scale</span> Manual Weight</button>
+                                <button class="w-full text-left px-3 py-2 text-xs text-slate-600 hover:bg-slate-50 flex items-center gap-2" onclick="toggleManual(${c.id}, 'thick'); toggleComponentMenu(${c.id})"><span class="material-symbols-outlined text-sm text-purple-500">straighten</span> Manual Thickness</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 ${mainInputs}`;

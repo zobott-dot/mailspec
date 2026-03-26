@@ -215,7 +215,7 @@
         const compliancePanel = document.getElementById('compliancePanel');
         const selfMailer = State.components.find(c => c.type === 'selfmailer');
 
-        if (selfMailer && State.components.length > 0) {
+        if (selfMailer && selfMailer.fold !== '1' && State.components.length > 0) {
             const hasOptional = document.getElementById('complianceOptionalElements')?.checked || false;
             const compliance = Compliance.evaluateSelfMailer({
                 foldType: selfMailer.fold,

@@ -43,6 +43,10 @@ No install, build, or test commands — open `index.html` directly in a browser 
 
 The legacy single-file version is preserved as `mailspec-assembly-tool-v2.4.html` for reference. The modular version in `index.html` + `app/data/` + `assets/` should behave identically.
 
+## Testing
+
+Open `tests/index.html` in a browser to run the regression test suite. It tests calculateComponentMetrics (all component types + custom panels + coatings + manual overrides), classifyPiece (all boundary conditions), lookupPostage, getWeightStatus, and evaluateSelfMailer (all fold types + optional elements + weight limits). No framework needed — just open the page and check for green.
+
 ## Key Constraints
 
 - **No bundler.** All JS uses `window.MailSpec` namespace, not ES modules.

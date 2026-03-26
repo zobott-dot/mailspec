@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MailSpec Test Suite</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #0f172a; color: #e2e8f0; padding: 2rem; font-size: 14px; line-height: 1.6; }
+        h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; color: #f8fafc; }
+        h2 { font-size: 1.1rem; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #94a3b8; border-bottom: 1px solid #334155; padding-bottom: 4px; }
+        .pass { color: #4ade80; }
+        .fail { color: #f87171; font-weight: bold; }
+        .summary { margin-top: 2rem; padding: 1rem; border: 2px solid #334155; border-radius: 8px; font-size: 1.1rem; }
+        .summary.all-pass { border-color: #4ade80; }
+        .summary.has-fail { border-color: #f87171; }
+        .detail { color: #64748b; font-size: 12px; margin-left: 2rem; }
+    </style>
+</head>
+<body>
+    <h1>MailSpec Test Suite</h1>
+    <div id="version"></div>
+    <div id="output"></div>
+    <div id="summary"></div>
+
+    <!-- Load app data and utility modules -->
+    <script src="../app/data/stocks.js"></script>
+    <script src="../app/data/coatings.js"></script>
+    <script src="../app/data/seals.js"></script>
+    <script src="../app/data/postage.js"></script>
+    <script src="../app/utils/calculations.js"></script>
+    <script src="../app/utils/postal.js"></script>
+    <script src="../app/utils/compliance.js"></script>
+
+    <script>
+        const Calc = window.MailSpec.Calculations;
+        const Postal = window.MailSpec.Postal;
+        const Compliance = window.MailSpec.Compliance;
+        const STOCKS = window.MailSpec.STOCKS;
+
+        let totalTests = 0;
+        let passCount = 0;
+        let failCount = 0;
+        let output = '';
+
+        function section(title) {
+            output += `<h2>${title}</h2>`;
+        }
+
+        function assert(description, actual, expected, tolerance) {
+            totalTests++;
+            const tol = tolerance || 0.0005;
+            const passed = Math.abs(actual - expected) < tol;
+            if (passed) {
+                passCount++;
+                output += `<div class="pass">[PASS] ${description}</div>`;
+            } else {
+                failCount++;
+                output += `<div class="fail">[FAIL] ${description}</div>`;
+                output += `<div class="detail">Expected: ${expected}, Got: ${actual}, Diff: ${(actual - expected).toFixed(6)}</div>`;
+            }
+        }
+
+        function assertString(description, actual, expected) {
+            totalTests++;
+            if (actual === expected) {
+                passCount++;
+                output += `<div class="pass">[PASS] ${description}</div>`;
+            } else {
+                failCount++;
+                output += `<div class="fail">[FAIL] ${description}</div>`;
+                output += `<div class="detail">Expected: "${expected}", Got: "${actual}"</div>`;
+            }
+        }
+
+        // Helper: find stock index by name
+        function stockIdx(name) {
+            return STOCKS.findIndex(s => s.name === name);
+        }
+
+        // Helper: build a minimal component object
+        function makeComponent(overrides) {
+            const defaults = {
+                type: 'sheet', w: 8.5, h: 11, fold: '1', panels: 8,
+                foldAxis: 'h', stockIdx: 0, coverStockIdx: -1, binding: 'stitch',
+                coating: 'none', manualWeight: null, manualThick: null,
+                customPanels: false, flatWidth: null, flatHeight: null,
+                finishedWidth: null, finishedHeight: null, layersAtFold: null,
+                caliper: 0, gsm: 0
+            };
+            const comp = Object.assign(defaults, overrides);
+            if (comp.caliper === 0 && STOCKS[comp.stockIdx]) {
+                comp.caliper = STOCKS[comp.stockIdx].cal;
+                comp.gsm = STOCKS[comp.stockIdx].gsm;
+            }
+            return comp;
+        }
+
+        // =====================================================
+        // CALCULATION TESTS
+        // =====================================================
+        section('Calculations: Envelope');
+
+        (function() {
+            // #10 Envelope on 24# White Wove: 9.5 x 4.125, cal=0.0040, gsm=90
+            var idx = stockIdx('24# White Wove Envelope');
+            var c = makeComponent({ type: 'envelope', w: 9.5, h: 4.125, stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            // Weight: (9.5 * 4.125 * 2.1 / 1550.0031) * 90 * 0.035274
+            var expectedArea = 9.5 * 4.125 * 2.1;
+            var expectedWeight = (expectedArea / 1550.0031) * 90 * 0.035274;
+            assert('Envelope weight: #10 on 24# White Wove', m.weightOz, expectedWeight);
+
+            // Thickness: 0.0040 * 2 * 1.1
+            assert('Envelope thickness: #10 on 24# White Wove', m.itemThick, 0.0040 * 2 * 1.1);
+
+            // Finished dimensions same as input (no folding)
+            assert('Envelope finW unchanged', m.finW, 9.5);
+            assert('Envelope finH unchanged', m.finH, 4.125);
+        })();
+
+        section('Calculations: Sheet/Self-Mailer (standard folds)');
+
+        (function() {
+            // Letter tri-fold: 8.5 x 11, fold=3, foldAxis=h, Cougar 60# Text (cal=0.0046, gsm=89)
+            var idx = stockIdx('Domtar Cougar 60# Text');
+            var c = makeComponent({ type: 'sheet', w: 8.5, h: 11, fold: '3', foldAxis: 'h', stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            assert('Tri-fold finH: 11/3', m.finH, 11 / 3, 0.001);
+            assert('Tri-fold finW unchanged', m.finW, 8.5);
+
+            var expectedWeight = (8.5 * 11 / 1550.0031) * 89 * 0.035274;
+            assert('Tri-fold weight uses flat area', m.weightOz, expectedWeight);
+
+            // Thickness: cal * ply * bulge, bulge = 1.1 + (3 * 0.02) = 1.16
+            var expectedThick = 0.0046 * 3 * 1.16;
+            assert('Tri-fold thickness with bulge', m.itemThick, expectedThick);
+        })();
+
+        (function() {
+            // Bi-fold self-mailer: 12 x 9, fold=2, foldAxis=w, McCoy 100# Gloss Cover
+            var idx = stockIdx('Sappi McCoy 100# Gloss Cover');
+            var c = makeComponent({ type: 'selfmailer', w: 12, h: 9, fold: '2', foldAxis: 'w', stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            assert('Bi-fold finW: 12/2', m.finW, 6);
+            assert('Bi-fold finH unchanged', m.finH, 9);
+
+            // Bulge for ply=2: 1.1 + (2 * 0.02) = 1.14
+            var expectedThick = 0.0087 * 2 * 1.14;
+            assert('Bi-fold thickness', m.itemThick, expectedThick);
+        })();
+
+        (function() {
+            // Flat sheet (no fold): 8.5 x 3.5, fold=1, McCoy 80# Gloss Text
+            var idx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var c = makeComponent({ type: 'sheet', w: 8.5, h: 3.5, fold: '1', stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            assert('Flat sheet finW unchanged', m.finW, 8.5);
+            assert('Flat sheet finH unchanged', m.finH, 3.5);
+
+            // ply=1, bulge=1.0 (no bulge for single ply)
+            assert('Flat sheet thickness = caliper', m.itemThick, 0.0035 * 1 * 1.0);
+        })();
+
+        section('Calculations: Accordion');
+
+        (function() {
+            // Accordion 4-panel: 28 x 8.5, panels=4, foldAxis=w, McCoy 80# Gloss Text
+            var idx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var c = makeComponent({ type: 'accordion', w: 28, h: 8.5, panels: 4, foldAxis: 'w', stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            assert('Accordion finW: 28/4', m.finW, 7);
+            assert('Accordion finH unchanged', m.finH, 8.5);
+
+            var expectedWeight = (28 * 8.5 / 1550.0031) * 118 * 0.035274;
+            assert('Accordion weight uses flat area', m.weightOz, expectedWeight);
+
+            // Bulge for ply=4: 1.1 + (4 * 0.02) = 1.18
+            var expectedThick = 0.0035 * 4 * 1.18;
+            assert('Accordion thickness', m.itemThick, expectedThick);
+        })();
+
+        section('Calculations: Custom Panel Mode');
+
+        (function() {
+            // Gate fold via custom panels: flat 17x11, finished 8.5x11, layers=4, McCoy 100# Gloss Cover
+            var idx = stockIdx('Sappi McCoy 100# Gloss Cover');
+            var c = makeComponent({
+                type: 'selfmailer', w: 17, h: 11, stockIdx: idx,
+                customPanels: true, flatWidth: 17, flatHeight: 11,
+                finishedWidth: 8.5, finishedHeight: 11, layersAtFold: 4
+            });
+            var m = Calc.calculateComponentMetrics(c);
+
+            assert('Custom panel finW = finishedWidth', m.finW, 8.5);
+            assert('Custom panel finH = finishedHeight', m.finH, 11);
+
+            // Weight uses flat area: 17 * 11
+            var expectedWeight = (17 * 11 / 1550.0031) * 270 * 0.035274;
+            assert('Custom panel weight uses flat area', m.weightOz, expectedWeight);
+
+            // Thickness: cal * layers * bulge, bulge = 1.1 + (4 * 0.02) = 1.18
+            var expectedThick = 0.0087 * 4 * 1.18;
+            assert('Custom panel thickness uses layersAtFold', m.itemThick, expectedThick);
+        })();
+
+        section('Calculations: Booklet (self-cover)');
+
+        (function() {
+            // 8-page self-cover booklet: 8.5x11, panels=8, stitch, McCoy 80# Gloss Text
+            var idx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var c = makeComponent({
+                type: 'booklet', w: 8.5, h: 11, panels: 8, binding: 'stitch',
+                stockIdx: idx, coverStockIdx: -1
+            });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var bodyArea = (8.5 * 11 * 2) * (8 / 4);
+            var bodyWeight = (bodyArea / 1550.0031) * 118 * 0.035274;
+            var coverArea = 8.5 * 2 * 11;
+            var coverWeight = (coverArea / 1550.0031) * 118 * 0.035274;
+            assert('Booklet self-cover weight', m.weightOz, bodyWeight + coverWeight);
+
+            var expectedThick = (0.0035 * 4 + 0.0035 * 2) * 1.25;
+            assert('Booklet self-cover thickness (saddle)', m.itemThick, expectedThick);
+        })();
+
+        section('Calculations: Booklet (plus-cover)');
+
+        (function() {
+            // 12+4 page plus-cover: 8.5x11, panels=16, stitch
+            var bodyIdx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var coverIdx = stockIdx('Sappi McCoy 100# Gloss Cover');
+            var c = makeComponent({
+                type: 'booklet', w: 8.5, h: 11, panels: 16, binding: 'stitch',
+                stockIdx: bodyIdx, coverStockIdx: coverIdx
+            });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var bodyArea = (8.5 * 11 * 2) * (12 / 4);
+            var bodyWeight = (bodyArea / 1550.0031) * 118 * 0.035274;
+            var coverArea = 8.5 * 2 * 11;
+            var coverWeight = (coverArea / 1550.0031) * 270 * 0.035274;
+            assert('Booklet plus-cover weight', m.weightOz, bodyWeight + coverWeight);
+
+            var expectedThick = (0.0035 * 6 + 0.0087 * 2) * 1.25;
+            assert('Booklet plus-cover thickness (saddle)', m.itemThick, expectedThick);
+        })();
+
+        (function() {
+            // Perfect bound booklet: 32+4 pages, paste binding
+            var bodyIdx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var coverIdx = stockIdx('Sappi McCoy 100# Gloss Cover');
+            var c = makeComponent({
+                type: 'booklet', w: 8.5, h: 11, panels: 36, binding: 'paste',
+                stockIdx: bodyIdx, coverStockIdx: coverIdx
+            });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var bodyThick = 0.0035 * (32 / 2);
+            var coverThick = 0.0087 * 2;
+            var expectedThick = (bodyThick + coverThick) * 1.05 + 0.015;
+            assert('Booklet perfect bound thickness (with glue)', m.itemThick, expectedThick);
+        })();
+
+        section('Calculations: Card (default type)');
+
+        (function() {
+            // CR80 card: 3.375 x 2.125, 30mil PVC
+            var idx = stockIdx('30mil PVC Card (CR80)');
+            var c = makeComponent({ type: 'card', w: 3.375, h: 2.125, stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var expectedWeight = (3.375 * 2.125 / 1550.0031) * 1400 * 0.035274;
+            assert('Card weight', m.weightOz, expectedWeight);
+            assert('Card thickness = caliper', m.itemThick, 0.0300);
+        })();
+
+        section('Calculations: Coating Weight Addition');
+
+        (function() {
+            // Sheet with UV coating (+3.5%)
+            var idx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var c = makeComponent({ type: 'sheet', w: 8.5, h: 11, fold: '1', stockIdx: idx, coating: 'uv' });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var baseWeight = (8.5 * 11 / 1550.0031) * 118 * 0.035274;
+            var expectedWeight = baseWeight * (1 + 0.035);
+            assert('UV coating adds 3.5% to weight', m.weightOz, expectedWeight);
+        })();
+
+        section('Calculations: Manual Overrides');
+
+        (function() {
+            var idx = stockIdx('Sappi McCoy 80# Gloss Text');
+            var c = makeComponent({ type: 'sheet', w: 8.5, h: 11, fold: '1', stockIdx: idx, manualWeight: 0.5, manualThick: 0.01 });
+            var m = Calc.calculateComponentMetrics(c);
+
+            assert('Manual weight override', m.weightOz, 0.5);
+            assert('Manual thickness override', m.itemThick, 0.01);
+        })();
+
+        section('Calculations: Buffers and Seals');
+
+        (function() {
+            // Weight buffer: 5%
+            assert('Weight buffer 5%', Calc.applyWeightBuffer(1.0, 5), 1.05);
+            assert('Weight buffer 0%', Calc.applyWeightBuffer(1.0, 0), 1.0);
+
+            // Thickness buffer
+            var result = Calc.applyThicknessBuffer(0.02, 0.001, 5);
+            assert('Thickness buffer 5%', result.thickness, 0.021);
+            assert('Tolerance buffer 5%', result.toleranceSum, 0.00105);
+
+            // Seals: 2 wafer tabs
+            var sealResult = Calc.applySeals(0.02, 0.5, 'wafer', 2);
+            assert('Seal thickness: 2 wafer', sealResult.thickness, 0.02 + 0.002 * 2);
+            assert('Seal weight: 2 wafer', sealResult.weightOz, 0.5 + 0.003 * 2);
+
+            // Seals: none
+            var noSeal = Calc.applySeals(0.02, 0.5, 'none', 0);
+            assert('No seal: thickness unchanged', noSeal.thickness, 0.02);
+            assert('No seal: weight unchanged', noSeal.weightOz, 0.5);
+        })();
+
+        // =====================================================
+        // CLASSIFICATION TESTS
+        // =====================================================
+        section('Classification: Letter Boundaries');
+
+        (function() {
+            // Standard letter
+            var r = Postal.classifyPiece(9.5, 4.125, 0.01, true);
+            assertString('Standard letter', r.pClass, 'Letter');
+            assertString('Standard letter sub', r.pSub, 'Automation');
+
+            // At letter height limit (exactly 6.125)
+            r = Postal.classifyPiece(9.5, 6.125, 0.01, true);
+            assertString('At height limit 6.125: still Letter', r.pClass, 'Letter');
+
+            // Over letter height limit
+            r = Postal.classifyPiece(9.5, 6.126, 0.01, true);
+            assertString('Over height limit 6.126: Flat', r.pClass, 'Flat');
+
+            // At letter width limit (exactly 11.5)
+            r = Postal.classifyPiece(11.5, 4.125, 0.01, true);
+            assertString('At width limit 11.5: still Letter', r.pClass, 'Letter');
+
+            // Over letter width limit
+            r = Postal.classifyPiece(11.501, 4.125, 0.01, true);
+            assertString('Over width limit 11.501: Flat', r.pClass, 'Flat');
+
+            // At thickness limit (exactly 0.25)
+            r = Postal.classifyPiece(9.5, 4.125, 0.25, true);
+            assertString('At thickness limit 0.25: still Letter', r.pClass, 'Letter');
+
+            // Over thickness limit
+            r = Postal.classifyPiece(9.5, 4.125, 0.251, true);
+            assertString('Over thickness limit 0.251: Flat', r.pClass, 'Flat');
+        })();
+
+        section('Classification: Flat and Parcel');
+
+        (function() {
+            // Flat piece
+            var r = Postal.classifyPiece(12, 9, 0.3, true);
+            assertString('Large flat', r.pClass, 'Flat');
+
+            // Over flat limits -> Parcel
+            r = Postal.classifyPiece(16, 9, 0.3, true);
+            assertString('Width > 15: Parcel', r.pClass, 'Parcel');
+
+            r = Postal.classifyPiece(12, 13, 0.3, true);
+            assertString('Height > 12: Parcel', r.pClass, 'Parcel');
+
+            r = Postal.classifyPiece(12, 9, 0.76, true);
+            assertString('Thickness > 0.75: Parcel', r.pClass, 'Parcel');
+        })();
+
+        section('Classification: Non-Mailable and Aspect Ratio');
+
+        (function() {
+            // Too small
+            var r = Postal.classifyPiece(4, 3, 0.01, true);
+            assertString('Too small: Non-Mailable', r.pClass, 'Non-Mailable');
+
+            // Bad aspect ratio (too low)
+            r = Postal.classifyPiece(6, 5, 0.01, true);
+            assertString('Aspect ratio 1.2: Non-Machinable', r.pSub, 'Non-Machinable');
+            assertString('Aspect ratio 1.2: still Letter class', r.pClass, 'Letter');
+
+            // Bad aspect ratio (too high)
+            r = Postal.classifyPiece(10, 3.5, 0.01, true);
+            assertString('Aspect ratio 2.86: Non-Machinable', r.pSub, 'Non-Machinable');
+
+            // Good aspect ratio
+            r = Postal.classifyPiece(9.5, 4.125, 0.01, true);
+            assertString('Aspect ratio 2.30: Automation', r.pSub, 'Automation');
+
+            // No components
+            r = Postal.classifyPiece(9.5, 4.125, 0.01, false);
+            assertString('No components: dash', r.pClass, '—');
+        })();
+
+        section('Classification: Postage Lookup');
+
+        (function() {
+            var r = Postal.lookupPostage('Letter', false, 0.5, true);
+            assert('Letter postage: marketing', r.marketingRate, 0.355);
+            assert('Letter postage: first-class 1oz', r.firstClassRate, 0.64);
+
+            r = Postal.lookupPostage('Letter', false, 1.5, true);
+            assert('Letter 1.5oz: first-class 2oz rate', r.firstClassRate, 0.93);
+
+            r = Postal.lookupPostage('Flat', true, 2.0, true);
+            assert('Flat postage: marketing', r.marketingRate, 0.56);
+            assert('Flat postage: first-class', r.firstClassRate, 1.60);
+
+            r = Postal.lookupPostage('Parcel', false, 15, true);
+            assert('Parcel: no marketing rate', r.marketingRate, 0);
+            assert('Parcel: no first-class rate', r.firstClassRate, 0);
+        })();
+
+        section('Classification: Weight Status');
+
+        (function() {
+            assertString('Weight 0.5oz', Postal.getWeightStatus(0.5, true), 'Machinable ≤1oz');
+            assertString('Weight 2.0oz', Postal.getWeightStatus(2.0, true), 'Std Letter ≤3.5oz');
+            assertString('Weight 5.0oz', Postal.getWeightStatus(5.0, true), 'Flat ≤13oz');
+            assertString('Weight 15oz', Postal.getWeightStatus(15.0, true), 'Parcel');
+            assertString('No components', Postal.getWeightStatus(0, false), '—');
+        })();
+
+        // =====================================================
+        // COMPLIANCE TESTS
+        // =====================================================
+        section('Compliance: Flat/Postcard');
+
+        (function() {
+            var r = Compliance.evaluateSelfMailer({ foldType: '1', totalWeightOz: 0.5, sealType: 'none', sealQty: 0, hasOptionalElements: false });
+            assertString('Postcard: N/A', r.status, 'na');
+        })();
+
+        section('Compliance: Bi-fold Tab Requirements');
+
+        (function() {
+            // Bi-fold under 1oz, no seals
+            var r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'none', sealQty: 0, hasOptionalElements: false });
+            assertString('Bi-fold no seals: fail', r.status, 'fail');
+            assert('Bi-fold requires 2 tabs', r.requiredTabs, 2);
+            assertString('Bi-fold tab size 1"', r.requiredSize, '1"');
+
+            // Bi-fold under 1oz, 2 wafer tabs
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false });
+            assertString('Bi-fold 2 tabs: pass', r.status, 'pass');
+
+            // Bi-fold under 1oz, 1 wafer tab (not enough)
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 1, hasOptionalElements: false });
+            assertString('Bi-fold 1 tab: fail', r.status, 'fail');
+
+            // Bi-fold over 1oz
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false });
+            assertString('Bi-fold over 1oz: pass (2 tabs)', r.status, 'pass');
+            assertString('Bi-fold over 1oz: size 1.5"', r.requiredSize, '1.5"');
+        })();
+
+        section('Compliance: Quarter-fold');
+
+        (function() {
+            // Quarter-fold over 1oz needs 3 tabs
+            var r = Compliance.evaluateSelfMailer({ foldType: '4', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false });
+            assertString('Quarter-fold over 1oz, 2 tabs: fail', r.status, 'fail');
+            assert('Quarter-fold requires 3 tabs', r.requiredTabs, 3);
+
+            r = Compliance.evaluateSelfMailer({ foldType: '4', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 3, hasOptionalElements: false });
+            assertString('Quarter-fold over 1oz, 3 tabs: pass', r.status, 'pass');
+        })();
+
+        section('Compliance: Optional Elements');
+
+        (function() {
+            // Bi-fold with optional elements needs 3 tabs
+            var r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: true });
+            assertString('Optional elements, 2 tabs: fail', r.status, 'fail');
+            assert('Optional elements require 3 tabs', r.requiredTabs, 3);
+
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 3, hasOptionalElements: true });
+            assertString('Optional elements, 3 tabs: pass', r.status, 'pass');
+        })();
+
+        section('Compliance: Line Glue and Weight Limit');
+
+        (function() {
+            // Line glue is acceptable
+            var r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'line_glue', sealQty: 2, hasOptionalElements: false });
+            assertString('Line glue: pass', r.status, 'pass');
+
+            // Line glue qty 1: caution
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'line_glue', sealQty: 1, hasOptionalElements: false });
+            assertString('Line glue qty 1: caution', r.status, 'caution');
+
+            // Over 3oz: fail regardless
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 3.5, sealType: 'wafer', sealQty: 3, hasOptionalElements: false });
+            assertString('Over 3oz: fail', r.status, 'fail');
+        })();
+
+        // =====================================================
+        // RENDER RESULTS
+        // =====================================================
+        document.getElementById('version').innerHTML = '<div style="color: #64748b; margin-bottom: 1rem;">Testing against MailSpec data modules (' + STOCKS.length + ' stocks loaded)</div>';
+        document.getElementById('output').innerHTML = output;
+
+        var summaryClass = failCount === 0 ? 'summary all-pass' : 'summary has-fail';
+        var summaryText = failCount === 0
+            ? `All ${totalTests} tests passed.`
+            : `${passCount}/${totalTests} passed, <span class="fail">${failCount} failed</span>.`;
+        document.getElementById('summary').innerHTML = `<div class="${summaryClass}">${summaryText}</div>`;
+    </script>
+</body>
+</html>

@@ -153,12 +153,13 @@
         totalThickness = sealResult.thickness;
         totalWeightOz = sealResult.weightOz;
 
-        document.getElementById('totalW').textContent = maxW.toFixed(3);
-        document.getElementById('totalH').textContent = maxH.toFixed(3);
-        document.getElementById('dimSource').textContent = State.components.length ? `From: ${driverName}` : 'Add a component';
-        document.getElementById('totalThick').textContent = totalThickness.toFixed(4);
-        document.getElementById('totalWeight').textContent = totalWeightOz.toFixed(3);
-        document.getElementById('thickRange').textContent = State.components.length ? `${(totalThickness - totalToleranceSum).toFixed(4)}" – ${(totalThickness + totalToleranceSum).toFixed(4)}"` : '—';
+        const hasComponents = State.components.length > 0;
+        document.getElementById('totalW').textContent = hasComponents ? maxW.toFixed(3) + '"' : '—';
+        document.getElementById('totalH').textContent = hasComponents ? maxH.toFixed(3) + '"' : '—';
+        document.getElementById('dimSource').textContent = hasComponents ? `From: ${driverName}` : 'Add a component';
+        document.getElementById('totalThick').textContent = hasComponents ? totalThickness.toFixed(4) + '"' : '—';
+        document.getElementById('totalWeight').textContent = hasComponents ? totalWeightOz.toFixed(3) + ' oz' : '—';
+        document.getElementById('thickRange').textContent = hasComponents ? `${(totalThickness - totalToleranceSum).toFixed(4)}" – ${(totalThickness + totalToleranceSum).toFixed(4)}"` : '—';
 
         // Classification
         const classification = Postal.classifyPiece(maxW, maxH, totalThickness, State.components.length > 0);
@@ -166,7 +167,7 @@
 
         document.getElementById('postalClass').textContent = classification.pClass;
         document.getElementById('postalSub').textContent = classification.pSub;
-        document.getElementById('aspectVal').textContent = ratio.toFixed(2);
+        document.getElementById('aspectVal').textContent = hasComponents ? ratio.toFixed(2) : '—';
         const rPct = Math.min(100, Math.max(0, ((ratio - 0.5) / 2.5) * 100));
         document.getElementById('aspectBar').style.width = rPct + '%';
         document.getElementById('aspectBar').className = (ratio >= 1.3 && ratio <= 2.5) ? 'h-full bg-emerald-500' : 'h-full bg-amber-500';
@@ -275,10 +276,10 @@
         // Trays
         const trays = Postal.calculateTrayCapacity(maxW, maxH, totalThickness, totalWeightOz);
         document.getElementById('emmAlert').className = trays.emm ? 'mt-3 text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-100 flex items-center gap-2' : 'hidden';
-        document.getElementById('tray2Count').textContent = trays.tray2Count.toLocaleString();
-        document.getElementById('tray1Count').textContent = trays.tray1Count.toLocaleString();
-        document.getElementById('tray2Weight').textContent = trays.tray2Weight.toFixed(1);
-        document.getElementById('tray1Weight').textContent = trays.tray1Weight.toFixed(1);
+        document.getElementById('tray2Count').textContent = hasComponents ? trays.tray2Count.toLocaleString() : '—';
+        document.getElementById('tray1Count').textContent = hasComponents ? trays.tray1Count.toLocaleString() : '—';
+        document.getElementById('tray2Weight').textContent = hasComponents ? trays.tray2Weight.toFixed(1) + ' lbs' : '—';
+        document.getElementById('tray1Weight').textContent = hasComponents ? trays.tray1Weight.toFixed(1) + ' lbs' : '—';
 
         // BOM Table
         document.getElementById('bomTable').innerHTML = bomData.map(i => {
@@ -292,8 +293,8 @@
                 <td class="px-4 py-2 text-right font-mono text-xs">${i.weight.toFixed(3)} oz</td>
             </tr>`;
         }).join('');
-        document.getElementById('bomTotalThick').textContent = totalThickness.toFixed(4) + '"';
-        document.getElementById('bomTotalWeight').textContent = totalWeightOz.toFixed(3) + ' oz';
+        document.getElementById('bomTotalThick').textContent = hasComponents ? totalThickness.toFixed(4) + '"' : '—';
+        document.getElementById('bomTotalWeight').textContent = hasComponents ? totalWeightOz.toFixed(3) + ' oz' : '—';
     }
 
     C.calculate = calculate;

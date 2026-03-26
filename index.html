@@ -1794,6 +1794,15 @@
             }
         });
 
+        // Close dialog modals on backdrop click
+        document.querySelectorAll('dialog').forEach(function(dialog) {
+            dialog.addEventListener('click', function(e) {
+                if (e.target === dialog) {
+                    dialog.close();
+                }
+            });
+        });
+
         console.log(`MailSpec v${MAILSPEC_VERSION}: Initialization complete`);
     });
 

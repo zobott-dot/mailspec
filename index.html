@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="MailSpec">
     <meta name="theme-color" content="#4f46e5">
     <meta name="description" content="Direct mail component weight and dimension calculator">
-    <title>MailSpec Pro | Component Assembly Tool v2.5</title>
+    <title>MailSpec | Component Assembly Tool</title>
 
     <!-- PWA App Icon (inline SVG as data URI) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234f46e5'/%3E%3Cstop offset='100%25' style='stop-color:%237c3aed'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='96' fill='url(%23bg)'/%3E%3Cg fill='white'%3E%3Crect x='96' y='160' width='320' height='48' rx='8'/%3E%3Crect x='96' y='232' width='240' height='48' rx='8' opacity='0.8'/%3E%3Crect x='96' y='304' width='280' height='48' rx='8' opacity='0.6'/%3E%3Ccircle cx='400' cy='352' r='64' opacity='0.9'/%3E%3Ctext x='400' y='368' text-anchor='middle' font-size='56' font-weight='bold' fill='%234f46e5'%3Eoz%3C/text%3E%3C/g%3E%3C/svg%3E">
@@ -126,7 +126,7 @@
             </button>
         </div>
         <div class="p-4 border-t border-slate-100 bg-slate-50">
-            <p class="text-xs text-slate-500 text-center" id="mobileMenuVersion">MailSpec Pro v2.5 • Mobile Edition</p>
+            <p class="text-xs text-slate-500 text-center" id="mobileMenuVersion">MailSpec v3.0 • Mobile Edition</p>
         </div>
     </div>
 </dialog>
@@ -1093,7 +1093,7 @@
         <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50 shrink-0">
             <div class="flex items-center gap-2 text-indigo-800">
                 <span class="material-symbols-outlined">menu_book</span>
-                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Manual v2.6</h2>
+                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Manual v3.0</h2>
             </div>
             <button class="touch-btn text-slate-400 hover:text-slate-600" onclick="document.getElementById('manualModal').close()">
                 <span class="material-symbols-outlined">close</span>
@@ -1110,6 +1110,7 @@
                     <a href="#manual-tips" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Tips & Features</a>
                     <a href="#manual-whats-new" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">What's New</a>
                     <a href="#manual-data-sources" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Data Sources</a>
+                    <a href="#manual-testing" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Testing</a>
                 </div>
             </nav>
 
@@ -1122,7 +1123,7 @@
                 <div class="space-y-4">
                     <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-indigo-800 mb-2">What This Tool Does</h4>
-                        <p class="text-xs md:text-sm text-slate-600">MailSpec Pro calculates the weight, thickness, and postal classification of direct mail assemblies. Choose from template categories — envelopes, self-mailers, folds, booklets, inserts, and cards — to quickly build assemblies. The tool estimates postage costs, checks self-mailer compliance against USPS standards, warns when values approach postal boundaries, and generates printable spec sheets.</p>
+                        <p class="text-xs md:text-sm text-slate-600">MailSpec calculates the weight, thickness, and postal classification of direct mail assemblies. Choose from template categories — envelopes, self-mailers, folds, booklets, inserts, and cards — to quickly build assemblies. The tool estimates postage costs, checks self-mailer compliance against USPS standards, warns when values approach postal boundaries, and generates printable spec sheets.</p>
                     </div>
                     <h4 class="font-bold text-sm text-slate-800">Basic Workflow</h4>
                     <div class="space-y-3 md:space-y-0 md:grid md:grid-cols-2 md:gap-4">
@@ -1282,6 +1283,17 @@
                         <p class="text-xs text-slate-600">Click the print icon in the header to generate a clean, one-page specification sheet. The printout includes assembly summary, postal classification, postage estimates, warnings, compliance status, the full BOM table, and seal/buffer notes. Formatted for letter-size paper with typographic hierarchy — no screen UI elements.</p>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Component Management</h4>
+                        <p class="text-xs text-slate-600 mb-2">Each component card has action buttons in its header:</p>
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <div><strong>Up/Down arrows</strong> — reorder components in the assembly (reflected in the BOM)</div>
+                            <div><strong>Duplicate</strong> — copy a component with all its settings</div>
+                            <div><strong>Delete</strong> — remove a component from the assembly</div>
+                            <div><strong>"..." overflow menu</strong> — access manual weight override, manual thickness override, and toggle flat/finished dimension mode</div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">Component names are editable — click the name to rename. The name carries through to the BOM table and print spec sheet.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">Data Confidence Indicators</h4>
                         <p class="text-xs text-slate-600 mb-2">Each stock entry shows provenance information below the stock selector:</p>
                         <div class="text-xs text-slate-600 space-y-1">
@@ -1310,14 +1322,25 @@
                 </h3>
                 <div class="space-y-3 md:space-y-4">
                     <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 md:p-4">
-                        <h4 class="font-bold text-sm text-purple-800 mb-3">v2.6 — Current Release</h4>
+                        <h4 class="font-bold text-sm text-purple-800 mb-3">v3.0 — Current Release</h4>
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Template-Driven Workflow</div><p class="text-[10px] text-slate-600">Template category dropdowns in the build panel for fast assembly creation</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Booklet Templates</div><p class="text-[10px] text-slate-600">Self-cover, plus-cover (separate cover stock), and perfect bound configurations</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Consolidated Folds</div><p class="text-[10px] text-slate-600">Accordions, Z-folds, and specialty folds unified under one category</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Print Spec Sheet</div><p class="text-[10px] text-slate-600">One-page typographic printout for job tickets</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Streamlined UI</div><p class="text-[10px] text-slate-600">Removed redundant component buttons and type badges from cards</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">3-Digit Precision</div><p class="text-[10px] text-slate-600">Mailing dimensions displayed to thousandths of an inch</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Component Reordering</div><p class="text-[10px] text-slate-600">Move components up/down with arrow buttons in the card header</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Overflow Action Menu</div><p class="text-[10px] text-slate-600">Manual weight, thickness, and swap actions collapsed behind a clean "..." menu</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Smart Compliance</div><p class="text-[10px] text-slate-600">Compliance panel hidden for postcards — only shows for folded self-mailers</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Empty-State Polish</div><p class="text-[10px] text-slate-600">Summary cards show dashes instead of zeros when no components are present</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Manual Navigation</div><p class="text-[10px] text-slate-600">Table of contents with smooth-scroll jump links in the full Manual</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Regression Test Suite</div><p class="text-[10px] text-slate-600">Browser-based test harness covering calculations, classification, and compliance</p></div>
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">v2.6 — Template-Driven Workflow</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2 rounded">Template category dropdowns in build panel</div>
+                            <div class="bg-slate-50 p-2 rounded">Booklet templates (self-cover, plus-cover, perfect bound)</div>
+                            <div class="bg-slate-50 p-2 rounded">Consolidated folds (accordions + specialty)</div>
+                            <div class="bg-slate-50 p-2 rounded">Print spec sheet for job tickets</div>
+                            <div class="bg-slate-50 p-2 rounded">Streamlined UI (removed type badges)</div>
+                            <div class="bg-slate-50 p-2 rounded">3-digit dimension precision</div>
                         </div>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
@@ -1370,6 +1393,34 @@
                 <p class="text-xs md:text-sm text-slate-600">Paper specs from official manufacturer sheets (Sappi, Domtar, Mohawk, Neenah, Finch, IP). Postage rates reflect July 2025 USPS pricing—always verify for production.</p>
             </section>
 
+            <!-- Testing -->
+            <section>
+                <h3 id="manual-testing" class="text-lg md:text-xl font-bold text-slate-900 mb-3 md:mb-4 border-b pb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-amber-500">science</span>
+                    Testing
+                </h3>
+                <div class="space-y-3">
+                    <p class="text-xs md:text-sm text-slate-600">MailSpec includes a browser-based regression test suite that verifies calculation accuracy, postal classification logic, and self-mailer compliance rules.</p>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Running the Tests</h4>
+                        <p class="text-xs text-slate-600 mb-2">Open the test page in any browser:</p>
+                        <div class="bg-slate-900 text-emerald-400 rounded p-3 font-mono text-xs mb-2">
+                            https://zobott-dot.github.io/mailspec/tests/
+                        </div>
+                        <p class="text-xs text-slate-500">All tests should show green [PASS]. If any show red [FAIL], the expected value may have drifted due to a calculation change — investigate before shipping.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">What's Covered</h4>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Calculations</strong><p class="text-slate-500 mt-1">Weight, thickness, and finished dimensions for every component type — envelopes, sheets, self-mailers, accordions, booklets (self-cover and plus-cover), cards, custom panels, coatings, manual overrides, buffers, and seals.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Classification</strong><p class="text-slate-500 mt-1">USPS boundary conditions — letter/flat/parcel thresholds, aspect ratio limits, non-mailable detection, postage rate lookup, weight status labels.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Compliance</strong><p class="text-slate-500 mt-1">Self-mailer tab requirements for bi-fold, tri-fold, quarter-fold at various weights. Optional elements, line glue, weight limits.</p></div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500">Run the test suite after any change to calculation, postal, or compliance logic. No framework needed — the page loads the app's modules directly and reports results.</p>
+                </div>
+            </section>
+
         </div>
         <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
             <button class="px-6 py-3 md:py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded min-h-[44px]" onclick="document.getElementById('manualModal').close()">Close Manual</button>
@@ -1403,7 +1454,7 @@
 
 <script type="text/javascript">
     // Version — single source of truth
-    const MAILSPEC_VERSION = '2.6';
+    const MAILSPEC_VERSION = '3.0';
     window.MailSpec.VERSION = MAILSPEC_VERSION;
 
     // Reference data from namespace
@@ -1479,10 +1530,10 @@
         initDarkMode();
 
         // Dynamic version
-        document.title = 'MailSpec Pro | Component Assembly Tool v' + MAILSPEC_VERSION;
+        document.title = 'MailSpec v' + MAILSPEC_VERSION + ' | Component Assembly Tool';
         document.getElementById('headerVersion').textContent = 'v' + MAILSPEC_VERSION;
         var mobileVer = document.getElementById('mobileMenuVersion');
-        if (mobileVer) mobileVer.textContent = 'MailSpec Pro v' + MAILSPEC_VERSION + ' \u2022 Mobile Edition';
+        if (mobileVer) mobileVer.textContent = 'MailSpec v' + MAILSPEC_VERSION + ' \u2022 Mobile Edition';
         var manualVer = document.getElementById('manualVersion');
         if (manualVer) manualVer.textContent = 'MailSpec Manual v' + MAILSPEC_VERSION;
 

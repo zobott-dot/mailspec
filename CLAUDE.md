@@ -89,6 +89,8 @@ Phase 1 migration complete.
 
 - **Phase 2.6:** Version bump to v2.6. Header buttons reordered (Quick Start, Manual, Templates, Configs, Sources, Stock). Quick Start rewritten for template-dropdown workflow. Manual What's New updated with v2.6 featured entry, v2.5 demoted. Manual Getting Started updated to reference template categories. Removed Add Custom component buttons row. Consolidated folds in templates modal. Dimension display precision to 3 decimal places.
 
+- **v3.0:** Review polish — click-outside close for template dropdowns, print button tooltip, Quick Start backup note, empty-state dashes in summary cards. Manual TOC with smooth-scroll. Data Confidence note neutral tone. Compliance panel hidden for postcards. Component card overflow menu (manual/swap behind "..."). Mobile tab bar simplified to 3 tabs. Browser-based regression test suite (`tests/index.html`). Removed "Pro" branding. Manual updated with Component Management card, Testing section, v3.0 What's New.
+
 Next: Phase 4.2+ (future phases).
 
 ## Development Plan

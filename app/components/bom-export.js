@@ -21,7 +21,7 @@
 
         let lines = [
             '═══════════════════════════════════════════════════════════════',
-            '  MAILSPEC PRO - ASSEMBLY SPECIFICATION',
+            '  MAILSPEC - ASSEMBLY SPECIFICATION',
             '  Generated: ' + new Date().toLocaleString(),
             '═══════════════════════════════════════════════════════════════',
             '',

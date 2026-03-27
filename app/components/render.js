@@ -153,7 +153,7 @@
                         <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${c.finishedHeight != null ? c.finishedHeight : ''}" onchange="updateComponent(${c.id}, 'finishedHeight', this.value)"></div>
                     </div>
                     <div class="mb-2">
-                        <label class="input-label">Layers at fold</label>
+                        <label class="input-label">Max Layers</label>
                         <input type="number" step="1" min="1" class="input-field w-20" value="${c.layersAtFold != null ? c.layersAtFold : ''}" onchange="updateComponent(${c.id}, 'layersAtFold', this.value)">
                     </div>`;
 

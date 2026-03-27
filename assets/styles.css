@@ -1323,3 +1323,17 @@ html.dark .bg-purple-100 {
         margin: 0.4in;
     }
 }
+
+/* Onboarding blink animations */
+@keyframes blink-red {
+    0%, 100% { color: #64748b; }
+    50% { color: #ef4444; }
+}
+
+.blink-red-3 {
+    animation: blink-red 0.6s ease-in-out 3;
+}
+
+.blink-red-2 {
+    animation: blink-red 0.6s ease-in-out 2;
+}

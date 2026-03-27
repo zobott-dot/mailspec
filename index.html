@@ -137,7 +137,7 @@
 
         <!-- Template Category Buttons -->
         <div id="templateSection" class="p-3 border-b border-slate-100 bg-slate-50/50 shrink-0">
-            <h2 class="text-xs font-bold text-slate-500 uppercase mb-2">Add Component</h2>
+            <h2 id="addComponentHeading" class="text-xs font-bold text-slate-500 uppercase mb-2 blink-red-3">Add Component</h2>
             <div class="grid grid-cols-3 md:grid-cols-6 gap-2 md:gap-1.5">
                 <button class="flex flex-col items-center justify-center p-2 md:p-1.5 bg-white border border-slate-200 rounded-lg shadow-md border-l-4 border-l-indigo-300 hover:border-indigo-400 hover:text-indigo-600 active:bg-indigo-50 transition text-xs md:text-[10px] font-medium group min-h-[60px] md:min-h-0" onclick="toggleTemplateDropdown('outerEnv')">
                     <span class="material-symbols-outlined text-slate-400 group-hover:text-indigo-500 text-2xl md:text-lg">mail</span>
@@ -167,6 +167,7 @@
 
             <!-- Template Dropdown Panels (one visible at a time) -->
             <div id="templateDropdown-outerEnv" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1.5 blink-red-2 dropdown-hint">Choose nearest match — editable details</p>
                 <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Outer Envelopes</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
                     <button class="template-dd-btn" onclick="addTemplate('env10'); closeTemplateDropdowns()">
@@ -200,6 +201,7 @@
             </div>
 
             <div id="templateDropdown-selfMailer" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1.5 blink-red-2 dropdown-hint">Choose nearest match — editable details</p>
                 <div class="grid grid-cols-3 gap-1.5">
                     <button class="template-dd-btn" onclick="addTemplate('postcard4x6'); closeTemplateDropdowns()">
                         <span class="font-bold">4×6 Postcard</span><span class="text-slate-400">4" × 6"</span>
@@ -214,6 +216,7 @@
             </div>
 
             <div id="templateDropdown-specialtyFold" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1.5 blink-red-2 dropdown-hint">Choose nearest match — editable details</p>
                 <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Standard Folds</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
                     <button class="template-dd-btn" onclick="addTemplate('accordion4'); closeTemplateDropdowns()">
@@ -247,6 +250,7 @@
             </div>
 
             <div id="templateDropdown-booklet" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1.5 blink-red-2 dropdown-hint">Choose nearest match — editable details</p>
                 <div class="text-[9px] font-bold text-slate-400 uppercase mb-1">Self-Cover (body stock throughout)</div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-1.5 mb-2">
                     <button class="template-dd-btn" onclick="addTemplate('booklet_5x8_8sc'); closeTemplateDropdowns()">
@@ -280,6 +284,7 @@
             </div>
 
             <div id="templateDropdown-insert" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1.5 blink-red-2 dropdown-hint">Choose nearest match — editable details</p>
                 <div class="grid grid-cols-3 gap-1.5">
                     <button class="template-dd-btn" onclick="addTemplate('letter'); closeTemplateDropdowns()">
                         <span class="font-bold">Letter (Tri-Fold)</span><span class="text-slate-400">8.5" × 11"</span>
@@ -294,6 +299,7 @@
             </div>
 
             <div id="templateDropdown-card" class="template-dropdown hidden mt-2 p-2 bg-white border border-slate-200 rounded-lg">
+                <p class="text-[9px] font-bold text-slate-400 uppercase mb-1.5 blink-red-2 dropdown-hint">Choose nearest match — editable details</p>
                 <div class="grid grid-cols-3 gap-1.5">
                     <button class="template-dd-btn" onclick="addTemplate('cr80'); closeTemplateDropdowns()">
                         <span class="font-bold">CR80 Card</span><span class="text-slate-400">3.375" × 2.125"</span>
@@ -1037,7 +1043,7 @@
                     <span class="bg-sky-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
                     <div>
                         <h4 class="font-bold text-sm text-slate-800">Choose a template</h4>
-                        <p class="text-xs text-slate-500 mt-1">Click a category button in the <strong>Add Component</strong> row — Envelopes, Self-Mailers, Folds, Booklets, Inserts, or Cards. A dropdown reveals the available formats. Click one to add it to your assembly.</p>
+                        <p class="text-xs text-slate-500 mt-1">The <strong>Add Component</strong> heading blinks red when you first open the app to draw your attention. Click a category button — Envelopes, Self-Mailers, Folds, Booklets, Inserts, or Cards. A dropdown reveals the available formats with the hint <strong>Choose nearest match — editable details</strong>. Pick the closest match to your piece — you can adjust all dimensions, stock, and settings after adding it.</p>
                     </div>
                 </div>
 
@@ -1132,7 +1138,7 @@
                                 <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0">1</span>
                                 <h5 class="font-bold text-sm">Add Components</h5>
                             </div>
-                            <p class="text-xs text-slate-600">Use the <strong>Add Component</strong> category buttons to select from common formats — envelopes, self-mailers, folds, booklets, inserts, and cards. Each category dropdown shows the available presets.</p>
+                            <p class="text-xs text-slate-600">The <strong>Add Component</strong> row blinks red on first load to guide you to the starting point. Click a category button — Envelopes, Self-Mailers, Folds, Booklets, Inserts, or Cards. Each dropdown shows available presets with the hint <strong>Choose nearest match — editable details</strong>. Select the closest format and refine after adding.</p>
                         </div>
                         <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -1284,6 +1290,7 @@
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">Component Management</h4>
+                        <p class="text-xs text-slate-600 mb-2"><strong>Getting started:</strong> The Add Component heading blinks red on first load. Each template dropdown shows "Choose nearest match — editable details" to remind you that templates are starting points, not fixed configurations.</p>
                         <p class="text-xs text-slate-600 mb-2">Each component card has action buttons in its header:</p>
                         <div class="text-xs text-slate-600 space-y-1">
                             <div><strong>Up/Down arrows</strong> — reorder components in the assembly (reflected in the BOM)</div>
@@ -1487,6 +1494,12 @@
         // Toggle the clicked one (if it was closed, open it; if it was open, leave closed)
         if (!isCurrentlyVisible && target) {
             target.classList.remove('hidden');
+            // Re-trigger blink animation on dropdown hints
+            target.querySelectorAll('.dropdown-hint').forEach(function(hint) {
+                hint.classList.remove('blink-red-2');
+                void hint.offsetWidth; // force reflow
+                hint.classList.add('blink-red-2');
+            });
         }
     }
 

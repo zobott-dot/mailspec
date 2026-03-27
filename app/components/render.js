@@ -11,6 +11,19 @@
     const PROVENANCE = window.MailSpec.PROVENANCE;
     const C = window.MailSpec.Components;
 
+    function formatDim(val) {
+        if (val == null) return '';
+        var num = parseFloat(val);
+        if (isNaN(num)) return val;
+        // Cap at 4 decimal places, then strip trailing zeros after decimal
+        var str = num.toFixed(4);
+        // Remove trailing zeros but keep at least one digit after decimal if there is a decimal
+        str = str.replace(/(\.\d*?)0+$/, '$1');
+        // Remove trailing decimal point if all zeros were stripped
+        str = str.replace(/\.$/, '');
+        return str;
+    }
+
     function getSourceBadge(source) {
         const map = { sappi: 'sappi', domtar: 'domtar', mohawk: 'mohawk', neenah: 'neenah', finch: 'finch', ip: 'ip', custom: 'custom', industry: 'industry' };
         return `<span class="source-badge ${map[source] || 'industry'}">${source.toUpperCase()}</span>`;
@@ -145,12 +158,12 @@
                     </label>` : '';
             const customPanelInputs = `
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">Flat W</label><input type="number" step="any" class="input-field" value="${c.flatWidth != null ? c.flatWidth : ''}" onchange="updateComponent(${c.id}, 'flatWidth', this.value)"></div>
-                        <div><label class="input-label">Flat H</label><input type="number" step="any" class="input-field" value="${c.flatHeight != null ? c.flatHeight : ''}" onchange="updateComponent(${c.id}, 'flatHeight', this.value)"></div>
+                        <div><label class="input-label">Flat W</label><input type="number" step="any" class="input-field" value="${c.flatWidth != null ? formatDim(c.flatWidth) : ''}" onchange="updateComponent(${c.id}, 'flatWidth', this.value)"></div>
+                        <div><label class="input-label">Flat H</label><input type="number" step="any" class="input-field" value="${c.flatHeight != null ? formatDim(c.flatHeight) : ''}" onchange="updateComponent(${c.id}, 'flatHeight', this.value)"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">Fin. W</label><input type="number" step="any" class="input-field" value="${c.finishedWidth != null ? c.finishedWidth : ''}" onchange="updateComponent(${c.id}, 'finishedWidth', this.value)"></div>
-                        <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${c.finishedHeight != null ? c.finishedHeight : ''}" onchange="updateComponent(${c.id}, 'finishedHeight', this.value)"></div>
+                        <div><label class="input-label">Fin. W</label><input type="number" step="any" class="input-field" value="${c.finishedWidth != null ? formatDim(c.finishedWidth) : ''}" onchange="updateComponent(${c.id}, 'finishedWidth', this.value)"></div>
+                        <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${c.finishedHeight != null ? formatDim(c.finishedHeight) : ''}" onchange="updateComponent(${c.id}, 'finishedHeight', this.value)"></div>
                     </div>
                     <div class="mb-2">
                         <label class="input-label">Max Layers</label>
@@ -160,8 +173,8 @@
             if (c.type === 'envelope') {
                 mainInputs = `
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
-                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${c.h}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
+                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${formatDim(c.w)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
+                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${formatDim(c.h)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
                     </div>
                     <div class="mb-2">
                         <label class="input-label">Material <span class="text-slate-300 font-normal">(type to search)</span></label>
@@ -188,8 +201,8 @@
                     mainInputs = `
                     ${customPanelToggle}
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">${c.dimMode === 'flat' ? 'Flat W' : 'Fin. W'}</label><input type="number" step="any" class="input-field" value="${dW.toFixed(3)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
-                        <div><label class="input-label">${c.dimMode === 'flat' ? 'Flat H' : 'Fin. H'}</label><input type="number" step="any" class="input-field" value="${dH.toFixed(3)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
+                        <div><label class="input-label">${c.dimMode === 'flat' ? 'Flat W' : 'Fin. W'}</label><input type="number" step="any" class="input-field" value="${formatDim(dW)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
+                        <div><label class="input-label">${c.dimMode === 'flat' ? 'Flat H' : 'Fin. H'}</label><input type="number" step="any" class="input-field" value="${formatDim(dH)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
                     </div>
                     <div class="mb-2">
                         <label class="input-label">Material</label>
@@ -221,8 +234,8 @@
                     mainInputs = `
                     ${customPanelToggle}
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">Fin. W</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
-                        <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${c.h}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
+                        <div><label class="input-label">Fin. W</label><input type="number" step="any" class="input-field" value="${formatDim(c.w)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
+                        <div><label class="input-label">Fin. H</label><input type="number" step="any" class="input-field" value="${formatDim(c.h)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
                         <div><label class="input-label">Binding</label><select class="input-field" onchange="updateComponent(${c.id}, 'binding', this.value)">
                             <option value="stitch" ${c.binding == 'stitch' ? 'selected' : ''}>Saddle</option>
                             <option value="paste" ${c.binding == 'paste' ? 'selected' : ''}>Perfect</option>
@@ -246,8 +259,8 @@
                     mainInputs = `
                     ${customPanelToggle}
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
-                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${c.h}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
+                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${formatDim(c.w)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
+                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${formatDim(c.h)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
                     </div>
                     <div class="mb-2">
                         <label class="input-label">Material</label>
@@ -259,8 +272,8 @@
             } else {
                 mainInputs = `
                     <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${c.w}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
-                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${c.h}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
+                        <div><label class="input-label">Width</label><input type="number" step="any" class="input-field" value="${formatDim(c.w)}" onchange="updateComponent(${c.id}, 'w', this.value)"></div>
+                        <div><label class="input-label">Height</label><input type="number" step="any" class="input-field" value="${formatDim(c.h)}" onchange="updateComponent(${c.id}, 'h', this.value)"></div>
                     </div>
                     <div class="mb-2">
                         <label class="input-label">Material</label>

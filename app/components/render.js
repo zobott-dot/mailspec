@@ -92,7 +92,29 @@
     function renderComponents() {
         const list = document.getElementById('componentList');
         if (State.components.length === 0) {
-            list.innerHTML = '<div class="text-center py-8 text-slate-400"><span class="material-symbols-outlined text-4xl mb-2">inbox</span><p class="text-sm">No components yet</p></div>';
+            list.innerHTML = `
+<div class="component-card p-4 border-l-4 border-l-slate-200 opacity-50">
+    <div class="flex justify-between items-center mb-2 border-b border-slate-100 pb-2">
+        <div class="flex items-center gap-2">
+            <span class="font-bold text-sm text-slate-400">Choose components above</span>
+        </div>
+        <div class="flex gap-0.5 items-center">
+            <span class="text-slate-200 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_up</span></span>
+            <span class="text-slate-200 p-1"><span class="material-symbols-outlined text-base">keyboard_arrow_down</span></span>
+            <span class="text-slate-200 p-1"><span class="material-symbols-outlined text-base">content_copy</span></span>
+            <span class="text-slate-200 p-1"><span class="material-symbols-outlined text-base">delete</span></span>
+            <span class="text-slate-200 p-1"><span class="material-symbols-outlined text-base">more_vert</span></span>
+        </div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mb-2">
+        <div><label class="input-label">WIDTH</label><div class="input-field bg-slate-50 text-slate-300">&nbsp;</div></div>
+        <div><label class="input-label">HEIGHT</label><div class="input-field bg-slate-50 text-slate-300">&nbsp;</div></div>
+    </div>
+    <div class="mb-2">
+        <label class="input-label">MATERIAL</label>
+        <div class="input-field bg-slate-50 text-slate-300">&nbsp;</div>
+    </div>
+</div>`;
             return;
         }
         list.innerHTML = '';

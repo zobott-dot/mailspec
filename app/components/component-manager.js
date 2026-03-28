@@ -58,6 +58,11 @@
     function clearAllComponents() {
         if (!State.components.length || !confirm('Remove all?')) return;
         State.components = [];
+        State.globalSealType = 'none';
+        State.globalSealQty = 0;
+        document.getElementById('globalSealType').value = 'none';
+        document.getElementById('globalSealQty').value = '0';
+        C.updateSealInfo();
         C.renderComponents(); C.calculate(); C.autoSave();
     }
 

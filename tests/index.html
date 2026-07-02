@@ -218,13 +218,15 @@
             });
             var m = Calc.calculateComponentMetrics(c);
 
-            var bodyArea = (8.5 * 11 * 2) * (8 / 4);
+            // 8pp self-cover = 4pp body + 4pp cover sheet (2 press sheets total)
+            var bodyArea = (8.5 * 11 * 2) * ((8 - 4) / 4);
             var bodyWeight = (bodyArea / 1550.0031) * 118 * 0.035274;
             var coverArea = 8.5 * 2 * 11;
             var coverWeight = (coverArea / 1550.0031) * 118 * 0.035274;
             assert('Booklet self-cover weight', m.weightOz, bodyWeight + coverWeight);
 
-            var expectedThick = (0.0035 * 4 + 0.0035 * 2) * 1.25;
+            // body leaves = (8-4)/2 = 2, cover leaves = 2
+            var expectedThick = (0.0035 * 2 + 0.0035 * 2) * 1.25;
             assert('Booklet self-cover thickness (saddle)', m.itemThick, expectedThick);
         })();
 

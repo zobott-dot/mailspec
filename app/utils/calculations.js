@@ -47,7 +47,7 @@
       } else if (c.type === 'booklet') {
         var bodyPages = c.panels;
         var hasCover = c.coverStockIdx != -1;
-        if (hasCover) bodyPages -= 4;
+        bodyPages -= 4; // 4 pages always form the cover sheet — self-cover uses body stock, plus-cover uses cover stock
         var bodyWeight = 0;
         if (bodyPages > 0) {
           var bodyArea = (c.w * c.h * 2) * (bodyPages / 4);

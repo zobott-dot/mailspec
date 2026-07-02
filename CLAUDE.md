@@ -45,7 +45,7 @@ The legacy single-file version is preserved as `mailspec-assembly-tool-v2.4.html
 
 ## Testing
 
-Open `tests/index.html` in a browser to run the regression test suite. It tests calculateComponentMetrics (all component types + custom panels + coatings + manual overrides), classifyPiece (all boundary conditions), lookupPostage, getWeightStatus, and evaluateSelfMailer (all fold types + optional elements + weight limits). No framework needed — just open the page and check for green.
+Open `tests/index.html` in a browser to run the regression test suite. It tests calculateComponentMetrics (all component types + custom panels + coatings + manual overrides), classifyPiece (all boundary conditions), lookupPostage, getWeightStatus, selectDimensionDriver (envelope precedence + largest-area tiebreak), calculateTrayCapacity (letter/flat/none modes + EMM trigger at MM-tray thresholds), and evaluateSelfMailer (all fold types + optional elements + weight limits). No framework needed — just open the page and check for green. Suite is at 116 assertions.
 
 ## Key Constraints
 
@@ -91,7 +91,9 @@ Phase 1 migration complete.
 
 - **v3.0:** Review polish — click-outside close for template dropdowns, print button tooltip, Quick Start backup note, empty-state dashes in summary cards. Manual TOC with smooth-scroll. Data Confidence note neutral tone. Compliance panel hidden for postcards. Component card overflow menu (manual/swap behind "..."). Mobile tab bar simplified to 3 tabs. Browser-based regression test suite (`tests/index.html`). Removed "Pro" branding. Manual updated with Component Management card, Testing section, v3.0 What's New.
 
-Next: Phase 4.2+ (future phases).
+- **Accuracy Remediation (2026-07):** Comprehensive accuracy audit (2026-07-01) identified seven Now defects. Fixed and verified 2026-07-02: **Defect 1** — self-cover booklet double-count (cover pages now deducted from body unconditionally, commit `7110c50`); **Defect 3** — specialty stock GSM corrections (20mil magnet 800→1830, 15mil 600→1370, CR80 PVC 1400→1100; C2S boards moved to ±8% tolerance with "verify against house stock" note, commit `ac96375`); **Defect 4** — envelope dimension-driver selection now picks the largest-area envelope instead of the last one added (commit `6681b1d`); **Defect 5** — EMM trigger corrected to letter-tray thresholds per DMM/M033 (height > 4.625" or length > 10"), flats no longer show letter-tray counts, 1-ft row marked inapplicable under EMM (commit `ef175b5`). Test suite grew from ~90 to 116 assertions. Remaining: **Defect 2** — postage restructure (scheduled with the July 12, 2026 Notice 123 refresh); **Defect 6** — FSM compliance rule updates; **Defect 7** — warning threshold fixes.
+
+Next: Defects 6 and 7 (accuracy remediation), then Phase 4.2+ (future phases). Defect 2 waits on the 2026-07-12 Notice 123 refresh.
 
 ## Development Plan
 

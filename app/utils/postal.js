@@ -29,6 +29,43 @@
     },
 
     /**
+     * Select which component drives piece classification.
+     * Envelopes are the mailing container and outrank their contents;
+     * among multiple envelopes the largest-area one (the outer) wins.
+     * With no envelope present, the largest-area component drives.
+     * items: array of { name, type, finW, finH }
+     * Returns { maxW, maxH, driverName, driverIsEnvelope }
+     */
+    selectDimensionDriver: function(items) {
+      var driver = null;
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var area = it.finW * it.finH;
+        var isEnv = it.type === 'envelope';
+        if (!driver) {
+          driver = { name: it.name, finW: it.finW, finH: it.finH, area: area, isEnv: isEnv };
+        } else if (isEnv && !driver.isEnv) {
+          // First envelope always beats a non-envelope driver.
+          driver = { name: it.name, finW: it.finW, finH: it.finH, area: area, isEnv: isEnv };
+        } else if (isEnv === driver.isEnv && area > driver.area) {
+          // Same kind: larger area wins. (A non-envelope never overrides an envelope.)
+          driver = { name: it.name, finW: it.finW, finH: it.finH, area: area, isEnv: isEnv };
+        }
+      }
+      if (!driver) return { maxW: 0, maxH: 0, driverName: '-', driverIsEnvelope: false };
+      return { maxW: driver.finW, maxH: driver.finH, driverName: driver.name, driverIsEnvelope: driver.isEnv };
+    },
+
+    /**
+     * Does content (cW x cH) fit inside an envelope (eW x eH), allowing a 90 deg rotation?
+     * Conservative: compares against the envelope's OUTER dimensions, so it only flags
+     * content that exceeds the envelope entirely — it does not model interior clearance.
+     */
+    fitsInsideEnvelope: function(cW, cH, eW, eH) {
+      return (cW <= eW && cH <= eH) || (cW <= eH && cH <= eW);
+    },
+
+    /**
      * Determine weight status label for display.
      */
     getWeightStatus: function(totalWeightOz, hasComponents) {

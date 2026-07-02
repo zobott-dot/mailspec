@@ -110,7 +110,8 @@
         const Postal = window.MailSpec.Postal;
 
         let totalWeightOz = 0, totalThickness = 0, totalToleranceSum = 0;
-        let maxW = 0, maxH = 0, driverName = '-', hasEnvelope = false;
+        let maxW = 0, maxH = 0, driverName = '-', driverIsEnvelope = false;
+        const driverItems = [];
 
         const bomData = State.components.map(c => {
             // Validate stockIdx
@@ -125,12 +126,7 @@
             const finW = metrics.finW, finH = metrics.finH;
             const weightOz = metrics.weightOz, itemThick = metrics.itemThick;
 
-            if (c.type === 'envelope') hasEnvelope = true;
-
-            const area = finW * finH;
-            if (c.type === 'envelope' || (!hasEnvelope && area > maxW * maxH)) {
-                maxW = finW; maxH = finH; driverName = c.name;
-            }
+            driverItems.push({ name: c.name, type: c.type, finW: finW, finH: finH });
 
             totalWeightOz += weightOz;
             totalThickness += itemThick;
@@ -141,6 +137,12 @@
         });
 
         State.lastBomData = bomData;
+
+        const driver = Postal.selectDimensionDriver(driverItems);
+        maxW = driver.maxW;
+        maxH = driver.maxH;
+        driverName = driver.driverName;
+        driverIsEnvelope = driver.driverIsEnvelope;
 
         // Apply global buffers
         totalWeightOz = Calc.applyWeightBuffer(totalWeightOz, State.globalBuffer);
@@ -182,6 +184,20 @@
 
         // Postal Risk Warnings
         const warnings = generatePostalWarnings(totalWeightOz, totalThickness, maxW, maxH, ratio, classification, State.components.length > 0);
+
+        // Fit check: warn if any non-envelope content exceeds the driving envelope.
+        if (driverIsEnvelope) {
+            driverItems.forEach(function(it) {
+                if (it.type !== 'envelope' &&
+                    !Postal.fitsInsideEnvelope(it.finW, it.finH, maxW, maxH)) {
+                    warnings.push({
+                        level: 'amber',
+                        text: `<strong>${it.name}</strong> (${it.finW.toFixed(2)}" × ${it.finH.toFixed(2)}") is larger than the ${driverName} (${maxW.toFixed(2)}" × ${maxH.toFixed(2)}") — contents will not fit; verify sizing.`
+                    });
+                }
+            });
+        }
+
         const warningsEl = document.getElementById('postalWarnings');
         if (warnings.length > 0) {
             warningsEl.className = 'space-y-2';

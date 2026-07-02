@@ -436,6 +436,52 @@
             assertString('No components', Postal.getWeightStatus(0, false), '—');
         })();
 
+        section('Dimension Driver Selection');
+
+        (function() {
+            // Largest-area envelope drives — not the last one in the list
+            var d = Postal.selectDimensionDriver([
+                { name: '9x12 Outer', type: 'envelope', finW: 12, finH: 9 },
+                { name: '#9 BRE',     type: 'envelope', finW: 8.875, finH: 3.875 }
+            ]);
+            assert('Driver maxW = largest envelope', d.maxW, 12);
+            assert('Driver maxH = largest envelope', d.maxH, 9);
+            assertString('Driver name = outer envelope', d.driverName, '9x12 Outer');
+            assertString('Driver flagged as envelope', d.driverIsEnvelope, true);
+
+            // Envelope outranks a larger-area non-envelope insert
+            var d2 = Postal.selectDimensionDriver([
+                { name: 'Big Insert', type: 'insert',   finW: 11, finH: 8.5 },
+                { name: '#10 Env',    type: 'envelope', finW: 9.5, finH: 4.125 }
+            ]);
+            assertString('Envelope drives over larger insert', d2.driverName, '#10 Env');
+
+            // No envelope: largest-area component drives
+            var d3 = Postal.selectDimensionDriver([
+                { name: 'Small', type: 'insert', finW: 6, finH: 4 },
+                { name: 'Large', type: 'sheet',  finW: 11, finH: 8.5 }
+            ]);
+            assertString('Largest component drives when no envelope', d3.driverName, 'Large');
+
+            // Empty assembly
+            var d4 = Postal.selectDimensionDriver([]);
+            assertString('Empty assembly driver name', d4.driverName, '-');
+        })();
+
+        section('Envelope Fit Check');
+
+        (function() {
+            // Content larger than the envelope in both orientations → does not fit
+            assertString('Oversize content does not fit',
+                Postal.fitsInsideEnvelope(10, 5, 9.5, 4.125), false);
+            // Normal tri-folded insert fits
+            assertString('Normal insert fits',
+                Postal.fitsInsideEnvelope(8.5, 3.67, 9.5, 4.125), true);
+            // Fits only when rotated 90°
+            assertString('Rotated content fits',
+                Postal.fitsInsideEnvelope(4, 9, 9.5, 4.125), true);
+        })();
+
         // =====================================================
         // COMPLIANCE TESTS
         // =====================================================

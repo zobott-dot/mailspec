@@ -459,6 +459,44 @@
             assertString('No components', Postal.getWeightStatus(0, false), '—');
         })();
 
+        section('Tray Capacity & EMM Trigger');
+
+        (function() {
+            // Standard #10 letter (9.5 x 4.125, 0.01" thick): MM trays, no EMM
+            var t = Postal.calculateTrayCapacity(9.5, 4.125, 0.01, 1.0, 'Letter');
+            assertString('Standard #10: mode letter', t.mode, 'letter');
+            assertString('Standard #10: no EMM', t.emm, false);
+            assert('Standard #10: 2-ft count 1785', t.tray2Count, 1785);   // floor(21.0/0.01*0.85)
+            assert('Standard #10: 1-ft count 871', t.tray1Count, 871);     // floor(10.25/0.01*0.85)
+
+            // 6x9 envelope package (9 x 6, height > 4.625): EMM required — THE defect case
+            t = Postal.calculateTrayCapacity(9, 6, 0.02, 1.5, 'Letter');
+            assertString('6x9 envelope: EMM required', t.emm, true);
+            assert('6x9 envelope: 2-ft uses 21.75', t.tray2Count, 924);    // floor(21.75/0.02*0.85)
+            assertString('6x9 envelope: 1-ft inapplicable', t.tray1Count, null);
+
+            // Length trigger: 10.5" long letter, short height
+            t = Postal.calculateTrayCapacity(10.5, 4.0, 0.01, 1.0, 'Letter');
+            assertString('10.5 inch letter: EMM via length', t.emm, true);
+
+            // Boundaries are inclusive for MM trays (strict > triggers EMM)
+            t = Postal.calculateTrayCapacity(10, 4.625, 0.01, 1.0, 'Letter');
+            assertString('Exactly 4.625 H and 10 L: MM tray, no EMM', t.emm, false);
+            assertString('Exactly at boundary: 1-ft count present', t.tray1Count !== null, true);
+
+            // Flat: letter-tray counts do not apply
+            t = Postal.calculateTrayCapacity(12, 9, 0.05, 3.0, 'Flat');
+            assertString('Flat: mode flat', t.mode, 'flat');
+            assertString('Flat: no 2-ft count', t.tray2Count, null);
+            assertString('Flat: no 1-ft count', t.tray1Count, null);
+
+            // Non-Mailable and empty: mode none
+            t = Postal.calculateTrayCapacity(4, 3, 0.01, 0.5, 'Non-Mailable');
+            assertString('Non-Mailable: mode none', t.mode, 'none');
+            t = Postal.calculateTrayCapacity(0, 0, 0, 0, '—');
+            assertString('Empty assembly: mode none', t.mode, 'none');
+        })();
+
         section('Dimension Driver Selection');
 
         (function() {

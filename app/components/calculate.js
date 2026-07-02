@@ -290,12 +290,35 @@
         }
 
         // Trays
-        const trays = Postal.calculateTrayCapacity(maxW, maxH, totalThickness, totalWeightOz);
-        document.getElementById('emmAlert').className = trays.emm ? 'mt-3 text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-100 flex items-center gap-2' : 'hidden';
-        document.getElementById('tray2Count').textContent = hasComponents ? trays.tray2Count.toLocaleString() : '—';
-        document.getElementById('tray1Count').textContent = hasComponents ? trays.tray1Count.toLocaleString() : '—';
-        document.getElementById('tray2Weight').textContent = hasComponents ? trays.tray2Weight.toFixed(1) + ' lbs' : '—';
-        document.getElementById('tray1Weight').textContent = hasComponents ? trays.tray1Weight.toFixed(1) + ' lbs' : '—';
+        const trays = Postal.calculateTrayCapacity(maxW, maxH, totalThickness, totalWeightOz, classification.pClass);
+        const trayNoteEl = document.getElementById('trayNote');
+        const noteBase = 'mt-3 text-[11px] p-2 rounded border flex items-center gap-2 ';
+
+        if (trays.mode === 'letter') {
+            document.getElementById('tray2Count').textContent = trays.tray2Count.toLocaleString();
+            document.getElementById('tray2Weight').textContent = trays.tray2Weight.toFixed(1) + ' lbs';
+            if (trays.emm) {
+                document.getElementById('tray1Count').textContent = '—';
+                document.getElementById('tray1Weight').textContent = 'EMM trays are 2-ft only';
+                trayNoteEl.className = noteBase + 'text-amber-700 bg-amber-50 border-amber-100';
+                trayNoteEl.innerHTML = '<span class="material-symbols-outlined text-sm">warning</span><span><strong>EMM Tray Required</strong> — letter exceeds 4.625&quot; H or 10&quot; L (21.75&quot; usable length)</span>';
+            } else {
+                document.getElementById('tray1Count').textContent = trays.tray1Count.toLocaleString();
+                document.getElementById('tray1Weight').textContent = trays.tray1Weight.toFixed(1) + ' lbs';
+                trayNoteEl.className = 'hidden';
+            }
+        } else {
+            document.getElementById('tray2Count').textContent = '—';
+            document.getElementById('tray1Count').textContent = '—';
+            document.getElementById('tray2Weight').textContent = '—';
+            document.getElementById('tray1Weight').textContent = '—';
+            if (trays.mode === 'flat') {
+                trayNoteEl.className = noteBase + 'text-slate-600 bg-slate-50 border-slate-200';
+                trayNoteEl.innerHTML = '<span class="material-symbols-outlined text-sm">info</span><span>Flats are prepared in flat trays/sacks — letter-tray counts do not apply</span>';
+            } else {
+                trayNoteEl.className = 'hidden';
+            }
+        }
 
         // BOM Table
         document.getElementById('bomTable').innerHTML = bomData.map(i => {

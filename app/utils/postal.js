@@ -98,20 +98,39 @@
     },
 
     /**
-     * Calculate tray capacity for 2-foot and 1-foot trays.
-     * Returns { tray2Count, tray1Count, tray2Weight, tray1Weight, emm }
+     * Calculate tray capacity for 2-foot and 1-foot letter trays.
+     *
+     * Modes:
+     *  'letter' — counts apply. EMM trays (21.75" usable) are required when a
+     *             letter-size piece exceeds MM tray inside dimensions:
+     *             height > 4.625" or length > 10" (DMM/M033). EMM trays are
+     *             2-ft only, so tray1Count is null when emm is true.
+     *  'flat'   — flats are prepared in flat trays/sacks; letter-tray counts
+     *             do not apply. All counts null.
+     *  'none'   — Parcel, Non-Mailable, or empty assembly. All counts null.
+     *
+     * Returns { mode, emm, tray2Count, tray1Count, tray2Weight, tray1Weight }
+     * (count/weight fields are null when inapplicable)
      */
-    calculateTrayCapacity: function(maxW, maxH, totalThickness, totalWeightOz) {
-      var tray2 = 21.0, tray1 = 10.25, emm = false;
-      if (maxH > 6.125 || maxW > 11.5) { tray2 = 21.75; emm = true; }
+    calculateTrayCapacity: function(maxW, maxH, totalThickness, totalWeightOz, pClass) {
+      if (pClass !== 'Letter') {
+        var mode = (pClass === 'Flat') ? 'flat' : 'none';
+        return { mode: mode, emm: false, tray2Count: null, tray1Count: null, tray2Weight: null, tray1Weight: null };
+      }
+      var emm = (maxH > 4.625 || maxW > 10);
+      var tray2 = emm ? 21.75 : 21.0;
       var c2 = totalThickness > 0 ? Math.floor((tray2 / totalThickness) * 0.85) : 0;
-      var c1 = totalThickness > 0 ? Math.floor((tray1 / totalThickness) * 0.85) : 0;
+      var c1 = null;
+      if (!emm) {
+        c1 = totalThickness > 0 ? Math.floor((10.25 / totalThickness) * 0.85) : 0;
+      }
       return {
+        mode: 'letter',
+        emm: emm,
         tray2Count: c2,
         tray1Count: c1,
         tray2Weight: (c2 * totalWeightOz) / 16,
-        tray1Weight: (c1 * totalWeightOz) / 16,
-        emm: emm
+        tray1Weight: c1 !== null ? (c1 * totalWeightOz) / 16 : null
       };
     }
 

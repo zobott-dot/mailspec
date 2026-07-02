@@ -276,9 +276,32 @@
             var c = makeComponent({ type: 'card', w: 3.375, h: 2.125, stockIdx: idx });
             var m = Calc.calculateComponentMetrics(c);
 
-            var expectedWeight = (3.375 * 2.125 / 1550.0031) * 1400 * 0.035274;
+            var expectedWeight = (3.375 * 2.125 / 1550.0031) * 1100 * 0.035274;
             assert('Card weight', m.weightOz, expectedWeight);
             assert('Card thickness = caliper', m.itemThick, 0.0300);
+        })();
+
+        section('Calculations: Magnet Stocks (ground truth)');
+
+        (function() {
+            // 4x6 20-mil promo magnet: trade-verified ~28 g (~1.0 oz)
+            var idx = stockIdx('20mil Magnet Sheet');
+            var c = makeComponent({ type: 'card', w: 6, h: 4, stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var expectedWeight = (6 * 4 / 1550.0031) * 1830 * 0.035274; // ≈ 0.9995 oz ≈ 28.3 g
+            assert('20mil magnet 4x6 weight (~28 g trade check)', m.weightOz, expectedWeight);
+            assert('20mil magnet thickness = caliper', m.itemThick, 0.0200);
+        })();
+
+        (function() {
+            var idx = stockIdx('15mil Magnet Sheet');
+            var c = makeComponent({ type: 'card', w: 6, h: 4, stockIdx: idx });
+            var m = Calc.calculateComponentMetrics(c);
+
+            var expectedWeight = (6 * 4 / 1550.0031) * 1370 * 0.035274;
+            assert('15mil magnet 4x6 weight', m.weightOz, expectedWeight);
+            assert('15mil magnet thickness = caliper', m.itemThick, 0.0150);
         })();
 
         section('Calculations: Coating Weight Addition');

@@ -78,7 +78,13 @@
             customNote = `<span class="text-[9px] text-slate-300">·</span><span class="text-[9px] text-purple-400 italic" title="User-provided values — not verified against manufacturer data">Unverified</span>`;
         }
 
-        return `<div class="mt-1 flex items-center gap-2 flex-wrap">${badge}${specs}<span class="text-[9px] text-slate-300">·</span>${tolTag}${verifiedTag}${customNote}</div>`;
+        // Generic stock note (e.g., "Generic — verify against house stock")
+        let stockNote = '';
+        if (stock.note) {
+            stockNote = `<span class="text-[9px] text-slate-300">·</span><span class="text-[9px] text-amber-500 italic" title="${stock.note}">${stock.note}</span>`;
+        }
+
+        return `<div class="mt-1 flex items-center gap-2 flex-wrap">${badge}${specs}<span class="text-[9px] text-slate-300">·</span>${tolTag}${verifiedTag}${customNote}${stockNote}</div>`;
     }
 
     function filterStocks(searchTerm, selectedIdx) {

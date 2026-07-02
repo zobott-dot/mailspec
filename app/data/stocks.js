@@ -95,15 +95,15 @@ window.MailSpec.STOCKS = [
     { name: "10pt C1S Board", cal: 0.0100, gsm: 220, type: 'Cover', source: 'industry', tolerance: 0.05 },
     { name: "12pt C1S Board", cal: 0.0120, gsm: 270, type: 'Cover', source: 'industry', tolerance: 0.05 },
     { name: "14pt C1S Board", cal: 0.0140, gsm: 310, type: 'Cover', source: 'industry', tolerance: 0.05 },
-    { name: "10pt C2S Board", cal: 0.0100, gsm: 250, type: 'Cover', source: 'industry', tolerance: 0.05 },
-    { name: "12pt C2S Board", cal: 0.0120, gsm: 300, type: 'Cover', source: 'industry', tolerance: 0.05 },
-    { name: "14pt C2S Board", cal: 0.0140, gsm: 350, type: 'Cover', source: 'industry', tolerance: 0.05 },
-    { name: "16pt C2S Board", cal: 0.0160, gsm: 400, type: 'Cover', source: 'industry', tolerance: 0.05 },
+    { name: "10pt C2S Board", cal: 0.0100, gsm: 250, type: 'Cover', source: 'industry', tolerance: 0.08, note: 'Generic — verify against house stock' },
+    { name: "12pt C2S Board", cal: 0.0120, gsm: 300, type: 'Cover', source: 'industry', tolerance: 0.08, note: 'Generic — verify against house stock' },
+    { name: "14pt C2S Board", cal: 0.0140, gsm: 350, type: 'Cover', source: 'industry', tolerance: 0.08, note: 'Generic — verify against house stock' },
+    { name: "16pt C2S Board", cal: 0.0160, gsm: 400, type: 'Cover', source: 'industry', tolerance: 0.08, note: 'Generic — verify against house stock' },
 
     // SPECIALTY
-    { name: "30mil PVC Card (CR80)", cal: 0.0300, gsm: 1400, type: 'Item', source: 'industry', tolerance: 0.03 },
-    { name: "20mil Magnet Sheet", cal: 0.0200, gsm: 800, type: 'Item', source: 'industry', tolerance: 0.05 },
-    { name: "15mil Magnet Sheet", cal: 0.0150, gsm: 600, type: 'Item', source: 'industry', tolerance: 0.05 }
+    { name: "30mil PVC Card (CR80)", cal: 0.0300, gsm: 1100, type: 'Item', source: 'industry', tolerance: 0.03 },
+    { name: "20mil Magnet Sheet", cal: 0.0200, gsm: 1830, type: 'Item', source: 'industry', tolerance: 0.05 },
+    { name: "15mil Magnet Sheet", cal: 0.0150, gsm: 1370, type: 'Item', source: 'industry', tolerance: 0.05 }
 ];
 
 window.MailSpec.loadCustomStocks = function() {

@@ -13,6 +13,14 @@
     },
 
     /**
+     * DMM minimum thickness: 0.007", rising to 0.009" when the piece is
+     * more than 4.25" high or more than 6" long (DMM 201, strict "more than").
+     */
+    getMinimumThickness: function(width, height) {
+      return (height > 4.25 || width > 6) ? 0.009 : 0.007;
+    },
+
+    /**
      * Classify a mail piece based on dimensions and thickness.
      * Returns { pClass, pSub, isFlat }
      */
@@ -21,6 +29,7 @@
       var pClass = 'Letter', pSub = 'Automation', isFlat = false;
       if (!hasComponents) { pClass = '—'; pSub = 'Add components'; }
       else if (height < 3.5 || width < 5) { pClass = 'Non-Mailable'; pSub = 'Too Small'; }
+      else if (totalThickness < this.getMinimumThickness(width, height)) { pClass = 'Non-Mailable'; pSub = 'Too Thin'; }
       else if (width > 11.5 || height > 6.125 || totalThickness > 0.25) {
         pClass = 'Flat'; pSub = 'Large Envelope'; isFlat = true;
         if (width > 15 || height > 12 || totalThickness > 0.75) { pClass = 'Parcel'; pSub = 'Oversize'; }
@@ -73,7 +82,129 @@
       if (totalWeightOz <= 1) return 'Machinable ≤1oz';
       if (totalWeightOz <= 3.5) return 'Std Letter ≤3.5oz';
       if (totalWeightOz <= 13) return 'Flat ≤13oz';
+      if (totalWeightOz < 16) return 'MM Flat only <16oz';
       return 'Parcel';
+    },
+
+    /**
+     * Generate postal risk warnings as the assembly approaches USPS
+     * classification boundaries. Pure function — returns an array of
+     * { level, text } (level: 'red' | 'amber' | 'info').
+     */
+    generatePostalWarnings: function(totalWeightOz, totalThickness, maxW, maxH, ratio, classification, hasComponents) {
+        const warnings = [];
+        if (!hasComponents) return warnings;
+
+        const pClass = classification.pClass;
+
+        // --- MINIMUM THICKNESS (DMM 201: ≥0.007"; ≥0.009" if height > 4.25" or length > 6") ---
+        if (totalThickness > 0) {
+            const minThick = this.getMinimumThickness(maxW, maxH);
+            if (totalThickness < minThick) {
+                const rule = minThick === 0.009
+                    ? '0.009" minimum (applies to pieces over 4.25" high or 6" long)'
+                    : '0.007" minimum';
+                warnings.push({ level: 'red', text: `<strong>Thickness ${totalThickness.toFixed(4)}"</strong> — below the DMM ${rule}. Non-mailable as designed; add stock or components.` });
+            }
+        }
+
+        // --- THICKNESS WARNINGS ---
+        if (pClass === 'Letter') {
+            const margin = (0.25 - totalThickness).toFixed(4);
+            if (totalThickness >= 0.235) {
+                warnings.push({ level: 'amber', text: `<strong>Thickness ${totalThickness.toFixed(4)}"</strong> — only ${margin}" from letter limit (0.25"). Adding components could push to Flat classification.` });
+            } else if (totalThickness >= 0.200) {
+                warnings.push({ level: 'info', text: `<strong>Thickness ${totalThickness.toFixed(4)}"</strong> — ${margin}" from letter limit (0.25").` });
+            }
+        }
+        if (pClass === 'Flat') {
+            const margin = (0.75 - totalThickness).toFixed(4);
+            if (totalThickness >= 0.710) {
+                warnings.push({ level: 'amber', text: `<strong>Thickness ${totalThickness.toFixed(4)}"</strong> — only ${margin}" from flat limit (0.75"). Adding components could push to Parcel.` });
+            } else if (totalThickness >= 0.650) {
+                warnings.push({ level: 'info', text: `<strong>Thickness ${totalThickness.toFixed(4)}"</strong> — ${margin}" from flat limit (0.75").` });
+            }
+        }
+
+        // --- WEIGHT WARNINGS ---
+        if (totalWeightOz <= 1.0) {
+            const margin = (1.0 - totalWeightOz).toFixed(3);
+            if (totalWeightOz >= 0.950) {
+                warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — only ${margin} oz from 1 oz tier. Adding components will increase first-class rate.` });
+            } else if (totalWeightOz >= 0.850) {
+                warnings.push({ level: 'info', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — ${margin} oz from 1 oz tier. First-class rate increases above 1 oz.` });
+            }
+        } else if (totalWeightOz <= 3.5) {
+            const margin = (3.5 - totalWeightOz).toFixed(3);
+            if (totalWeightOz >= 3.350) {
+                warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — only ${margin} oz from the 3.5 oz letter maximum. Above 3.5 oz, letter-size pieces take flat prices and preparation (dimensional classification is unchanged).` });
+            } else if (totalWeightOz >= 3.000) {
+                warnings.push({ level: 'info', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — ${margin} oz from 3.5 oz letter maximum.` });
+            }
+        } else if (totalWeightOz <= 13) {
+            const margin = (13.0 - totalWeightOz).toFixed(3);
+            if (totalWeightOz >= 12.500) {
+                warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — only ${margin} oz from the 13 oz First-Class flat maximum. Above 13 oz, First-Class is unavailable; Marketing Mail flats are permitted to just under 16 oz.` });
+            } else if (totalWeightOz >= 11.500) {
+                warnings.push({ level: 'info', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — ${margin} oz from the 13 oz First-Class flat maximum.` });
+            }
+        } else if (totalWeightOz < 16) {
+            warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — over the 13 oz First-Class limit. Marketing Mail flats only (permitted to just under 16 oz).` });
+        } else {
+            warnings.push({ level: 'red', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — at or over 16 oz. Outside Marketing Mail flats; parcel rates apply.` });
+        }
+
+        // --- DIMENSION WARNINGS ---
+        if (pClass === 'Letter') {
+            if (maxW >= 10.500) {
+                const margin = (11.5 - maxW).toFixed(2);
+                if (maxW >= 11.250) {
+                    warnings.push({ level: 'amber', text: `<strong>Width ${maxW.toFixed(2)}"</strong> — only ${margin}" from letter limit (11.5"). Could push to Flat classification.` });
+                } else {
+                    warnings.push({ level: 'info', text: `<strong>Width ${maxW.toFixed(2)}"</strong> — ${margin}" from letter limit (11.5").` });
+                }
+            }
+            if (maxH >= 5.625) {
+                const margin = (6.125 - maxH).toFixed(3);
+                if (maxH >= 5.975) {
+                    warnings.push({ level: 'amber', text: `<strong>Height ${maxH.toFixed(2)}"</strong> — only ${margin}" from letter limit (6.125"). Could push to Flat classification.` });
+                } else {
+                    warnings.push({ level: 'info', text: `<strong>Height ${maxH.toFixed(2)}"</strong> — ${margin}" from letter limit (6.125").` });
+                }
+            }
+        }
+
+        // --- ASPECT RATIO WARNINGS ---
+        if (pClass === 'Letter') {
+            // Low end (boundary: 1.3)
+            if (ratio > 0 && ratio < 1.30) {
+                warnings.push({ level: 'red', text: `<strong>Aspect ratio ${ratio.toFixed(2)}</strong> — below 1.3 minimum. Non-machinable surcharge applies.` });
+            } else if (ratio <= 1.35) {
+                const margin = (ratio - 1.3).toFixed(2);
+                const msg = margin === '0.00'
+                    ? 'at the 1.3 minimum — compliant, but designing at the limit; trim variance could trigger the non-machinable surcharge'
+                    : `only ${margin} from 1.3 minimum. Adjusting dimensions could trigger non-machinable surcharge`;
+                warnings.push({ level: 'amber', text: `<strong>Aspect ratio ${ratio.toFixed(2)}</strong> — ${msg}.` });
+            } else if (ratio <= 1.45) {
+                const margin = (ratio - 1.3).toFixed(2);
+                warnings.push({ level: 'info', text: `<strong>Aspect ratio ${ratio.toFixed(2)}</strong> — ${margin} from 1.3 minimum for automation.` });
+            }
+            // High end (boundary: 2.5)
+            if (ratio > 2.50) {
+                warnings.push({ level: 'red', text: `<strong>Aspect ratio ${ratio.toFixed(2)}</strong> — exceeds 2.5 maximum. Non-machinable surcharge applies.` });
+            } else if (ratio >= 2.45) {
+                const margin = (2.5 - ratio).toFixed(2);
+                const msg = margin === '0.00'
+                    ? 'at the 2.5 maximum — compliant, but designing at the limit; trim variance could trigger the non-machinable surcharge'
+                    : `only ${margin} from 2.5 maximum. Adjusting dimensions could trigger non-machinable surcharge`;
+                warnings.push({ level: 'amber', text: `<strong>Aspect ratio ${ratio.toFixed(2)}</strong> — ${msg}.` });
+            } else if (ratio >= 2.35) {
+                const margin = (2.5 - ratio).toFixed(2);
+                warnings.push({ level: 'info', text: `<strong>Aspect ratio ${ratio.toFixed(2)}</strong> — ${margin} from 2.5 maximum for automation.` });
+            }
+        }
+
+        return warnings;
     },
 
     /**

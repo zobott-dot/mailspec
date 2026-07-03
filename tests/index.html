@@ -430,6 +430,80 @@
             assertString('No components: dash', r.pClass, '—');
         })();
 
+        section('Classification: Minimum Thickness (DMM two-tier)');
+
+        (function() {
+            assert('Floor 0.007 at exactly 6" x 4.25"', Postal.getMinimumThickness(6, 4.25), 0.007, 0.00001);
+            assert('Floor 0.009 when length > 6"', Postal.getMinimumThickness(6.01, 4.25), 0.009, 0.00001);
+            assert('Floor 0.009 when height > 4.25"', Postal.getMinimumThickness(6, 4.26), 0.009, 0.00001);
+
+            // #10-size piece (9.5" long -> 0.009 floor)
+            var r = Postal.classifyPiece(9.5, 4.125, 0.008, true);
+            assertString('9.5x4.125 @ 0.008: Non-Mailable', r.pClass, 'Non-Mailable');
+            assertString('9.5x4.125 @ 0.008: Too Thin', r.pSub, 'Too Thin');
+            r = Postal.classifyPiece(9.5, 4.125, 0.009, true);
+            assertString('9.5x4.125 @ exactly 0.009: Letter', r.pClass, 'Letter');
+
+            // Small piece on the 0.007 floor
+            r = Postal.classifyPiece(6, 4.25, 0.007, true);
+            assertString('6x4.25 @ exactly 0.007: Letter', r.pClass, 'Letter');
+            r = Postal.classifyPiece(6, 4.25, 0.0065, true);
+            assertString('6x4.25 @ 0.0065: Too Thin', r.pSub, 'Too Thin');
+
+            // Flat-size sheet too thin must be Non-Mailable, not Flat (ordering check)
+            r = Postal.classifyPiece(12, 9, 0.005, true);
+            assertString('12x9 @ 0.005: Non-Mailable, not Flat', r.pClass, 'Non-Mailable');
+
+            // Too Small outranks Too Thin
+            r = Postal.classifyPiece(4, 3, 0.001, true);
+            assertString('Below min size: Too Small wins', r.pSub, 'Too Small');
+        })();
+
+        section('Postal Warnings: Boundaries & Minimums');
+
+        (function() {
+            function count(w, level, substr) {
+                return w.filter(function(x) { return x.level === level && x.text.indexOf(substr) !== -1; }).length;
+            }
+            function warn(wOz, thick, W, H) {
+                var cls = Postal.classifyPiece(W, H, thick, true);
+                var ratio = Postal.calculateAspectRatio(W, H);
+                return Postal.generatePostalWarnings(wOz, thick, W, H, ratio, cls, true);
+            }
+
+            // Ratio exactly 2.50: compliant -> amber at-limit, NO red
+            var w = warn(1, 0.05, 10, 4);
+            assert('Ratio 2.50: no red', count(w, 'red', 'Aspect ratio'), 0);
+            assert('Ratio 2.50: at-limit amber', count(w, 'amber', 'at the 2.5 maximum'), 1);
+
+            // Ratio above 2.50: red
+            w = warn(1, 0.05, 10.2, 4);
+            assert('Ratio 2.55: red fires', count(w, 'red', 'Aspect ratio'), 1);
+
+            // Ratio exactly 1.30: compliant -> amber at-limit, NO red
+            w = warn(1, 0.05, 6.5, 5);
+            assert('Ratio 1.30: no red', count(w, 'red', 'Aspect ratio'), 0);
+            assert('Ratio 1.30: at-limit amber', count(w, 'amber', 'at the 1.3 minimum'), 1);
+
+            // Ratio below 1.30: red
+            w = warn(1, 0.05, 6, 5);
+            assert('Ratio 1.20: red fires', count(w, 'red', 'Aspect ratio'), 1);
+
+            // Minimum thickness red
+            w = warn(0.2, 0.005, 9.5, 4.125);
+            assert('Sub-minimum thickness: red fires', count(w, 'red', 'below the DMM'), 1);
+            w = warn(0.2, 0.010, 9.5, 4.125);
+            assert('Compliant thickness: no min-thickness red', count(w, 'red', 'below the DMM'), 0);
+
+            // Weight bands
+            w = warn(3.4, 0.05, 9.5, 4.125);
+            assert('3.4 oz: flat-pricing amber, corrected wording', count(w, 'amber', 'flat prices and preparation'), 1);
+            w = warn(14, 0.3, 12, 9);
+            assert('14 oz: MM-flats-only amber', count(w, 'amber', 'Marketing Mail flats only'), 1);
+            w = warn(16.5, 0.3, 12, 9);
+            assert('16.5 oz: parcel red', count(w, 'red', 'parcel rates apply'), 1);
+        })();
+
         section('Classification: Postage Lookup');
 
         (function() {
@@ -455,7 +529,8 @@
             assertString('Weight 0.5oz', Postal.getWeightStatus(0.5, true), 'Machinable ≤1oz');
             assertString('Weight 2.0oz', Postal.getWeightStatus(2.0, true), 'Std Letter ≤3.5oz');
             assertString('Weight 5.0oz', Postal.getWeightStatus(5.0, true), 'Flat ≤13oz');
-            assertString('Weight 15oz', Postal.getWeightStatus(15.0, true), 'Parcel');
+            assertString('Weight 15oz: MM flat territory', Postal.getWeightStatus(15.0, true), 'MM Flat only <16oz');
+            assertString('Weight 16oz: Parcel', Postal.getWeightStatus(16.0, true), 'Parcel');
             assertString('No components', Postal.getWeightStatus(0, false), '—');
         })();
 

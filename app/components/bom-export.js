@@ -36,7 +36,7 @@
 
         // Add global seal info if present
         if (State.globalSealType !== 'none' && State.globalSealQty > 0) {
-            const sealLabels = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue' };
+            const sealLabels = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue', perf_tab: 'Perforated Tab' };
             const seal = SEALS[State.globalSealType];
             lines.push(`  Tab Seals:           ${State.globalSealQty}× ${sealLabels[State.globalSealType]}`);
             lines.push(`                       (+${(seal.thick * State.globalSealQty).toFixed(4)}" / +${(seal.weight * State.globalSealQty).toFixed(4)} oz)`);

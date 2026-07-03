@@ -29,7 +29,7 @@
             const seal = SEALS[State.globalSealType];
             const totalThick = (seal.thick * State.globalSealQty).toFixed(4);
             const totalWeight = (seal.weight * State.globalSealQty).toFixed(4);
-            const labels = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue' };
+            const labels = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue', perf_tab: 'Perforated Tab' };
             infoEl.innerHTML = `<span class="text-emerald-600 font-medium">${State.globalSealQty}× ${labels[State.globalSealType]}</span>: +${totalThick}" / +${totalWeight} oz`;
             infoEl.className = 'text-[10px] text-slate-600 mt-1';
         }

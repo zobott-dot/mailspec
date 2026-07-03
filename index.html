@@ -370,6 +370,7 @@
                         <option value="wafer">Wafer Tab</option>
                         <option value="glue_dot">Glue Dot</option>
                         <option value="line_glue">Line Glue</option>
+                        <option value="perf_tab">Perforated Tab — not FSM-compliant</option>
                     </select>
                 </div>
                 <div>
@@ -1253,6 +1254,7 @@
                                     <div class="flex justify-between"><span>Wafer Tab</span><span class="text-indigo-600">+.002" / +.003oz</span></div>
                                     <div class="flex justify-between"><span>Glue Dot</span><span class="text-indigo-600">+.004" / +.001oz</span></div>
                                     <div class="flex justify-between"><span>Line Glue</span><span class="text-indigo-600">+.001" / +.002oz</span></div>
+                                    <div class="flex justify-between"><span>Perforated Tab</span><span class="text-indigo-600">+.003" / +.004oz</span></div>
                                 </div>
                                 <p class="text-[10px] text-slate-500 mt-2">Seals are set in <strong>Global Adjustments</strong>. Specify type and quantity.</p>
                             </div>
@@ -1261,12 +1263,13 @@
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">🔒 Tab Seals (Global Adjustments)</h4>
                         <p class="text-xs text-slate-600 mb-3">Self-mailers require tab seals to meet USPS automation standards. Set seal type and quantity in <strong>Global Adjustments</strong>. The total thickness and weight from seals is added to the assembly total.</p>
-                        <div class="space-y-2 md:space-y-0 md:grid md:grid-cols-3 md:gap-2 text-xs">
+                        <div class="space-y-2 md:space-y-0 md:grid md:grid-cols-2 md:gap-2 text-xs">
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Wafer Tab</strong><p class="text-slate-500 mt-1">Standard 1" clear circular tab. Most common. +0.002" / +0.003 oz each.</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Glue Dot</strong><p class="text-slate-500 mt-1">Fugitive adhesive dots that release cleanly. +0.004" / +0.001 oz.</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Line Glue</strong><p class="text-slate-500 mt-1">Continuous glue line along fold edge. +0.001" / +0.002 oz.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Perforated Tab</strong><p class="text-slate-500 mt-1">Not permitted as a closure for folded self-mailers or booklets — DMM 201.3.14 requires tabs free of perforations. Included for physical weight/thickness modeling only. +0.003" / +0.004 oz.</p></div>
                         </div>
-                        <p class="text-[10px] text-slate-500 mt-2"><strong>Note:</strong> USPS requires tabs based on piece weight and fold configuration. Consult DMM 201.3.15 for specifics.</p>
+                        <p class="text-[10px] text-slate-500 mt-2"><strong>Note:</strong> USPS requires tabs based on piece weight and fold configuration. Consult DMM 201.3.14 for specifics.</p>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">Custom Panel Mode</h4>
@@ -1702,7 +1705,7 @@
         var printSeals = document.getElementById('printSeals');
         var sealsText = '';
         if (State.globalSealType !== 'none' && State.globalSealQty > 0) {
-            var sealName = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue' }[State.globalSealType] || State.globalSealType;
+            var sealName = { wafer: 'Wafer Tab', glue_dot: 'Glue Dot', line_glue: 'Line Glue', perf_tab: 'Perforated Tab' }[State.globalSealType] || State.globalSealType;
             sealsText = 'Seals: ' + State.globalSealQty + '\u00d7 ' + sealName + ' (included in totals)';
         }
 

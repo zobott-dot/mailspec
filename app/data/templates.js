@@ -37,7 +37,8 @@ window.MailSpec.TEMPLATES = {
         customPanels: true,
         flatWidth: 17, flatHeight: 11,
         finishedWidth: 8.5, finishedHeight: 11,
-        layersAtFold: 4
+        layersAtFold: 4,
+        complianceFoldType: 'specialty'
     },
     doubleGateFold: {
         type: 'selfmailer', name: 'Double Gate Fold',
@@ -46,7 +47,8 @@ window.MailSpec.TEMPLATES = {
         customPanels: true,
         flatWidth: 25.5, flatHeight: 11,
         finishedWidth: 6.375, finishedHeight: 11,
-        layersAtFold: 6
+        layersAtFold: 6,
+        complianceFoldType: 'specialty'
     },
     rollFold8x14: {
         type: 'sheet', name: 'Roll Fold (4-Panel)',
@@ -73,7 +75,8 @@ window.MailSpec.TEMPLATES = {
         customPanels: true,
         flatWidth: 17, flatHeight: 22,
         finishedWidth: 8.5, finishedHeight: 11,
-        layersAtFold: 4
+        layersAtFold: 4,
+        complianceFoldType: 'specialty'
     },
     frenchFold: {
         type: 'sheet', name: 'French Fold',

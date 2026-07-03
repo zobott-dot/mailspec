@@ -112,6 +112,8 @@
         let totalWeightOz = 0, totalThickness = 0, totalToleranceSum = 0;
         let maxW = 0, maxH = 0, driverName = '-', driverIsEnvelope = false;
         const driverItems = [];
+        // Compliance uses .find() below, which returns the first match — mirror that here.
+        let selfMailerFinishedW = 0, selfMailerFinishedH = 0, selfMailerCaptured = false;
 
         const bomData = State.components.map(c => {
             // Validate stockIdx
@@ -127,6 +129,12 @@
             const weightOz = metrics.weightOz, itemThick = metrics.itemThick;
 
             driverItems.push({ name: c.name, type: c.type, finW: finW, finH: finH });
+
+            if (c.type === 'selfmailer' && !selfMailerCaptured) {
+                selfMailerFinishedW = finW;
+                selfMailerFinishedH = finH;
+                selfMailerCaptured = true;
+            }
 
             totalWeightOz += weightOz;
             totalThickness += itemThick;
@@ -231,14 +239,19 @@
         const compliancePanel = document.getElementById('compliancePanel');
         const selfMailer = State.components.find(c => c.type === 'selfmailer');
 
-        if (selfMailer && selfMailer.fold !== '1' && State.components.length > 0) {
+        const complianceFold = (selfMailer && selfMailer.complianceFoldType) ? selfMailer.complianceFoldType : (selfMailer ? selfMailer.fold : '1');
+
+        if (selfMailer && complianceFold !== '1' && State.components.length > 0) {
             const hasOptional = document.getElementById('complianceOptionalElements')?.checked || false;
             const compliance = Compliance.evaluateSelfMailer({
-                foldType: selfMailer.fold,
+                foldType: complianceFold,
                 totalWeightOz: totalWeightOz,
                 sealType: State.globalSealType,
                 sealQty: State.globalSealQty,
-                hasOptionalElements: hasOptional
+                hasOptionalElements: hasOptional,
+                finishedW: selfMailerFinishedW,
+                finishedH: selfMailerFinishedH,
+                stockGsm: selfMailer.gsm
             });
 
             compliancePanel.className = '';
@@ -283,7 +296,7 @@
                 <div class="space-y-1">
                     ${compliance.messages.map(m => `<div class="text-xs text-slate-600 flex items-start gap-1.5"><span class="material-symbols-outlined text-xs text-slate-400 mt-0.5">arrow_right</span><span>${m}</span></div>`).join('')}
                 </div>
-                <div class="mt-3 text-[9px] text-slate-400">Reference: ${compliance.reference}. Verify with USPS for production mailings.</div>
+                <div class="mt-3 text-[9px] text-slate-400">Checks tab count/size, weight, size, and paper minimums per ${compliance.reference}. Tab placement zones, final-fold orientation, and panel-count limits are not modeled — confirm with QSG 601a or an MDA (mda@usps.gov) before production.</div>
             `;
         } else {
             compliancePanel.className = 'hidden';

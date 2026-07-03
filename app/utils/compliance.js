@@ -9,11 +9,14 @@
          * Evaluate self-mailer tab compliance against DMM 201.3.14.
          *
          * @param {Object} params
-         * @param {string} params.foldType - '1' (flat/postcard), '2' (bi-fold), '3' (tri-fold), '4' (quarter-fold)
+         * @param {string} params.foldType - '1' (flat/postcard), '2' (bi-fold), '3' (tri-fold), '4' (quarter-fold), 'specialty' (gate/double-gate/iron-cross)
          * @param {number} params.totalWeightOz - Assembly total weight in ounces (after buffers/seals)
-         * @param {string} params.sealType - 'none', 'wafer', 'glue_dot', 'line_glue'
+         * @param {string} params.sealType - 'none', 'wafer', 'glue_dot', 'line_glue', 'perf_tab'
          * @param {number} params.sealQty - Number of seals/tabs
          * @param {boolean} params.hasOptionalElements - Whether piece has die-cuts, perforations, etc.
+         * @param {number} [params.finishedW] - Finished piece width (in)
+         * @param {number} [params.finishedH] - Finished piece height (in)
+         * @param {number} [params.stockGsm] - GSM of the self-mailer's stock (omit/undefined = skip paper check)
          * @returns {Object} { status, requiredTabs, requiredSize, messages, reference }
          *   status: 'pass' | 'caution' | 'fail' | 'na'
          *   requiredTabs: number
@@ -30,10 +33,11 @@
                 reference: 'DMM 201.3.14'
             };
 
-            // Only evaluate folded self-mailers (bi-fold, tri-fold, quarter-fold)
             var foldType = params.foldType;
+            var isSpecialty = (foldType === 'specialty');
+
+            // Flat/postcard with no specialty flag — tab standards do not apply
             if (foldType === '1') {
-                // Flat/postcard — no tab requirements (postcards have different rules)
                 result.status = 'na';
                 result.messages.push('Flat piece — tab standards do not apply.');
                 return result;
@@ -43,64 +47,111 @@
             var sealType = params.sealType;
             var sealQty = params.sealQty;
             var hasOptional = params.hasOptionalElements;
-            var isQuarterFold = (foldType === '4');
 
-            // Check maximum weight
+            // Maximum weight
             if (weight > 3.0) {
                 result.status = 'fail';
                 result.messages.push('Weight ' + weight.toFixed(3) + ' oz exceeds 3 oz maximum for folded self-mailers.');
                 return result;
             }
 
-            // Determine required tabs and size
-            var reqTabs = 2;
-            var reqSize = '1"';
+            // Size gate — DMM 201.3.14 max is 6" × 10.5" (smaller than the letter maximum)
+            var longDim = Math.max(params.finishedW || 0, params.finishedH || 0);
+            var shortDim = Math.min(params.finishedW || 0, params.finishedH || 0);
+            if (longDim > 0 && shortDim > 0 && (longDim > 10.5 || shortDim > 6)) {
+                result.status = 'fail';
+                result.messages.push('Finished size ' + longDim.toFixed(3) + '" × ' + shortDim.toFixed(3) + '" exceeds the folded self-mailer maximum of 6" × 10.5" (the FSM limit is smaller than the 6.125" × 11.5" letter maximum).');
+                return result;
+            }
 
-            if (weight > 1.0) {
-                reqSize = '1.5"';
-                if (isQuarterFold) {
-                    reqTabs = 3;
+            // Paper minimum — record failure but continue so tab evaluation still renders
+            if (typeof params.stockGsm === 'number' && params.stockGsm > 0) {
+                var minGsm, minLabel;
+                if (hasOptional) {
+                    minGsm = 148;
+                    minLabel = '100# book';
+                } else if (weight > 1.0) {
+                    minGsm = 118;
+                    minLabel = '80# book';
+                } else {
+                    minGsm = 104;
+                    minLabel = '70# book';
                 }
-            } else {
-                reqSize = '1"';
+                if (params.stockGsm < minGsm) {
+                    result.status = 'fail';
+                    result.messages.push('Stock ' + params.stockGsm + ' gsm is below the ' + minGsm + ' gsm minimum (' + minLabel + ' equivalent) required for this fold/weight/optional-element combination.');
+                }
             }
 
-            // Optional design elements add a third tab
-            if (hasOptional && reqTabs < 3) {
-                reqTabs = 3;
+            // Perforated tabs are prohibited by DMM 201.3.14
+            if (sealType === 'perf_tab') {
+                result.status = 'fail';
+                result.messages.push('Perforated tabs are not permitted as a closure for folded self-mailers — DMM 201.3.14 requires tabs free of perforations. Use wafer tabs or glue.');
+                if (isSpecialty) {
+                    result.messages.push('Specialty fold — gate, double-gate, and iron-cross formats carry additional closure and final-fold requirements. Verify tab placement and orientation with an MDA before production.');
+                }
+                return result;
             }
 
-            // Quarter-fold over 1oz always needs 3
-            if (isQuarterFold && weight > 1.0) {
-                reqTabs = 3;
+            // Required tabs and size
+            var reqTabs = 2;
+            var reqSize = (weight > 1.0) ? '1.5"' : '1"';
+
+            if (hasOptional) {
+                reqTabs = 2;
                 reqSize = '1.5"';
             }
 
             result.requiredTabs = reqTabs;
             result.requiredSize = reqSize;
 
-            // Evaluate current seal configuration
+            var paperAlreadyFailed = (result.status === 'fail');
+
+            // Evaluate seal configuration
             if (sealType === 'none' || sealQty === 0) {
                 result.status = 'fail';
                 result.messages.push('No seals configured. Minimum ' + reqTabs + ' tabs (' + reqSize + ') required.');
                 result.messages.push('Set seal type and quantity in Global Adjustments.');
-                return result;
-            }
-
-            // Line glue is acceptable as an alternative closure
-            if (sealType === 'line_glue') {
-                result.status = 'pass';
-                result.messages.push('Line glue is an acceptable closure method for folded self-mailers.');
-                if (sealQty < 2) {
-                    result.status = 'caution';
-                    result.messages = ['Line glue configured but quantity is ' + sealQty + '. Verify continuous glue coverage along open edge.'];
+                if (isSpecialty) {
+                    result.messages.push('Specialty fold — gate, double-gate, and iron-cross formats carry additional closure and final-fold requirements. Verify tab placement and orientation with an MDA before production.');
                 }
                 return result;
             }
 
-            // Evaluate tab quantity
+            // Line glue: acceptable alternative closure (including when optional elements are present)
+            if (sealType === 'line_glue') {
+                if (!paperAlreadyFailed) result.status = 'pass';
+                result.messages.push('Line glue is an acceptable closure method for folded self-mailers.');
+                if (sealQty < 2) {
+                    if (!paperAlreadyFailed) result.status = 'caution';
+                    result.messages.push('Line glue configured but quantity is ' + sealQty + '. Verify continuous glue coverage along open edge.');
+                }
+                if (isSpecialty) {
+                    result.messages.push('Specialty fold — gate, double-gate, and iron-cross formats carry additional closure and final-fold requirements. Verify tab placement and orientation with an MDA before production.');
+                }
+                return result;
+            }
+
+            // Glue dots: 3 spots <= 1 oz, 4 spots > 1 oz
+            if (sealType === 'glue_dot') {
+                var reqGlueSpots = (weight > 1.0) ? 4 : 3;
+                if (sealQty >= reqGlueSpots) {
+                    if (!paperAlreadyFailed) result.status = 'pass';
+                    result.messages.push(sealQty + ' glue spot(s) configured. Requirement: ' + reqGlueSpots + ' minimum.');
+                } else {
+                    result.status = 'fail';
+                    result.messages.push(sealQty + ' glue spot(s) configured but ' + reqGlueSpots + ' required.');
+                }
+                result.messages.push('Glue dots: minimum 3/8" diameter, placed within 3/4" of open edges.');
+                if (isSpecialty) {
+                    result.messages.push('Specialty fold — gate, double-gate, and iron-cross formats carry additional closure and final-fold requirements. Verify tab placement and orientation with an MDA before production.');
+                }
+                return result;
+            }
+
+            // Wafer / generic tab evaluation
             if (sealQty >= reqTabs) {
-                result.status = 'pass';
+                if (!paperAlreadyFailed) result.status = 'pass';
                 result.messages.push(sealQty + ' tab(s) configured. Requirement: ' + reqTabs + ' minimum (' + reqSize + ').');
             } else {
                 result.status = 'fail';
@@ -108,14 +159,12 @@
                 result.messages.push('Increase seal quantity in Global Adjustments.');
             }
 
-            // Size advisory for wafer tabs
             if (sealType === 'wafer' && reqSize === '1.5"') {
                 result.messages.push('Verify wafer tabs are 1.5" diameter (standard wafers are 1").');
             }
 
-            // Glue dot advisory
-            if (sealType === 'glue_dot') {
-                result.messages.push('Glue dots: minimum 3/8" diameter, placed within 3/4" of open edges.');
+            if (isSpecialty) {
+                result.messages.push('Specialty fold — gate, double-gate, and iron-cross formats carry additional closure and final-fold requirements. Verify tab placement and orientation with an MDA before production.');
             }
 
             return result;

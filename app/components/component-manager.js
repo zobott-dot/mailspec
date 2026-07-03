@@ -34,6 +34,7 @@
             finishedWidth: defaults.finishedWidth || null,
             finishedHeight: defaults.finishedHeight || null,
             layersAtFold: defaults.layersAtFold || null,
+            complianceFoldType: defaults.complianceFoldType || null,
             caliper: 0, gsm: 0
         };
         const stock = STOCKS[comp.stockIdx];
@@ -145,6 +146,7 @@
             defaults.finishedHeight = t.finishedHeight;
             defaults.layersAtFold = t.layersAtFold;
         }
+        if (t.complianceFoldType) defaults.complianceFoldType = t.complianceFoldType;
         addComponent(t.type, defaults);
     }
 

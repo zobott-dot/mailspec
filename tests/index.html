@@ -579,10 +579,11 @@
         section('Compliance: Quarter-fold');
 
         (function() {
-            // Quarter-fold over 1oz needs 3 tabs
+            // DMM 201.3.14 (current): quarter-fold > 1oz requires 2 tabs @ 1.5" (the 3-tab rule is for newsprint only, not modeled here).
             var r = Compliance.evaluateSelfMailer({ foldType: '4', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false });
-            assertString('Quarter-fold over 1oz, 2 tabs: fail', r.status, 'fail');
-            assert('Quarter-fold requires 3 tabs', r.requiredTabs, 3);
+            assertString('Quarter-fold over 1oz, 2 tabs: pass', r.status, 'pass');
+            assert('Quarter-fold requires 2 tabs', r.requiredTabs, 2);
+            assertString('Quarter-fold over 1oz size 1.5"', r.requiredSize, '1.5"');
 
             r = Compliance.evaluateSelfMailer({ foldType: '4', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 3, hasOptionalElements: false });
             assertString('Quarter-fold over 1oz, 3 tabs: pass', r.status, 'pass');
@@ -591,13 +592,131 @@
         section('Compliance: Optional Elements');
 
         (function() {
-            // Bi-fold with optional elements needs 3 tabs
+            // DMM 201.3.14 (current): optional elements require 2 tabs @ 1.5" (or glue), NOT +1 tab. Paper check omitted here — stockGsm not passed.
             var r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: true });
-            assertString('Optional elements, 2 tabs: fail', r.status, 'fail');
-            assert('Optional elements require 3 tabs', r.requiredTabs, 3);
+            assertString('Optional elements, 2 tabs: pass', r.status, 'pass');
+            assert('Optional elements require 2 tabs', r.requiredTabs, 2);
+            assertString('Optional elements size 1.5"', r.requiredSize, '1.5"');
 
-            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 3, hasOptionalElements: true });
-            assertString('Optional elements, 3 tabs: pass', r.status, 'pass');
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 1, hasOptionalElements: true });
+            assertString('Optional elements, 1 tab: fail', r.status, 'fail');
+        })();
+
+        section('Compliance: Perforated Tab Prohibition');
+
+        (function() {
+            // DMM 201.3.14: perforated tabs are prohibited regardless of count.
+            var r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.8, sealType: 'perf_tab', sealQty: 2, hasOptionalElements: false });
+            assertString('Perf tab bi-fold, 2 tabs: fail', r.status, 'fail');
+            var hasProhibitionMsg = r.messages.some(function(m) { return m.indexOf('Perforated tabs are not permitted') !== -1; });
+            assertString('Perf tab: prohibition message present', hasProhibitionMsg, true);
+        })();
+
+        section('Compliance: Glue Dot Counts');
+
+        (function() {
+            // Under 1oz: 3 spots required
+            var r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.8, sealType: 'glue_dot', sealQty: 3, hasOptionalElements: false });
+            assertString('Glue dot 0.8oz, 3 spots: pass', r.status, 'pass');
+
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.8, sealType: 'glue_dot', sealQty: 2, hasOptionalElements: false });
+            assertString('Glue dot 0.8oz, 2 spots: fail', r.status, 'fail');
+
+            // Over 1oz: 4 spots required
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 1.4, sealType: 'glue_dot', sealQty: 4, hasOptionalElements: false });
+            assertString('Glue dot 1.4oz, 4 spots: pass', r.status, 'pass');
+
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 1.4, sealType: 'glue_dot', sealQty: 3, hasOptionalElements: false });
+            assertString('Glue dot 1.4oz, 3 spots: fail', r.status, 'fail');
+        })();
+
+        section('Compliance: FSM Size Gate (6" x 10.5")');
+
+        (function() {
+            // Letter-size finished piece exceeds FSM max even though it's within the letter maximum (11.5 x 6.125).
+            var r = Compliance.evaluateSelfMailer({
+                foldType: '3', totalWeightOz: 0.8, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                finishedW: 11, finishedH: 6.125
+            });
+            assertString('Finished 6.125x11 tri-fold: fail size gate', r.status, 'fail');
+            var hasSizeMsg = r.messages.some(function(m) { return m.indexOf('folded self-mailer maximum') !== -1; });
+            assertString('Size gate: fail message present', hasSizeMsg, true);
+
+            // Boundary inclusive: exactly 6 x 10.5 passes gate
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 0.8, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                finishedW: 10.5, finishedH: 6
+            });
+            assertString('Finished 6x10.5 bi-fold: pass (boundary)', r.status, 'pass');
+
+            // Well within: no size failure surfaces
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                finishedW: 8.5, finishedH: 5.5
+            });
+            assertString('Finished 5.5x8.5 bi-fold: pass', r.status, 'pass');
+            var noSizeMsg = !r.messages.some(function(m) { return m.indexOf('folded self-mailer maximum') !== -1; });
+            assertString('Small finished size: no size gate message', noSizeMsg, true);
+        })();
+
+        section('Compliance: Paper Basis-Weight Minimums');
+
+        (function() {
+            // <=1oz, no optional elements: 104 gsm min (70# book)
+            var r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                stockGsm: 104
+            });
+            assertString('0.5oz, 104 gsm: pass', r.status, 'pass');
+
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                stockGsm: 90
+            });
+            assertString('0.5oz, 90 gsm: fail (below 104)', r.status, 'fail');
+
+            // >1oz: 118 gsm min (80# book)
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                stockGsm: 118
+            });
+            assertString('1.5oz, 118 gsm: pass', r.status, 'pass');
+
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 1.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                stockGsm: 104
+            });
+            assertString('1.5oz, 104 gsm: fail (below 118)', r.status, 'fail');
+
+            // Optional elements: 148 gsm min (100# book)
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: true,
+                stockGsm: 148
+            });
+            assertString('Optional elements, 148 gsm: pass', r.status, 'pass');
+
+            r = Compliance.evaluateSelfMailer({
+                foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: true,
+                stockGsm: 118
+            });
+            assertString('Optional elements, 118 gsm: fail (below 148)', r.status, 'fail');
+
+            // No stockGsm: no paper message
+            r = Compliance.evaluateSelfMailer({ foldType: '2', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false });
+            var noPaperMsg = !r.messages.some(function(m) { return m.indexOf('gsm minimum') !== -1; });
+            assertString('No stockGsm: no paper minimum message', noPaperMsg, true);
+        })();
+
+        section('Compliance: Specialty Fold Engagement');
+
+        (function() {
+            var r = Compliance.evaluateSelfMailer({
+                foldType: 'specialty', totalWeightOz: 0.5, sealType: 'wafer', sealQty: 2, hasOptionalElements: false,
+                finishedW: 8.5, finishedH: 5.5
+            });
+            assertString('Specialty fold, wafer x2: pass', r.status, 'pass');
+            var hasMdaMsg = r.messages.some(function(m) { return m.indexOf('MDA') !== -1; });
+            assertString('Specialty fold: MDA advisory present', hasMdaMsg, true);
         })();
 
         section('Compliance: Line Glue and Weight Limit');

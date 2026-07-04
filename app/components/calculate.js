@@ -10,6 +10,63 @@
     const COATINGS = window.MailSpec.COATINGS;
     const C = window.MailSpec.Components;
 
+    // --- Postage card rendering helpers (Notice 123 range display) ---
+    function fmtRate(v) { return '$' + v.toFixed(3); }
+
+    function fmtDate(iso) {
+        const p = String(iso).split('-');
+        return p.length === 3 ? `${+p[1]}/${+p[2]}/${p[0]}` : iso;
+    }
+
+    // key: 'Marketing' | 'FirstClass'; data: a class object from lookupPostage or null.
+    function renderPostageRow(key, data, isMM) {
+        const rateEl = document.getElementById('postage' + key);
+        const subEl = document.getElementById('postage' + key + 'Sub');
+        const noteEl = document.getElementById('postage' + key + 'Note');
+
+        // Price range (or dash for null result / priced-out-of-range note rows).
+        if (data && data.low != null && data.high != null) {
+            rateEl.textContent = (data.low === data.high)
+                ? fmtRate(data.low)
+                : `${fmtRate(data.low)} – ${fmtRate(data.high)}`;
+        } else {
+            rateEl.textContent = '—';
+        }
+
+        // Tier / entry / DSCF sub-line.
+        if (data && data.lowTier && data.highTier) {
+            let sub = `${data.lowTier} → ${data.highTier}`;
+            if (isMM) {
+                sub += ', origin entry';
+                if (data.dscfBest != null) sub += ` · DSCF: from ${fmtRate(data.dscfBest)}`;
+            }
+            subEl.textContent = sub;
+        } else {
+            subEl.textContent = '';
+        }
+
+        // Note line (re-quote, piece+pound, or over-cap explanation).
+        if (data && data.note) {
+            noteEl.textContent = data.note;
+            noteEl.classList.remove('hidden');
+        } else {
+            noteEl.textContent = '';
+            noteEl.classList.add('hidden');
+        }
+    }
+
+    function renderPostageFooter(meta) {
+        const el = document.getElementById('postageFooter');
+        if (!el) return;
+        if (!meta) { el.textContent = ''; return; }
+        const base = `Rates: Notice 123 eff. ${fmtDate(meta.effectiveDate)} — verified ${fmtDate(meta.verifiedDate)}`;
+        if (meta.status !== 'final') {
+            el.innerHTML = `${base} <span class="text-amber-600 font-semibold">(proposed)</span>`;
+        } else {
+            el.textContent = base;
+        }
+    }
+
     function calculate() {
         const Calc = window.MailSpec.Calculations;
         const Postal = window.MailSpec.Postal;
@@ -90,10 +147,11 @@
         // Weight status
         document.getElementById('weightStatus').textContent = Postal.getWeightStatus(totalWeightOz, State.components.length > 0);
 
-        // POSTAGE CALCULATION
-        const postage = Postal.lookupPostage(classification.pClass, classification.isFlat, totalWeightOz, State.components.length > 0);
-        document.getElementById('postageMarketing').textContent = postage.marketingRate ? `$${postage.marketingRate.toFixed(3)}` : '—';
-        document.getElementById('postageFirstClass').textContent = postage.firstClassRate ? `$${postage.firstClassRate.toFixed(2)}` : '—';
+        // POSTAGE CALCULATION — presort-tier ranges, entry disclosed, weight-guarded.
+        const postage = Postal.lookupPostage(classification.pClass, totalWeightOz);
+        renderPostageRow('Marketing', postage.mm, true);
+        renderPostageRow('FirstClass', postage.fc, false);
+        renderPostageFooter(postage.meta);
 
         // Postal Risk Warnings
         const warnings = Postal.generatePostalWarnings(totalWeightOz, totalThickness, maxW, maxH, ratio, classification, State.components.length > 0);

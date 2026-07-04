@@ -82,7 +82,7 @@
       if (totalWeightOz <= 1) return 'Machinable ≤1oz';
       if (totalWeightOz <= 3.5) return 'Std Letter ≤3.5oz';
       if (totalWeightOz <= 13) return 'Flat ≤13oz';
-      if (totalWeightOz < 16) return 'MM Flat only <16oz';
+      if (totalWeightOz < 20) return 'MM Flat only <20oz';
       return 'Parcel';
     },
 
@@ -144,14 +144,14 @@
         } else if (totalWeightOz <= 13) {
             const margin = (13.0 - totalWeightOz).toFixed(3);
             if (totalWeightOz >= 12.500) {
-                warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — only ${margin} oz from the 13 oz First-Class flat maximum. Above 13 oz, First-Class is unavailable; Marketing Mail flats are permitted to just under 16 oz.` });
+                warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — only ${margin} oz from the 13 oz First-Class flat maximum. Above 13 oz, First-Class is unavailable; Marketing Mail flats are permitted to just under 20 oz.` });
             } else if (totalWeightOz >= 11.500) {
                 warnings.push({ level: 'info', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — ${margin} oz from the 13 oz First-Class flat maximum.` });
             }
-        } else if (totalWeightOz < 16) {
-            warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — over the 13 oz First-Class limit. Marketing Mail flats only (permitted to just under 16 oz).` });
+        } else if (totalWeightOz < 20) {
+            warnings.push({ level: 'amber', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — over the 13 oz First-Class limit. Marketing Mail flats only (permitted to just under 20 oz).` });
         } else {
-            warnings.push({ level: 'red', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — at or over 16 oz. Outside Marketing Mail flats; parcel rates apply.` });
+            warnings.push({ level: 'red', text: `<strong>Weight ${totalWeightOz.toFixed(3)} oz</strong> — at or over 20 oz. Outside Marketing Mail flats; parcel rates apply.` });
         }
 
         // --- DIMENSION WARNINGS ---
@@ -208,24 +208,93 @@
     },
 
     /**
-     * Look up postage rates based on classification and weight.
-     * Returns { marketingRate, firstClassRate }
+     * Look up postage as presort-tier ranges (5-Digit -> Mixed) per class.
+     * Pure function: takes (pClass, weightOz), returns a structured result the
+     * card can render as two rows. No DOM, no sort/entry selection.
+     *
+     * Return shape:
+     *   {
+     *     mm: { low, high, lowTier, highTier, dscfBest, note, requoted } | null,
+     *     fc: { low, high, lowTier, highTier, note, requoted } | null,
+     *     meta
+     *   }
+     * A class object with null low/high but a note means "priced out of range"
+     * (over the flat weight cap) — the card shows the note and dashes the price.
+     * A null class object means no estimate applies (the card dashes the row).
      */
-    lookupPostage: function(postalClass, isFlat, totalWeightOz, hasComponents) {
+    lookupPostage: function(pClass, weightOz) {
       var POSTAGE = window.MailSpec.POSTAGE;
-      var marketingRate = 0, firstClassRate = 0;
-      if (hasComponents && postalClass !== 'Parcel' && postalClass !== 'Non-Mailable' && postalClass !== '—') {
-        if (isFlat || postalClass === 'Flat') {
-          marketingRate = POSTAGE.marketing.flat;
-          firstClassRate = POSTAGE.firstClass.flat;
-        } else {
-          marketingRate = POSTAGE.marketing.letter;
-          if (totalWeightOz <= 1) firstClassRate = POSTAGE.firstClass.letter1oz;
-          else if (totalWeightOz <= 2) firstClassRate = POSTAGE.firstClass.letter2oz;
-          else firstClassRate = POSTAGE.firstClass.letter3oz;
-        }
+      var meta = POSTAGE.meta;
+
+      // Non-mailable / parcel / empty classification: no estimate.
+      if (pClass === 'Parcel' || pClass === 'Non-Mailable' || pClass === '—' || !pClass) {
+        return { mm: null, fc: null, meta: meta };
       }
-      return { marketingRate: marketingRate, firstClassRate: firstClassRate };
+
+      // Marketing Mail flat quote (also used to re-quote over-weight letters).
+      var mmFlatQuote = function() {
+        var mf = POSTAGE.mmFlat;
+        // >= maxOz so exactly 20.00 oz dashes out, matching getWeightStatus' Parcel
+        // (>= 20) red flag — never price a piece the warning engine red-flags.
+        if (weightOz >= mf.maxOz) {
+          return { low: null, high: null, lowTier: null, highTier: null, dscfBest: null,
+                   note: 'At or over 20 oz — Marketing Mail flat maximum. Parcel pricing applies (not modeled).', requoted: false };
+        }
+        if (weightOz <= mf.pieceRateMaxOz) {
+          return { low: mf.rates['5-Digit'].none, high: mf.rates['Mixed'].none,
+                   lowTier: '5-Digit', highTier: 'Mixed',
+                   dscfBest: mf.rates['5-Digit'].dscf, note: null, requoted: false };
+        }
+        // Over 4 oz: piece + pound. Piece portion is entry-invariant.
+        var lbs = weightOz / 16;
+        var pp = mf.piecePound;
+        return {
+          low: pp.piece['5-Digit'].none + pp.perLb.none * lbs,
+          high: pp.piece['Mixed'].none + pp.perLb.none * lbs,
+          lowTier: '5-Digit', highTier: 'Mixed',
+          dscfBest: pp.piece['5-Digit'].dscf + pp.perLb.dscf * lbs,
+          note: 'Piece + pound pricing (over 4 oz)', requoted: false
+        };
+      };
+
+      // First-Class flat quote ("weight not over N oz" table).
+      var fcFlatQuote = function() {
+        var ff = POSTAGE.fcFlat;
+        if (weightOz > ff.maxOz) {
+          return { low: null, high: null, lowTier: null, highTier: null,
+                   note: 'Over 13 oz — First-Class flat maximum.', requoted: false };
+        }
+        var idx = Math.max(0, Math.ceil(weightOz) - 1);
+        return { low: ff.byOz['5-Digit'][idx], high: ff.byOz['Mixed'][idx],
+                 lowTier: '5-Digit', highTier: 'Mixed', note: null, requoted: false };
+      };
+
+      // Letter path, <= 3.5 oz: single letter prices per tier.
+      if (pClass === 'Letter' && weightOz <= POSTAGE.mmLetter.maxOz) {
+        var mmL = POSTAGE.mmLetter.rates;
+        var fcL = POSTAGE.fcLetter.rates;
+        return {
+          mm: { low: mmL['5-Digit'].none, high: mmL['Mixed'].none,
+                lowTier: '5-Digit', highTier: 'Mixed',
+                dscfBest: mmL['5-Digit'].dscf, note: null, requoted: false },
+          fc: { low: fcL['5-Digit'], high: fcL['Mixed'],
+                lowTier: '5-Digit', highTier: 'Mixed', note: null, requoted: false },
+          meta: meta
+        };
+      }
+
+      // Flat, or a letter-dims piece over 3.5 oz re-quoted as a flat.
+      var requoted = (pClass === 'Letter');
+      var mm = mmFlatQuote();
+      var fc = fcFlatQuote();
+      if (requoted) {
+        var reNote = 'Letters over 3.5 oz pay flat prices and preparation';
+        // Append, don't clobber: a heavy re-quoted letter keeps the flat quote's
+        // own note (e.g. FC's "Over 13 oz" or MM's piece+pound explanation).
+        mm.requoted = true; mm.note = mm.note ? (mm.note + ' ' + reNote) : reNote;
+        fc.requoted = true; fc.note = fc.note ? (fc.note + ' ' + reNote) : reNote;
+      }
+      return { mm: mm, fc: fc, meta: meta };
     },
 
     /**

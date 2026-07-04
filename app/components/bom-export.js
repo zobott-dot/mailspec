@@ -16,8 +16,6 @@
         const totalThick = document.getElementById('totalThick').textContent;
         const totalWeight = document.getElementById('totalWeight').textContent;
         const postalClass = document.getElementById('postalClass').textContent;
-        const marketingRate = document.getElementById('postageMarketing').textContent;
-        const firstClassRate = document.getElementById('postageFirstClass').textContent;
 
         let lines = [
             '═══════════════════════════════════════════════════════════════',
@@ -27,7 +25,7 @@
             '',
             'ASSEMBLY SUMMARY',
             '─────────────────────────────────────────────────────────────────',
-            `  Mailing Dimensions:  ${totalW}" × ${totalH}"`,
+            `  Mailing Dimensions:  ${totalW} × ${totalH}`,
             `  Total Thickness:     ${totalThick}`,
             `  Total Weight:        ${totalWeight}`,
             `  Postal Class:        ${postalClass}`,
@@ -56,10 +54,28 @@
             }
         }
 
-        lines.push('POSTAGE ESTIMATES (July 2025)');
+        // Postage — DOM-read the live card (card = single source of truth), mirroring
+        // its range/entry display in text. Dash rows export a dash; visible note
+        // lines are included underneath the value column.
+        const postageLine = (label, id) => {
+            const rate = (document.getElementById(id).textContent || '').trim() || '—';
+            const subEl = document.getElementById(id + 'Sub');
+            const sub = subEl ? subEl.textContent.trim() : '';
+            lines.push(label + rate + (sub ? `  (${sub})` : ''));
+            const noteEl = document.getElementById(id + 'Note');
+            if (noteEl && !noteEl.classList.contains('hidden') && noteEl.textContent.trim()) {
+                lines.push(' '.repeat(26) + noteEl.textContent.trim());
+            }
+        };
+
+        lines.push('POSTAGE ESTIMATES');
         lines.push('─────────────────────────────────────────────────────────────────');
-        lines.push(`  Marketing Mail (Auto):  ${marketingRate}`);
-        lines.push(`  First-Class (Auto):     ${firstClassRate}`);
+        postageLine('  Marketing Mail (Auto):  ', 'postageMarketing');
+        postageLine('  First-Class (Auto):     ', 'postageFirstClass');
+        const postageFooterEl = document.getElementById('postageFooter');
+        if (postageFooterEl && postageFooterEl.textContent.trim()) {
+            lines.push('  ' + postageFooterEl.textContent.trim());
+        }
         lines.push('');
         lines.push('BILL OF MATERIALS');
         lines.push('─────────────────────────────────────────────────────────────────');

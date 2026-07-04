@@ -471,13 +471,17 @@
                     <div class="space-y-3">
                         <div class="p-3 bg-emerald-50 rounded border border-emerald-100">
                             <div class="postage-label">Marketing Mail (Auto)</div>
-                            <div class="postage-rate" id="postageMarketing">$0.000</div>
+                            <div class="postage-rate" id="postageMarketing">—</div>
+                            <div class="text-[10px] text-slate-500 mt-0.5" id="postageMarketingSub"></div>
+                            <div class="mt-2 text-[10px] italic px-2 py-1 rounded border text-amber-700 bg-amber-50 border-amber-100 hidden" id="postageMarketingNote"></div>
                         </div>
                         <div class="p-3 bg-blue-50 rounded border border-blue-100">
                             <div class="postage-label">First-Class (Auto)</div>
-                            <div class="postage-rate text-blue-600" id="postageFirstClass">$0.000</div>
+                            <div class="postage-rate text-blue-600" id="postageFirstClass">—</div>
+                            <div class="text-[10px] text-slate-500 mt-0.5" id="postageFirstClassSub"></div>
+                            <div class="mt-2 text-[10px] italic px-2 py-1 rounded border text-amber-700 bg-amber-50 border-amber-100 hidden" id="postageFirstClassNote"></div>
                         </div>
-                        <p class="text-[9px] text-slate-400">*July 2025 rates. Verify with USPS.</p>
+                        <p class="text-[9px] text-slate-400" id="postageFooter"></p>
                     </div>
                 </div>
 
@@ -546,7 +550,7 @@
                     <div>
                         <strong class="text-slate-700">About This Data</strong>
                         <p class="text-xs mt-1 text-slate-500">
-                            Stock specs from manufacturer sheets (70+ papers). Tolerance and verification dates shown per stock. Postage rates are USPS July 2025 estimates. Always verify critical specs with physical samples.
+                            Stock specs from manufacturer sheets (70+ papers). Tolerance and verification dates shown per stock. Postage rates are USPS Notice 123, effective July 12, 2026. Always verify critical specs with physical samples.
                             <button class="underline font-medium text-indigo-600" onclick="document.getElementById('sourcesModal').showModal()">View sources →</button>
                         </p>
                     </div>
@@ -630,7 +634,7 @@
 
     <div class="print-footer">
         <span>Estimates for planning purposes. Verify with physical samples for postal qualification.</span>
-        <span>Postage rates: USPS July 2025. Stock data from manufacturer spec sheets.</span>
+        <span>Postage rates: USPS Notice 123 (eff. 7/12/2026). Stock data from manufacturer spec sheets.</span>
     </div>
 </div>
 
@@ -957,25 +961,13 @@
                 </div>
             </section>
             <section>
-                <h3 class="text-base md:text-lg font-bold text-slate-900 mb-3">Postage Rates (July 2025)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-sm">
-                    <div class="p-3 bg-emerald-50 rounded border border-emerald-200">
-                        <strong>Marketing Mail (Automation)</strong>
-                        <ul class="text-xs mt-1 space-y-1 text-slate-600">
-                            <li>Letters: $0.336/pc</li>
-                            <li>Flats: $0.531/pc</li>
-                        </ul>
-                    </div>
-                    <div class="p-3 bg-blue-50 rounded border border-blue-200">
-                        <strong>First-Class (Automation)</strong>
-                        <ul class="text-xs mt-1 space-y-1 text-slate-600">
-                            <li>Letters (1oz): $0.63</li>
-                            <li>Letters (2oz): $0.87</li>
-                            <li>Flats: $1.50</li>
-                        </ul>
-                    </div>
+                <h3 class="text-base md:text-lg font-bold text-slate-900 mb-3">Postage Rates</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs border-collapse">
+                        <tbody id="manualRateTable"></tbody>
+                    </table>
                 </div>
-                <p class="text-xs text-slate-500 mt-2">Rates are estimates. Always verify with current USPS rate card.</p>
+                <p class="text-xs text-slate-500 mt-2" id="manualRateFooter"></p>
             </section>
             <section>
                 <h3 class="text-base md:text-lg font-bold text-slate-900 mb-3">Coating Weight Additions</h3>
@@ -1346,6 +1338,16 @@
                     What's New
                 </h3>
                 <div class="space-y-3 md:space-y-4">
+                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-emerald-800 mb-3">July 2026 — Postage Restructure &amp; Notice 123 Rates</h4>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Presort-Tier Ranges</div><p class="text-[10px] text-slate-600">Postage card now shows a 5-Digit → Mixed range with entry disclosed, not a single best-case cell</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">July 2026 Rates (Final)</div><p class="text-[10px] text-slate-600">USPS Notice 123 rates effective 7/12/2026, with 3-Digit replacing ADC/AADC tiers and DSCF best-case shown</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Piece + Pound for Heavy Flats</div><p class="text-[10px] text-slate-600">Marketing Mail flats over 4 oz price correctly as piece rate plus a per-pound charge</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Weight Guards &amp; Re-Quote</div><p class="text-[10px] text-slate-600">Over-cap pieces dash out with a note; letter-size pieces over 3.5 oz re-quote at flat prices. MM flat max now 20 oz</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Live Manual Rate Table</div><p class="text-[10px] text-slate-600">The Manual's rate table now renders from the same data as the card — one source of truth, no stale numbers</p></div>
+                        </div>
+                    </div>
                     <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-purple-800 mb-3">v3.0 — Current Release</h4>
                         <div class="grid grid-cols-2 gap-2">
@@ -1415,7 +1417,7 @@
                     <span class="material-symbols-outlined text-slate-500">verified</span>
                     Data Sources
                 </h3>
-                <p class="text-xs md:text-sm text-slate-600">Paper specs from official manufacturer sheets (Sappi, Domtar, Mohawk, Neenah, Finch, IP). Postage rates reflect July 2025 USPS pricing—always verify for production.</p>
+                <p class="text-xs md:text-sm text-slate-600">Paper specs from official manufacturer sheets (Sappi, Domtar, Mohawk, Neenah, Finch, IP). Postage rates reflect USPS Notice 123 pricing effective July 12, 2026—always verify for production.</p>
             </section>
 
             <!-- Testing -->
@@ -1557,6 +1559,54 @@
     // ============================================================
     // INITIALIZATION
     // ============================================================
+    // Manual postage table — single-sourced from window.MailSpec.POSTAGE so no
+    // hand-kept rate numbers remain in the markup (the card reads the same data).
+    function populateManualRates() {
+        const P = POSTAGE;
+        if (!P) return;
+        const tbody = document.getElementById('manualRateTable');
+        if (!tbody) return;
+        const $ = v => (v == null ? '—' : '$' + v.toFixed(3));
+        const fmt = iso => { const p = String(iso).split('-'); return p.length === 3 ? `${+p[1]}/${+p[2]}/${p[0]}` : iso; };
+        const rows = [];
+        const hdr = (label, cols) => `<tr><td colspan="${cols}" class="pt-3 pb-1 font-bold text-slate-800">${label}</td></tr>`;
+        const sub = cells => `<tr class="text-slate-400 uppercase text-[10px]">${cells.map(c => `<td class="py-1 pr-4">${c}</td>`).join('')}</tr>`;
+        const row = cells => `<tr class="border-t border-slate-100">${cells.map((c, i) => `<td class="py-1 pr-4 ${i === 0 ? 'text-slate-600' : 'font-mono text-slate-700'}">${c}</td>`).join('')}</tr>`;
+
+        rows.push(hdr('Marketing Mail — Automation Letters (≤ 3.5 oz)', 3));
+        rows.push(sub(['Tier', 'None (origin)', 'DSCF']));
+        P.mmLetter.tiers.forEach(t => { const r = P.mmLetter.rates[t]; rows.push(row([t, $(r.none), $(r.dscf)])); });
+
+        rows.push(hdr('Marketing Mail — Automation Flats, piece rate (≤ 4 oz)', 3));
+        rows.push(sub(['Tier', 'None (origin)', 'DSCF']));
+        P.mmFlat.tiers.forEach(t => { const r = P.mmFlat.rates[t]; rows.push(row([t, $(r.none), $(r.dscf)])); });
+
+        rows.push(hdr('Marketing Mail — Automation Flats, piece + pound (> 4 oz, < 20 oz)', 3));
+        rows.push(sub(['Component', 'None (origin)', 'DSCF']));
+        const pp = P.mmFlat.piecePound;
+        P.mmFlat.tiers.forEach(t => { const r = pp.piece[t]; rows.push(row(['Piece ' + t, $(r.none), $(r.dscf)])); });
+        rows.push(row(['Pound (/lb)', $(pp.perLb.none), $(pp.perLb.dscf)]));
+
+        rows.push(hdr('First-Class Mail — Automation Letters (≤ 3.5 oz, origin only)', 3));
+        rows.push(sub(['Tier', 'Rate', '']));
+        P.fcLetter.tiers.forEach(t => { rows.push(row([t, $(P.fcLetter.rates[t]), ''])); });
+
+        rows.push(hdr('First-Class Mail — Automation Flats (weight not over N oz, ≤ 13 oz)', 4));
+        rows.push(sub(['Not over (oz)', '5-Digit', '3-Digit', 'Mixed']));
+        for (let i = 0; i < P.fcFlat.maxOz; i++) {
+            rows.push(row([String(i + 1), $(P.fcFlat.byOz['5-Digit'][i]), $(P.fcFlat.byOz['3-Digit'][i]), $(P.fcFlat.byOz['Mixed'][i])]));
+        }
+
+        tbody.innerHTML = rows.join('');
+
+        const footer = document.getElementById('manualRateFooter');
+        if (footer) {
+            let txt = `Ranges shown 5-Digit → Mixed at origin entry; actual postage depends on presort yield. Rates: USPS Notice 123 — eff. ${fmt(P.meta.effectiveDate)}, verified ${fmt(P.meta.verifiedDate)}. Source: ${P.meta.source}.`;
+            if (P.meta.status !== 'final') txt += ' (proposed)';
+            footer.textContent = txt;
+        }
+    }
+
     function init() {
         initDarkMode();
 
@@ -1567,6 +1617,8 @@
         if (mobileVer) mobileVer.textContent = 'MailSpec v' + MAILSPEC_VERSION + ' \u2022 Mobile Edition';
         var manualVer = document.getElementById('manualVersion');
         if (manualVer) manualVer.textContent = 'MailSpec Manual v' + MAILSPEC_VERSION;
+
+        populateManualRates();
 
         loadCustomStocks();
         const saved = localStorage.getItem(window.MailSpec.STORAGE_KEY_CURRENT);

@@ -126,7 +126,7 @@
             </button>
         </div>
         <div class="p-4 border-t border-slate-100 bg-slate-50">
-            <p class="text-xs text-slate-500 text-center" id="mobileMenuVersion">MailSpec v3.0 • Mobile Edition</p>
+            <p class="text-xs text-slate-500 text-center" id="mobileMenuVersion">MailSpec • Mobile Edition</p>
         </div>
     </div>
 </dialog>
@@ -1107,7 +1107,7 @@
         <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-indigo-50/50 shrink-0">
             <div class="flex items-center gap-2 text-indigo-800">
                 <span class="material-symbols-outlined">menu_book</span>
-                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Manual v3.0</h2>
+                <h2 class="font-bold text-base md:text-lg" id="manualVersion">MailSpec Manual</h2>
             </div>
             <button class="touch-btn text-slate-400 hover:text-slate-600" onclick="document.getElementById('manualModal').close()">
                 <span class="material-symbols-outlined">close</span>
@@ -1195,11 +1195,10 @@
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">Bottom Tab Navigation</h4>
-                        <div class="grid grid-cols-2 gap-2 md:gap-3 text-xs">
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Build</strong><p class="text-slate-500">Add and configure mail piece components</p></div>
+                        <div class="grid grid-cols-3 gap-2 md:gap-3 text-xs">
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Build</strong><p class="text-slate-500">Add and configure mail piece components (templates are in the build panel's category dropdowns)</p></div>
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Results</strong><p class="text-slate-500">View calculations, BOM, and postal classification</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Templates</strong><p class="text-slate-500">Quick-add common mail piece configurations</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">More</strong><p class="text-slate-500">Manual, Sources, Custom Stock</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">More</strong><p class="text-slate-500">Quick Start, Manual, Sources, Custom Stock, Dark Mode, Clear All</p></div>
                         </div>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
@@ -1284,6 +1283,18 @@
                         <p class="text-[10px] text-slate-500 mt-2">Monitors thickness, weight, dimensions, and aspect ratio. Only warns about the next relevant boundary.</p>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Reading the Postage Panel</h4>
+                        <p class="text-xs text-slate-600 mb-2">The postage card shows an estimated <strong>rate range</strong> for Marketing Mail and First-Class, not a single price. Read it like this:</p>
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <div><strong>The range (5-Digit → Mixed)</strong> — best case to worst case by presort depth. The low end assumes deep 5-Digit sortation; the high end assumes an unsorted Mixed mailing. Your actual rate lands somewhere inside once the list is processed.</div>
+                            <div><strong>Entry assumption</strong> — rates assume <strong>origin entry</strong>. For Marketing Mail, the sub-line also shows a <strong>DSCF</strong> best-case where a destination-entry discount exists.</div>
+                            <div><strong>Amber italic notes</strong> — a letter-size piece over <strong>3.5 oz</strong> re-quotes at <em>flat</em> pricing (its dimensional classification does not change); a Marketing Mail flat over <strong>4 oz</strong> prices as <em>piece + pound</em>.</div>
+                            <div><strong>Dashes (—)</strong> — a rate dashes out when the piece can't be priced on that line: Non-Mailable, Parcel, or at/over the <strong>20 oz</strong> Marketing Mail flat cap (First-Class flats dash over 13 oz).</div>
+                            <div><strong>Footer</strong> — shows the rates' effective date, verification date, and source. A <strong>(proposed)</strong> amber tag means the rates were transcribed from a provisional USPS file rather than a final one.</div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">The full rate table lives in the <strong>Sources</strong> panel (header → Sources → Postage Rates), rendered live from the same postage data the card uses — one source of truth.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">Self-Mailer Compliance (DMM 201.3.14)</h4>
                         <p class="text-xs text-slate-600 mb-2">When a self-mailer component is present, MailSpec evaluates tab requirements based on fold type and weight per USPS DMM 201.3.14. The compliance panel shows whether the current seal configuration meets requirements.</p>
                         <div class="text-xs text-slate-600 space-y-1">
@@ -1338,25 +1349,34 @@
                     What's New
                 </h3>
                 <div class="space-y-3 md:space-y-4">
-                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-3 md:p-4">
-                        <h4 class="font-bold text-sm text-emerald-800 mb-3">July 2026 — Postage Restructure &amp; Notice 123 Rates</h4>
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-purple-800 mb-1">v3.1 — Current Release</h4>
+                        <p class="text-[10px] text-slate-600 mb-3">Closes the 2026-07-01 accuracy audit: seven data and logic defects fixed, the postage engine rebuilt for the July 2026 Notice 123 rates, and the documentation and BOM export brought current.</p>
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Presort-Tier Ranges</div><p class="text-[10px] text-slate-600">Postage card now shows a 5-Digit → Mixed range with entry disclosed, not a single best-case cell</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">July 2026 Rates (Final)</div><p class="text-[10px] text-slate-600">USPS Notice 123 rates effective 7/12/2026, with 3-Digit replacing ADC/AADC tiers and DSCF best-case shown</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Piece + Pound for Heavy Flats</div><p class="text-[10px] text-slate-600">Marketing Mail flats over 4 oz price correctly as piece rate plus a per-pound charge</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Weight Guards &amp; Re-Quote</div><p class="text-[10px] text-slate-600">Over-cap pieces dash out with a note; letter-size pieces over 3.5 oz re-quote at flat prices. MM flat max now 20 oz</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-emerald-100"><div class="font-bold text-xs mb-1">Live Manual Rate Table</div><p class="text-[10px] text-slate-600">The Manual's rate table now renders from the same data as the card — one source of truth, no stale numbers</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Accuracy Audit — 7 Fixes</div><p class="text-[10px] text-slate-600">A comprehensive audit surfaced seven defects across booklet math, stock data, classification, tray logic, compliance, warnings, and postage — all now fixed and verified</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Self-Cover Booklet Math</div><p class="text-[10px] text-slate-600">Cover pages are now deducted from the body, correcting weight and thickness that were previously overstated by roughly 50%</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Specialty Stock GSM</div><p class="text-[10px] text-slate-600">Corrected magnet and CR80 PVC densities; C2S boards moved to ±8% tolerance with a "verify against house stock" note</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Envelope Driver</div><p class="text-[10px] text-slate-600">The largest-area envelope now always drives classification, with a fit-check warning when a component may not fit its outer</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">EMM &amp; Tray Logic</div><p class="text-[10px] text-slate-600">Corrected DMM tray/EMM triggers (letter-tray thresholds); flats no longer show letter-tray counts</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">FSM Compliance (DMM 201.3.14)</div><p class="text-[10px] text-slate-600">Rewritten to current rules: tab counts/sizes, perforated-tab prohibition, 6&quot;×10.5&quot; size gate, paper basis-weight minimums, specialty-fold advisory</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Warning Thresholds</div><p class="text-[10px] text-slate-600">New minimum-thickness "Too Thin / Non-Mailable" check, at-limit aspect-ratio cautions, and corrected weight bands</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Postage Restructure</div><p class="text-[10px] text-slate-600">Rebuilt as a presort × entry matrix with range display, over-3.5oz letter re-quote, and piece + pound pricing for heavy Marketing Mail flats</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">July 2026 Rates (Final)</div><p class="text-[10px] text-slate-600">USPS Notice 123 rates effective 7/12/2026 — tiers collapse to 5-Digit / 3-Digit / Mixed, and the Marketing Mail flat cap rises from 16 to 20 oz</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Live Rate Table</div><p class="text-[10px] text-slate-600">The Sources panel's rate table now renders from the same data as the postage card — one source of truth, no hand-kept numbers</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">BOM Export Gains</div><p class="text-[10px] text-slate-600">Text export now carries the self-mailer FSM compliance verdict and reads the live postage card (ranges, notes, and footer)</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Regression Suite — 191</div><p class="text-[10px] text-slate-600">Test coverage grew to 191 assertions spanning calculations, classification, tray logic, warnings, compliance, and the postage matrix</p></div>
+                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Build-Date Stamp</div><p class="text-[10px] text-slate-600">The version now carries a build date, shown in the Manual header and console so staleness self-announces</p></div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-3 md:p-4">
-                        <h4 class="font-bold text-sm text-purple-800 mb-3">v3.0 — Current Release</h4>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Component Reordering</div><p class="text-[10px] text-slate-600">Move components up/down with arrow buttons in the card header</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Overflow Action Menu</div><p class="text-[10px] text-slate-600">Manual weight, thickness, and swap actions collapsed behind a clean "..." menu</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Smart Compliance</div><p class="text-[10px] text-slate-600">Compliance panel hidden for postcards — only shows for folded self-mailers</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Empty-State Polish</div><p class="text-[10px] text-slate-600">Summary cards show dashes instead of zeros when no components are present</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Manual Navigation</div><p class="text-[10px] text-slate-600">Table of contents with smooth-scroll jump links in the full Manual</p></div>
-                            <div class="bg-white/70 p-2 rounded border border-purple-100"><div class="font-bold text-xs mb-1">Regression Test Suite</div><p class="text-[10px] text-slate-600">Browser-based test harness covering calculations, classification, and compliance</p></div>
+                    <div class="border border-slate-200 rounded-lg p-3 md:p-4">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">v3.0 — Review Polish</h4>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="bg-slate-50 p-2 rounded">Component reordering with header arrows</div>
+                            <div class="bg-slate-50 p-2 rounded">"..." overflow action menu</div>
+                            <div class="bg-slate-50 p-2 rounded">Compliance panel hidden for postcards</div>
+                            <div class="bg-slate-50 p-2 rounded">Empty-state dashes in summary cards</div>
+                            <div class="bg-slate-50 p-2 rounded">Manual TOC with smooth-scroll</div>
+                            <div class="bg-slate-50 p-2 rounded">Browser-based regression test suite</div>
                         </div>
                     </div>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
@@ -1427,7 +1447,7 @@
                     Testing
                 </h3>
                 <div class="space-y-3">
-                    <p class="text-xs md:text-sm text-slate-600">MailSpec includes a browser-based regression test suite that verifies calculation accuracy, postal classification logic, and self-mailer compliance rules.</p>
+                    <p class="text-xs md:text-sm text-slate-600">MailSpec includes a browser-based regression test suite — currently <strong>191 assertions</strong> — that verifies calculation accuracy, postal classification logic, tray/EMM capacity, postal warnings, self-mailer compliance, and the postage matrix. It loads the app's pure calculation and postal modules directly; no framework needed.</p>
                     <div class="border border-slate-200 rounded-lg p-3 md:p-4">
                         <h4 class="font-bold text-sm text-slate-800 mb-2">Running the Tests</h4>
                         <p class="text-xs text-slate-600 mb-2">Open the test page in any browser:</p>
@@ -1440,8 +1460,8 @@
                         <h4 class="font-bold text-sm text-slate-800 mb-2">What's Covered</h4>
                         <div class="grid grid-cols-3 gap-2 text-xs">
                             <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Calculations</strong><p class="text-slate-500 mt-1">Weight, thickness, and finished dimensions for every component type — envelopes, sheets, self-mailers, accordions, booklets (self-cover and plus-cover), cards, custom panels, coatings, manual overrides, buffers, and seals.</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Classification</strong><p class="text-slate-500 mt-1">USPS boundary conditions — letter/flat/parcel thresholds, aspect ratio limits, non-mailable detection, postage rate lookup, weight status labels.</p></div>
-                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Compliance</strong><p class="text-slate-500 mt-1">Self-mailer tab requirements for bi-fold, tri-fold, quarter-fold at various weights. Optional elements, line glue, weight limits.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Classification &amp; Warnings</strong><p class="text-slate-500 mt-1">USPS boundary conditions — letter/flat/parcel thresholds, the minimum-thickness "Too Thin" / Non-Mailable check, aspect-ratio limits and at-limit cautions, dimension-driver selection, tray capacity and EMM triggers, weight status labels, and postal warnings.</p></div>
+                            <div class="bg-slate-50 p-2 rounded"><strong class="text-indigo-700">Compliance &amp; Postage</strong><p class="text-slate-500 mt-1">Self-mailer tabs per DMM 201.3.14 (bi-/tri-/quarter-fold, optional elements, line glue, perf-tab prohibition, size gate, paper minimums) and the postage matrix — presort ranges, piece + pound, weight-cap boundaries, and over-3.5oz re-quotes.</p></div>
                         </div>
                     </div>
                     <p class="text-xs text-slate-500">Run the test suite after any change to calculation, postal, or compliance logic. No framework needed — the page loads the app's modules directly and reports results.</p>
@@ -1481,7 +1501,9 @@
 
 <script type="text/javascript">
     // Version — single source of truth
-    const MAILSPEC_VERSION = '3.0';
+    const MAILSPEC_VERSION = '3.1';
+    const MAILSPEC_BUILD_DATE = '2026-07-04'; // update on each release commit
+    const MAILSPEC_VERSION_FULL = MAILSPEC_VERSION + ' · ' + MAILSPEC_BUILD_DATE;
     window.MailSpec.VERSION = MAILSPEC_VERSION;
 
     // Reference data from namespace
@@ -1498,7 +1520,7 @@
     const C = window.MailSpec.Components;
 
     // Debug: verify script execution
-    console.log(`MailSpec v${MAILSPEC_VERSION}: Script starting...`);
+    console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: Script starting...`);
 
     // ============================================================
     // DARK MODE
@@ -1616,7 +1638,7 @@
         var mobileVer = document.getElementById('mobileMenuVersion');
         if (mobileVer) mobileVer.textContent = 'MailSpec v' + MAILSPEC_VERSION + ' \u2022 Mobile Edition';
         var manualVer = document.getElementById('manualVersion');
-        if (manualVer) manualVer.textContent = 'MailSpec Manual v' + MAILSPEC_VERSION;
+        if (manualVer) manualVer.textContent = 'MailSpec Manual v' + MAILSPEC_VERSION_FULL;
 
         populateManualRates();
 
@@ -1776,7 +1798,7 @@
     // ============================================================
     // WINDOW BINDINGS
     // ============================================================
-    console.log(`MailSpec v${MAILSPEC_VERSION}: Binding functions to window...`);
+    console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: Binding functions to window...`);
 
     // Bind all functions to window for onclick handlers
     window.addComponent = C.addComponent;
@@ -1809,7 +1831,7 @@
     window.exportBOMText = C.exportBOMText;
     window.switchTab = C.switchTab;
 
-    console.log(`MailSpec v${MAILSPEC_VERSION}: Functions bound. addComponent =`, typeof window.addComponent);
+    console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: Functions bound. addComponent =`, typeof window.addComponent);
 
     // ============================================================
     // EVENT DELEGATION
@@ -1844,11 +1866,11 @@
                 }
             }
         });
-        console.log(`MailSpec v${MAILSPEC_VERSION}: Event delegation ready`);
+        console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: Event delegation ready`);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        console.log(`MailSpec v${MAILSPEC_VERSION}: DOM ready, initializing...`);
+        console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: DOM ready, initializing...`);
         setupEventDelegation();
         init();
         C.renderConfigList();
@@ -1886,11 +1908,11 @@
             });
         });
 
-        console.log(`MailSpec v${MAILSPEC_VERSION}: Initialization complete`);
+        console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: Initialization complete`);
     });
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        console.log(`MailSpec v${MAILSPEC_VERSION}: DOM already ready, initializing immediately...`);
+        console.log(`MailSpec v${MAILSPEC_VERSION_FULL}: DOM already ready, initializing immediately...`);
         setupEventDelegation();
         init();
         C.renderConfigList();

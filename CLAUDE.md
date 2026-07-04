@@ -95,6 +95,8 @@ Phase 1 migration complete.
 
 - **Housekeeping (2026-07-03):** Removed legacy `mailspec-assembly-tool-v2.4.html` (preserved in git history); exposed `perf_tab` in the seal picker with a "not FSM-compliant" warning label, wired into all three seal label maps (ui-controls `updateSealInfo`, bom-export, print sheet) — the Defect 6 perforated-tab prohibition in compliance.js is now reachable from the UI. Documented Perforated Tab in the Manual's seal quick-reference table and Tab Seals cards (grid now 2×2) with the DMM 201.3.14 prohibition note; fixed the Manual's incorrect DMM 201.3.15 citation to 201.3.14. No calculation or data changes; suite unchanged at 160 assertions.
 
+- **Housekeeping (2026-07-04):** BOM text export (`generateBOMText()` in `bom-export.js`) now carries the self-mailer FSM compliance verdict — inserted between the seal block and `POSTAGE ESTIMATES`. It mirrors the print sheet's approach: reads the live `#compliancePanel` DOM (status via `.font-bold.text-sm`, messages via `.text-xs.text-slate-600 span:last-child`) rather than re-running evaluation, keeping the compliance panel the single source of truth. Emits nothing when no self-mailer is present (panel is `hidden`). Covers both Copy BOM and Export .txt since both call `generateBOMText()`. No compliance logic touched; suite unchanged at 160 (export block is DOM-reading UI outside the pure-function suite's scope). Also added a macOS section to `.gitignore` ignoring `.DS_Store`.
+
 Next: Phase 4.2+ (future phases). Defect 2 waits on the 2026-07-12 Notice 123 refresh.
 
 ## Development Plan

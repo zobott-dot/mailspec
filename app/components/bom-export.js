@@ -43,6 +43,19 @@
             lines.push('');
         }
 
+        // Self-mailer compliance verdict — mirrors the print sheet: reads the live
+        // compliance panel rather than re-running evaluation (panel = source of truth).
+        const compPanel = document.getElementById('compliancePanel');
+        if (compPanel && !compPanel.classList.contains('hidden')) {
+            const statusEl = document.querySelector('#complianceContent .font-bold.text-sm');
+            if (statusEl) {
+                lines.push(`  FSM Compliance:      ${statusEl.textContent} (DMM 201.3.14)`);
+                const msgs = document.querySelectorAll('#complianceContent .text-xs.text-slate-600 span:last-child');
+                Array.from(msgs).forEach(m => lines.push(`                       - ${m.textContent}`));
+                lines.push('');
+            }
+        }
+
         lines.push('POSTAGE ESTIMATES (July 2025)');
         lines.push('─────────────────────────────────────────────────────────────────');
         lines.push(`  Marketing Mail (Auto):  ${marketingRate}`);
